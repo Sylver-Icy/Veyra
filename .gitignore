@@ -1,0 +1,25 @@
+# Venv and env files
+veyra-venv/
+.venv/
+env/
+ENV/
+venv/
+*.env
+.env
+
+
+# Python junk
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+
+# VSCode and IDE files
+.vscode/
+.idea/
+
+# macOS BS
+.DS_Store
