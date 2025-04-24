@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 
 from services.users_services import is_user
+from utils.chatexp import chatexp
+
 
 load_dotenv("veyra.env")
 
@@ -30,7 +32,7 @@ async def on_ready():
     print(f"logged in as {bot.user}")
 
 @bot.event
-async def on_command_error(ctx, error):
+async def on_command_error(error):
     if isinstance(error, commands.CheckFailure):
         # Don't spam the terminal for blocked users
         return
@@ -41,7 +43,7 @@ async def on_command_error(ctx, error):
 async def on_message(message):
     if message.author.bot:
         return
-
+    #Logic to allow in line commands
     for command in bot.commands:
         if f"!{command.name}" in message.content:
             # Extract the command with everything after it
@@ -68,6 +70,10 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+    #Give exp for chatting in servers
+    if is_user(message.author.id):
+        ctx = await bot.get_context(message)
+        await chatexp(ctx)
 
 cogs_list=[
     'games',
