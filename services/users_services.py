@@ -24,5 +24,3 @@ def is_user(user_id: int):
     """
     with Session() as session:
         return session.get(User, user_id) is not None
-
-print(is_user(123))
