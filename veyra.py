@@ -15,7 +15,12 @@ async def on_ready():
     print(f"logged in as {bot.user}")
 
 
-bot.load_extension('cogs.games')
+cogs_list=[
+    'games',
+    'profile'
+]
 
+for cog in cogs_list:
+    bot.load_extension(f'cogs.{cog}')
 
 bot.run(TOKEN)
