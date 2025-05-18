@@ -5,6 +5,7 @@ import os
 
 from services.users_services import is_user
 from utils.chatexp import chatexp
+from nsfw_classifier.nsfw_classifier import classify
 
 
 load_dotenv("veyra.env")
@@ -44,6 +45,12 @@ async def on_message(message):
     if message.author.bot:
         return
     #Logic to allow in line commands
+    result,proba = classify(message.content)
+    if result == 1:
+        await message.reply(f"Perv detected 🚨, {proba[1]:.2f}")
+    else:
+        print(f"Sfw, {proba[0]:.2f}")
+
     for command in bot.commands:
         if f"!{command.name}" in message.content:
             # Extract the command with everything after it
