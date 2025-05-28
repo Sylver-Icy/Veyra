@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import logging
+# import utils.custom_errors as err
+from utils.custom_errors import VeyraError
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,9 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.CommandNotFound):
             pass 
-
+        elif isinstance(error, VeyraError):
+            await ctx.send(error)
+            logger.warning("Veyra error from %s on %s: %s", ctx.author.name, ctx.command, error)
         else:
             await ctx.send("💥 An unexpected error occurred.")
             logger.exception("Unhandled error in command: %s", error)
