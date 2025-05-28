@@ -6,6 +6,8 @@ import os
 from services.users_services import is_user
 from utils.chatexp import chatexp
 from nsfw_classifier.nsfw_classifier import classify
+from utils.logger import setup_logging
+setup_logging()
 
 
 load_dotenv("veyra.env")
@@ -32,14 +34,6 @@ async def on_ready():
     """Send a conformation message when bot boots up"""
     print(f"logged in as {bot.user}")
 
-@bot.event
-async def on_command_error(error):
-    if isinstance(error, commands.CheckFailure):
-        # Don't spam the terminal for blocked users
-        return
-
-    # For other errors, still print them
-    raise error
 @bot.event
 async def on_message(message):
     if message.author.bot:
@@ -84,7 +78,9 @@ async def on_message(message):
 
 cogs_list=[
     'games',
-    'profile'
+    'profile',
+    'exp',
+    'error_handler'
 ]
 
 for cog in cogs_list:

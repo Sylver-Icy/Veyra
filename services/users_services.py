@@ -2,6 +2,9 @@ from datetime import datetime
 
 from database.sessionmaker import Session
 from models.users_model import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 def add_user(user_id: int, user_name: str):
     """
@@ -15,7 +18,11 @@ def add_user(user_id: int, user_name: str):
             joined=datetime.utcnow()
         )
         session.add(new_user)
-        session.commit()
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            logger.error("Error adding user %s: %s", user_id, str(e))
 
 def is_user(user_id: int):
     """
