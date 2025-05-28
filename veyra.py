@@ -80,7 +80,8 @@ cogs_list=[
     'games',
     'profile',
     'exp',
-    'error_handler'
+    'error_handler',
+    'economy'
 ]
 
 for cog in cogs_list:

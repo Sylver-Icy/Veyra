@@ -14,11 +14,11 @@ class UserNotFoundError(VeyraError):
     """Raise error when user is not in database"""
 
     def __init__(self, user_id):
-        message = f"User- {user_id} is not my friend, can't interact! Stranger Danger"
+        message = f"<@{user_id}> is not my friend, can't interact! Stranger Danger"
         super().__init__(message)
 
 class NegativeGoldError(VeyraError):
     """Raise error if someone tries adding negative gold"""
     def __init__(self):
-        message = "Mind explaining me you want to transfer negative gold? ._."
+        message = "Mind explaining me why you want to transfer negative gold? ._."
         super().__init__(message)

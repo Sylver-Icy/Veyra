@@ -9,13 +9,13 @@ def add_gold(user_id: int, gold_amount: int):
     "Gives users required amount of gold"
     if not isinstance(gold_amount, int) or gold_amount <= 0:
         logger.warning("Invalid gold amount: %s", gold_amount)
-        raise NegativeGoldError("Gold amount must be a positive integer.")
+        raise NegativeGoldError()
     
     with Session() as session:
         user = session.get(Wallet, user_id)
         if not user:
             logger.warning("User with user id- %s is not registered and was attempted to give %s gold", user_id, gold_amount)
-            raise UserNotFoundError("User is not registered")
+            raise UserNotFoundError(user_id)
 
         try:
             user.gold += gold_amount
@@ -27,13 +27,13 @@ def add_gold(user_id: int, gold_amount: int):
 
 def remove_gold(user_id:int, gold_amount:int):
     if not isinstance(gold_amount, int) or gold_amount <=0:
-        raise NegativeGoldError(f"Failed to deduct {gold_amount} gold from user- {user_id}")
+        raise NegativeGoldError()
     
     with Session() as session:
         user = session.get(Wallet,user_id)
         if not user:
             logger.warning("Failed to deduct %s gold from User- %s coz they are not in database", gold_amount, user_id)
-            raise UserNotFoundError(f"User-{user_id} is not registered can't deduct gold")
+            raise UserNotFoundError(user_id)
         
         if user.gold - gold_amount < 0:
             raise NotEnoughGoldError(gold_amount,user.gold)
@@ -45,3 +45,9 @@ def remove_gold(user_id:int, gold_amount:int):
         except Exception as e:
             session.rollback()
             logger.error("Error updating -%s gold for User- %s: %s",gold_amount,user_id,e)
+
+def check_wallet(user_id):
+    """Returns how much gold someone has"""
+    with Session() as session:
+        user = session.get(Wallet,user_id)
+        return user.gold

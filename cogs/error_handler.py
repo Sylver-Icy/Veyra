@@ -39,8 +39,8 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, commands.CommandNotFound):
             pass 
         elif isinstance(error, VeyraError):
-            await ctx.send(error)
-            logger.warning("Veyra error from %s on %s: %s", ctx.author.name, ctx.command, error)
+            await ctx.send(str(error))
+            logger.warning("Veyra error from %s on %s: %s", ctx.author.name, ctx.command, str(error))
         else:
             await ctx.send("💥 An unexpected error occurred.")
             logger.exception("Unhandled error in command: %s", error)

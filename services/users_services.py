@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from database.sessionmaker import Session
-from models.users_model import User
+from models.users_model import User, Wallet
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ def add_user(user_id: int, user_name: str):
             user_name=user_name,
             joined=datetime.utcnow()
         )
+        new_user.wallet = Wallet()
         session.add(new_user)
         try:
             session.commit()
