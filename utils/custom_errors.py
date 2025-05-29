@@ -22,3 +22,9 @@ class NegativeGoldError(VeyraError):
     def __init__(self):
         message = "Mind explaining me why you want to transfer negative gold? ._."
         super().__init__(message)
+
+class WrongItemError(VeyraError):
+    """Raise error if there is no such item in database"""
+    def __init__(self):
+        message = "There is no such item"
+        super().__init__(message)

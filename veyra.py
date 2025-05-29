@@ -5,7 +5,7 @@ import os
 
 from services.users_services import is_user
 from utils.chatexp import chatexp
-from nsfw_classifier.nsfw_classifier import classify
+# from nsfw_classifier.nsfw_classifier import classify
 from utils.logger import setup_logging
 setup_logging()
 
@@ -38,13 +38,12 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
+    # result,proba = classify(message.content)
+    # if result == 1:
+    #     await message.reply(f"Perv detected 🚨, {proba[1]:.2f}")
+    # else:
+    #     print(f"Sfw, {proba[0]:.2f}")
     #Logic to allow in line commands
-    result,proba = classify(message.content)
-    if result == 1:
-        await message.reply(f"Perv detected 🚨, {proba[1]:.2f}")
-    else:
-        print(f"Sfw, {proba[0]:.2f}")
-
     for command in bot.commands:
         if f"!{command.name}" in message.content:
             # Extract the command with everything after it
@@ -81,7 +80,8 @@ cogs_list=[
     'profile',
     'exp',
     'error_handler',
-    'economy'
+    'economy',
+    'inventory'
 ]
 
 for cog in cogs_list:
