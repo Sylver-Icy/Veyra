@@ -90,3 +90,32 @@ def update_wordle(state, pattern):
         "attempts": attempts,
     }
     return new_state, next_guess
+
+
+# New functions
+def suggest_next_guess(state):
+    """
+    Suggest the next best guess based on current solver state without applying any new feedback.
+    """
+    from collections import Counter
+
+    valid_words = state["valid"]
+    if not valid_words:
+        raise NoValidWordsError()
+
+    letter_counts = Counter("".join(valid_words))
+    def score(w): return sum(letter_counts[ch] for ch in set(w))
+    
+    sorted_words = sorted(valid_words, key=score, reverse=True)
+    return sorted_words[0] if sorted_words else None
+
+
+def build_state_from_history(valid_words, history, max_attempts=6, initial_guess="adieu"):
+    """
+    Create a solver state from a list of (guess, pattern) tuples.
+    """
+    state = init_wordle(valid_words, initial_guess=initial_guess, max_attempts=max_attempts)
+    for guess, pattern in history:
+        state["guess"] = guess
+        state, _ = update_wordle(state, pattern)
+    return state
