@@ -1,6 +1,7 @@
 from database.sessionmaker import Session
 from models.inventory_model import Inventory, Items
 from utils.custom_errors import WrongItemError
+from utils.itemname_to_id import item_name_to_id
 import logging
 
 logger = logging.getLogger('__name__')
@@ -23,7 +24,7 @@ def add_item(
         
         new_item = Items(
             item_id = item_id,
-            item_name = item_name,
+            item_name = item_name.capitalize(),
             item_description = item_description,
             item_rarity = item_rarity,
             item_icon = item_icon,
@@ -31,12 +32,13 @@ def add_item(
 
         )
         session.add(new_item)
+        item_name_to_id[item_name] = item_id
         session.commit()
 
-def give_item(user_id: int, item_id: int, amount: int):
+def give_item(target_id: int, item_id: int, amount: int):
     """Gives any item to any user"""
     with Session() as session:
-        entry = session.get(Inventory, (user_id, item_id))
+        entry = session.get(Inventory, (target_id, item_id))
         item = session.get(Items, item_id)
         if not item:
             raise WrongItemError()
@@ -44,7 +46,7 @@ def give_item(user_id: int, item_id: int, amount: int):
             entry.item_quantity += amount
         else:
             new_entry = Inventory(
-                user_id=user_id,
+                user_id=target_id,
                 item_id=item_id,
                 item_quantity=amount,
                 item_durability=item.item_durability

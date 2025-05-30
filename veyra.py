@@ -5,6 +5,7 @@ import os
 
 from services.users_services import is_user
 from utils.chatexp import chatexp
+import utils.itemname_to_id
 # from nsfw_classifier.nsfw_classifier import classify
 from utils.logger import setup_logging
 setup_logging()
@@ -14,7 +15,7 @@ load_dotenv("veyra.env")
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 intent=discord.Intents.all()
-bot=commands.Bot(command_prefix="!",intents=intent)
+bot = commands.Bot(command_prefix="!", intents=intent, case_insensitive=True)
 
 @bot.check
 async def is_registered(ctx):

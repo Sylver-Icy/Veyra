@@ -23,3 +23,6 @@ __pycache__/
 
 # macOS BS
 .DS_Store
+
+#wordle
+wordle.txt
