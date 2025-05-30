@@ -9,6 +9,7 @@ class Games(commands.Cog):
 
     def __init__(self,bot):
         self.bot=bot
+        self.sessions = {}
     
     @commands.command()
     async def ping(self,ctx):
@@ -40,9 +41,10 @@ class Games(commands.Cog):
             words = [w.strip() for w in f]
         
         state = init_wordle(words)
+        self.sessions[ctx.author.id] = state
 
-        while state["attempts"] > 0 and state["guess"]:
-            guess = state["guess"]
+        while self.sessions.get(ctx.author.id, {}).get("attempts", 0) > 0 and self.sessions[ctx.author.id].get("guess"):
+            guess = self.sessions[ctx.author.id]["guess"]
             await thread.send(f"Guess: {guess}")  # <- send in thread now
 
             def check(msg):
@@ -53,17 +55,20 @@ class Games(commands.Cog):
                 result = msg.content.strip()
             except asyncio.TimeoutError:
                 await thread.send("Too slow, try again later.")
+                del self.sessions[ctx.author.id]
                 return
             except WrongInputError as e:
                 await thread.send(e)
 
             if result == "22222":
                 await thread.send("Congratulations 🎉")
+                del self.sessions[ctx.author.id]
                 return
 
-            state, _ = update_wordle(state, result)
+            self.sessions[ctx.author.id], _ = update_wordle(self.sessions[ctx.author.id], result)
 
         await thread.send("Game over! You're out of attempts.")
+        del self.sessions[ctx.author.id]
 
 
     @commands.slash_command(name="wordle_hint", description="Get a Wordle hint based on your past guesses and feedbacks")

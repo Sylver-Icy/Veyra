@@ -39,5 +39,5 @@ class NoValidWordsError(VeyraError):
     """Raise error if wordle has  no possible words left"""
     
     def __init__(self):
-        message = "Hmmm I tried all 5 letter words nothing left prolly wrong inputs from your side or maybe you looking for some alien language word"
+        message = "I tried all 5 letter words nothing left prolly wrong inputs from your side or maybe you looking for some alien language word"
         super().__init__(message)
