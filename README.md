@@ -78,5 +78,10 @@ share it with your server.
 git clone https://github.com/YOUR_USERNAME/veyra
 cd veyra
 pip install -r requirements.txt
+# Copy the sample env file and edit it with your credentials
+cp veyra.env.example veyra.env
 # Add your token, DB config, and start Veyra!
 python veyra.py
+```
+
+You'll also need a `wordle.txt` word list in the project root. A small example is provided as `wordle.txt.example`.

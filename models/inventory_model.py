@@ -28,5 +28,3 @@ class Items(Base):
 
     inventory = relationship('Inventory', back_populates='item')
     
-
-

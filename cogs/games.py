@@ -37,6 +37,9 @@ class Games(commands.Cog):
     "Don't mess up the inputs and you win :3"
 )
 
+        if not os.path.exists("wordle.txt"):
+            await thread.send("wordle.txt is missing in the bot directory.")
+            return
         with open("wordle.txt") as f:
             words = [w.strip() for w in f]
         
@@ -65,7 +68,13 @@ class Games(commands.Cog):
                 del self.sessions[ctx.author.id]
                 return
 
-            self.sessions[ctx.author.id], _ = update_wordle(self.sessions[ctx.author.id], result)
+            try:
+                self.sessions[ctx.author.id], _ = update_wordle(
+                    self.sessions[ctx.author.id], result
+                )
+            except WrongInputError as e:
+                await thread.send(e)
+                continue
 
         await thread.send("Game over! You're out of attempts.")
         del self.sessions[ctx.author.id]

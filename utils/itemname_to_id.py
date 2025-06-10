@@ -20,4 +20,3 @@ def suggest_similar_item(user_input: str, limit: int = 3, threshold: int = 65):
     choices = list(item_name_to_id.keys())
     results = process.extract(user_input, choices, limit=limit)
     return [match for match, score, _ in results if score >= threshold]
-
