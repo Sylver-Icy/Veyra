@@ -1,8 +1,9 @@
+"""This module handles inventory-related services like adding items and assigning them to users."""
+import logging
 from database.sessionmaker import Session
 from models.inventory_model import Inventory, Items
 from utils.custom_errors import WrongItemError
 from utils.itemname_to_id import item_name_to_id
-import logging
 
 logger = logging.getLogger('__name__')
 
@@ -21,7 +22,6 @@ def add_item(
 
         if item_by_id or item_by_name:
             return True
-        
         new_item = Items(
             item_id = item_id,
             item_name = item_name.capitalize(),

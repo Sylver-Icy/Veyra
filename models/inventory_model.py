@@ -12,7 +12,7 @@ class Inventory(Base):
     user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'))
     item_id = Column(Integer, ForeignKey('items.item_id', ondelete='CASCADE'))
     item_quantity = Column(Integer, default=1)
-    item_durability = Column(Integer)
+    item_durability = Column(Integer, nullable=True)
 
     item = relationship('Items', back_populates='inventory')
     user = relationship('User', back_populates='inventory')
@@ -27,6 +27,3 @@ class Items(Base):
     item_durability = Column(Integer, nullable=True)
 
     inventory = relationship('Inventory', back_populates='item')
-    
-
-

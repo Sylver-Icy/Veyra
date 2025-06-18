@@ -1,6 +1,4 @@
-import os
-import regex
-from collections import Counter
+"""This module is for wordle solving"""
 from utils.custom_errors import WrongInputError,NoValidWordsError
 
 def init_wordle(valid_words, initial_guess="adieu", max_attempts=6):
@@ -30,7 +28,7 @@ def update_wordle(state, pattern):
     """
     if len(pattern) != 5 or any(ch not in "012" for ch in pattern):
         raise WrongInputError()
-    
+
     from collections import Counter
 
     guess = state["guess"]
@@ -105,7 +103,7 @@ def suggest_next_guess(state):
 
     letter_counts = Counter("".join(valid_words))
     def score(w): return sum(letter_counts[ch] for ch in set(w))
-    
+
     sorted_words = sorted(valid_words, key=score, reverse=True)
     return sorted_words[0] if sorted_words else None
 

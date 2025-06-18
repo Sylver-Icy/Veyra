@@ -2,7 +2,7 @@
 
 > Why settle for 10 bots... when you can have **one** that does it better?
 
-Veyra’s a modular Discord bot I’m building with a bunch of fun, useful, and just plain chaotic features — like **moderation**, **economy**, **RPG**, and **mind-blowing minigames** — all running on a production-grade codebase.  
+Veyra’s a modular Discord bot I’m building with a bunch of fun, useful, and just plain chaotic features — like **moderation**, **economy**, **RPG**, and **cool minigames** — all running on a production-grade codebase.  
 More features coming soon… because I can’t stop adding stuff T-T
 
 ---
@@ -37,14 +37,14 @@ Most bots are:
 - ❌ Ugly
 - ❌ Dumb
 - ❌ Overpriced
+
 Veyra is:
 - ✅ All-in-one
 - ✅ Built like a real product
 - ✅ Actually fun
 
-She’s a **Discord-native experiment** in modular bot design, scalable AI integration, and unhinged creativity.  
+She’s a **Discord-native experiment** in modular bot design, scalable AI integration, and a lot of creativity.  
 
-Oh... and she roasts you if you mess up commands.
 
 ---
 
@@ -56,7 +56,7 @@ Oh... and she roasts you if you mess up commands.
 
 ## 🧪 Wanna Help?
 
-Pull requests? Ideas? Wanna test new chaos features?
+Pull requests? Ideas? Wanna test new features?
 > **DM me on Discord(`sylver.icy`)** or open an issue.
 
 ---
