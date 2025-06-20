@@ -6,9 +6,9 @@ import os
 import models.users_model
 
 load_dotenv("veyra.env")
-TOKEN = os.getenv("ENGINE")
+DB_URL = os.getenv("DB_URL")
 
-engine = create_engine(TOKEN)
+engine = create_engine(DB_URL)
 
 Session = sessionmaker(bind=engine)
 

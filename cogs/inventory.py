@@ -71,6 +71,8 @@ class Inventory(commands.Cog):
             await ctx.respond(f"{ctx.author.mention} gave {amount}X {item_name.capitalize()} to {target.mention}")
         except WrongItemError as e:
             await ctx.respond(e)
-        
+    
+    
+
 def setup(bot):
     bot.add_cog(Inventory(bot))

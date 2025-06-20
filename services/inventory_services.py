@@ -13,7 +13,7 @@ def add_item(
     item_description: str,
     item_rarity: str,
     item_icon: str = None,
-    item_durability: str = None
+    item_durability: int = None
 ):
     """Adds an item to database"""
     with Session() as session:

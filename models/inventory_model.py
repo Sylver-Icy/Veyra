@@ -25,5 +25,6 @@ class Items(Base):
     item_rarity = Column(String, nullable=False)
     item_icon = Column(String, nullable=True)
     item_durability = Column(Integer, nullable=True)
+    item_price = Column(Integer,nullable=False)
 
     inventory = relationship('Inventory', back_populates='item')
