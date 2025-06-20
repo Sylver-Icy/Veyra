@@ -33,7 +33,8 @@ async def is_registered(ctx):
 async def on_ready():
     """Fill the daily shop and start a schedule also send a conformation message when bot boots up"""
     update_daily_shop()
-    scheduler.start()
+    if not scheduler.running:
+        scheduler.start()
     print(f"logged in as {bot.user}")
 
 @bot.event

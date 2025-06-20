@@ -30,17 +30,18 @@ def buy_item(user_id, item_id, item_quantity):
     item_id = int(item_id)
     if item_quantity <= 0:
         print("Invalid quantity")
-        return "Invalid quantity"
+        return "Its not funny ._."
 
     if item_id not in [item["id"] for item in daily_shop_items]:
         print("Wrong item")
-        return "Item not in shop"
+        return "That item is not currently in shop use /shop to look available items"
 
     item_price = next(item["price"] for item in daily_shop_items if item["id"] == item_id)
     user_gold = check_wallet(user_id)
     if user_gold < item_price * item_quantity:
-        print("No gold")
-        return "Not enough gold"
+        if user_gold < item_price:
+            return("Nuh uh! TOOO BROKE BRUH. Next time check your wallet before coming here 🔪")
+        return(f"You can't buy that many... HOWEVERRRR you can get `{user_gold//item_price}` of it")
 
     give_item(user_id, item_id, item_quantity)
     remove_gold(user_id, item_price * item_quantity)

@@ -6,7 +6,7 @@ def load_item_map():
     """Loads Items table into a dictionary of item names to IDs"""
     with Session() as session:
         return {
-            item.item_name: item.item_id
+            item.item_name.lower(): item.item_id
             for item in session.query(Items).all()
         }
 

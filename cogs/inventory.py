@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 from discord import Option
 import logging
-from services.inventory_services import add_item as add_item_service, give_item as give_item_service
+from services.inventory_services import add_item as add_item_service, give_item as give_item_service, get_inventory
 from services.users_services import is_user
 from utils.custom_errors import WrongItemError
 from utils.itemname_to_id import item_name_to_id,suggest_similar_item
@@ -41,7 +41,7 @@ class Inventory(commands.Cog):
     async def give_item(self,ctx,target: discord.Member, item_name: str, amount: int):
         """Slash command to give items to users"""
         #Convert the item_name to id
-        item_id = item_name_to_id.get(item_name.capitalize())
+        item_id = item_name_to_id.get(item_name.lower())
         #Suggest items to  user if they made a typo
         if not item_id:
             suggestions = suggest_similar_item(item_name)
@@ -71,6 +71,11 @@ class Inventory(commands.Cog):
             await ctx.respond(f"{ctx.author.mention} gave {amount}X {item_name.capitalize()} to {target.mention}")
         except WrongItemError as e:
             await ctx.respond(e)
+    
+    @commands.command()
+    async def checkinventory(self,ctx):
+        embed =get_inventory(ctx.author.id, ctx.author.name)
+        await ctx.send (embed = embed)
     
     
 
