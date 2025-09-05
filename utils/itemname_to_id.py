@@ -21,3 +21,13 @@ def suggest_similar_item(user_input: str, limit: int = 3, threshold: int = 65):
     results = process.extract(user_input, choices, limit=limit)
     return [match for match, score, _ in results if score >= threshold]
 
+def get_item_id_safe(user_input: str):
+    """
+    Attempts to fetch the item ID using a case-insensitive name match.
+    If not found, returns None and a list of suggested similar items.
+    """
+    item_id = item_name_to_id.get(user_input.lower())
+    if item_id is not None:
+        return item_id, []
+    suggestions = suggest_similar_item(user_input)
+    return None, suggestions

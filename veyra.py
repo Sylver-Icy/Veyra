@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from services.users_services import is_user
+from services import response_serives
 from utils.chatexp import chatexp
 import utils.itemname_to_id
 from services.shop_services import scheduler, update_daily_shop
@@ -85,7 +86,8 @@ cogs_list=[
     'error_handler',
     'economy',
     'inventory',
-    'shop'
+    'shop',
+    'lootbox'
 ]
 
 for cog in cogs_list:

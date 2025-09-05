@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-from discord import Option
+from discord import Option  # pylint: disable=no-name-in-module
 import logging
 from services.inventory_services import add_item as add_item_service, give_item as give_item_service, get_inventory
 from services.users_services import is_user
@@ -16,19 +16,20 @@ class Inventory(commands.Cog):
     @commands.slash_command()
     async def add_item(self,
                     ctx,
-                    item_id: int,
                     item_name: str,
                     item_description: str,
+                    item_price: int,
                     item_rarity: str = Option(
                         str,
-                        choices=["Common", "Rare", "Epic", "Legendary", "Paragon"],
+                        choices=["Common", "Rare", "Epic", "Legendary", "Paragon", "Lootbox"],
                         description="Select the rarity of item"
                     ),
+                    item_id: int = None,
                     item_icon: str = None,
                     item_durability: int = None):
         """Adds an item to database"""
 
-        if add_item_service(item_id, item_name, item_description, item_rarity, item_icon, item_durability):
+        if add_item_service(item_id, item_name, item_description, item_price, item_rarity, item_icon, item_durability):
             await ctx.respond("❌ This item already exists.")
         else:
             await ctx.respond(
@@ -44,7 +45,7 @@ class Inventory(commands.Cog):
         item_id = item_name_to_id.get(item_name.lower())
         #Suggest items to  user if they made a typo
         if not item_id:
-            suggestions = suggest_similar_item(item_name)
+            suggestions = [s.title() for s in suggest_similar_item(item_name)]
             if suggestions:
                 length = len(suggestions)
                 if length == 1:

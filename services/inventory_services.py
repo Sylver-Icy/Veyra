@@ -13,6 +13,7 @@ def add_item(
     item_id: int,
     item_name: str,
     item_description: str,
+    item_price: int,
     item_rarity: str,
     item_icon: str = None,
     item_durability: int = None
@@ -26,11 +27,12 @@ def add_item(
             return True
         new_item = Items(
             item_id = item_id,
-            item_name = item_name.capitalize(),
+            item_name = item_name.title(),
             item_description = item_description,
             item_rarity = item_rarity,
             item_icon = item_icon,
-            item_durability = item_durability
+            item_durability = item_durability,
+            item_price = item_price
 
         )
         session.add(new_item)
@@ -68,6 +70,8 @@ def get_inventory(user_id: int, user_name: str) -> discord.Embed:
         inventory = session.query(Inventory).filter_by(user_id=user_id).all()
         result = []
         for entry in inventory:
+            if entry.item_quantity == 0:
+                continue
             item = session.get(Items, entry.item_id)
             result.append({
                 "item_id": entry.item_id,
@@ -76,4 +80,6 @@ def get_inventory(user_id: int, user_name: str) -> discord.Embed:
                 "item_rarity": item.item_rarity,
                 "item_description": item.item_description
             })
-        return build_inventory(user_name,result)
+        if result:
+            return build_inventory(user_name,result)
+        return ("You dont have anything") 
