@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP 
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -11,6 +11,7 @@ class User(Base):
     exp = Column(Integer, default=0)
     level = Column(SmallInteger, default=1)
     joined = Column(TIMESTAMP, nullable=False)
+    starter_given = Column(Boolean, nullable=False, default=False)
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')

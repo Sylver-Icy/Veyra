@@ -23,10 +23,22 @@ class NegativeGoldError(VeyraError):
         message = "Mind explaining me why you want to transfer negative gold? ._."
         super().__init__(message)
 
+class InvalidItemAmountError(VeyraError):
+    """Same as gold but for items"""
+    def __init__(self):
+        message = "That's not a valid amount"
+        super().__init__(message)
+
 class WrongItemError(VeyraError):
     """Raise error if there is no such item in database"""
     def __init__(self):
         message = "There is no such item"
+        super().__init__(message)
+
+class NotEnoughItemError(VeyraError):
+    """Raise error when user has insuffiecient items for transaction"""
+    def __init__(self):
+        message = "You don't own enough items"
         super().__init__(message)
 
 class WrongInputError(VeyraError):

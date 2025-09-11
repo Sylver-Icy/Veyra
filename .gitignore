@@ -26,3 +26,6 @@ __pycache__/
 
 #wordle
 wordle.txt
+
+#bot responses
+responses/

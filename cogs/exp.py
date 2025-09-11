@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType
 from services.exp_services import current_exp
+from services.response_serives import create_response
 class Exp(commands.Cog):
     def __init__(self,bot):
         self.bot=bot
@@ -10,7 +11,8 @@ class Exp(commands.Cog):
     @commands.cooldown(1,10,BucketType.user)
     async def checkexp(self,ctx):
          exp, level = current_exp(ctx.author.id)
-         await ctx.send(f"Hello {ctx.author.name}! You're at level {level} with {exp} EXP points.")
+         response =  create_response("check_exp", 1, user = ctx.author.mention, level=level, exp=exp) #creating response for the bot to send when user uses !checkexp
+         await ctx.send(response)
 
 def setup(bot):
     """Setup the Cog"""

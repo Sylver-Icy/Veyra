@@ -1,3 +1,4 @@
+from services.response_serives import create_response
 import asyncio
 
 async def give_exp(ctx, user_id: int, exp_amount: int):
@@ -6,4 +7,4 @@ async def give_exp(ctx, user_id: int, exp_amount: int):
     leveled_up = await asyncio.to_thread(add_exp, user_id, exp_amount)
 
     if leveled_up:
-        await ctx.send(f"Congratulations {ctx.author.mention} Levelled up to {leveled_up} yippe 🎉")
+        await ctx.send(create_response("level_up",1,user=ctx.author.mention,level=leveled_up))

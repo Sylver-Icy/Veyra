@@ -1,11 +1,14 @@
 """This module handles inventory-related services like adding items and assigning them to users."""
 import logging
 import discord
+from typing import Tuple, Optional
 from database.sessionmaker import Session
 from models.inventory_model import Inventory, Items
-from utils.custom_errors import WrongItemError
+from models.users_model import User
+from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError
 from utils.itemname_to_id import item_name_to_id
 from utils.embeds.inventoryembed import build_inventory
+from services.users_services import is_user
 
 logger = logging.getLogger('__name__')
 
@@ -41,11 +44,18 @@ def add_item(
 
 def give_item(target_id: int, item_id: int, amount: int):
     """Gives any item to any user"""
+    if not is_user(target_id):
+        raise UserNotFoundError(target_id)
+
+    if amount < 1:
+        raise InvalidItemAmountError
+
     with Session() as session:
         entry = session.get(Inventory, (target_id, item_id))
-        item = session.get(Items, item_id)
-        if not item:
-            raise WrongItemError()
+
+        # check if item exists in db
+        # if not item:
+        #     raise WrongItemError()
         if entry: #If user already have the item
             entry.item_quantity += amount
         else:
@@ -53,21 +63,83 @@ def give_item(target_id: int, item_id: int, amount: int):
                 user_id=target_id,
                 item_id=item_id,
                 item_quantity=amount,
-                item_durability=item.item_durability
             )
             session.add(new_entry)
 
         session.commit()
 
+def take_item(target_id: int, item_id: int, amount: int):
+    """
+    Removes specified amount of item from target
+    """
+    if not is_user(target_id):
+        raise UserNotFoundError(target_id)
 
+    if amount < 1:
+        raise InvalidItemAmountError
 
-def get_inventory(user_id: int, user_name: str) -> discord.Embed:
+    with Session() as session:
+        entry = session.get(Inventory, (target_id,item_id))
+
+        if not entry or entry.item_quantity < amount:
+            raise NotEnoughItemError
+
+        entry.item_quantity -= amount
+
+        #delete row is it reaches 0
+        if entry.item_quantity == 0:
+            session.delete(entry)
+
+        session.commit()
+
+def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
+    """
+    Transfers given amount of given item from sender to reciver
+    """
+    if not is_user(sender_id):
+        raise UserNotFoundError(sender_id)
+    if not is_user(receiver_id):
+        raise UserNotFoundError(receiver_id)
+    if amount < 1:
+        raise InvalidItemAmountError
+
+    with Session() as session:
+        entry1 = session.get(Inventory,(sender_id,item_id)) #Sender's row
+        entry2 = session.get(Inventory,(receiver_id,item_id)) #reciver's row
+
+        #raise an error is sender has insuffiecient items to send
+        if not entry1 or entry1.item_quantity<amount:
+            raise NotEnoughItemError
+
+        entry1.item_quantity -= amount #deduct the amount for transaction
+
+        #if sender has no more items left delete the row
+        if entry1.item_quantity == 0:
+            session.delete(entry1)
+
+        if entry2: #if reciver already has the item
+            entry2.item_quantity += amount
+        else: #if reciver has no such item
+            new_entry = Inventory(
+                user_id=receiver_id,
+                item_id=item_id,
+                item_quantity=amount,
+            )
+            session.add(new_entry)
+        session.commit()
+
+def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
     """
     Fetches all items a user owns and turn them in a list of dicts,
-    and calls embed builder to return an embed
+    and calls embed builder to return an embed.
+
+    Returns a tuple (status, embed) where:
+    - ("start_event", None): First-time user, trigger starter event.
+    - (None, embed): Regular inventory (including empty with troll message).
     """
     with Session() as session:
         inventory = session.query(Inventory).filter_by(user_id=user_id).all()
+        user = session.get(User,(user_id))
         result = []
         for entry in inventory:
             if entry.item_quantity == 0:
@@ -80,6 +152,11 @@ def get_inventory(user_id: int, user_name: str) -> discord.Embed:
                 "item_rarity": item.item_rarity,
                 "item_description": item.item_description
             })
-        if result:
-            return build_inventory(user_name,result)
-        return ("You dont have anything") 
+        if not result:
+            if user.starter_given:
+                embed = build_inventory(user_name, result)
+                return (None,embed)
+            else:
+                user.starter_given = True
+                session.commit()
+                return ("start_event",None)

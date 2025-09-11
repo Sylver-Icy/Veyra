@@ -13,7 +13,7 @@ async def chatexp(ctx):
     now = datetime.now(timezone.utc)
     if user_id in on_cooldown:
         last_time = on_cooldown[user_id]
-        if (now - last_time).total_seconds() < 60:  # Checks if user is still in cooldown
+        if (now - last_time).total_seconds() < 0:  # Checks if user is still in cooldown
             return
 
     await give_exp(ctx, user_id, random.randint(6, 15))  # Grants random amount of exp from 6 to 15
