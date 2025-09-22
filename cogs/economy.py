@@ -4,7 +4,7 @@ import logging
 from services.economy_services import add_gold, remove_gold, check_wallet
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
-from services.response_serives import create_response
+from services.response_services import create_response
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -53,7 +53,7 @@ class Economy(commands.Cog):
                 user2_gold = target_balance,
                 coin_emoji = GOLD_EMOJI
                 )
-            
+
             await ctx.respond(response)
         except VeyraError as e:
             await ctx.respond(str(e))

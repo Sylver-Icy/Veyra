@@ -1,4 +1,4 @@
-from services.response_serives import create_response
+from services.response_services import create_response
 import asyncio
 
 async def give_exp(ctx, user_id: int, exp_amount: int):

@@ -2,9 +2,9 @@ from discord.ext import commands
 import discord
 from discord import Option  # pylint: disable=no-name-in-module
 import logging
-from services.inventory_services import add_item as add_item_service, give_item as give_item_service, transfer_item, get_inventory
+from services.inventory_services import add_item as add_item_service, give_item as give_item_service, transfer_item, take_item, get_inventory
 from services.users_services import is_user
-from services.response_serives import create_response
+from services.response_services import create_response
 from utils.custom_errors import WrongItemError, VeyraError
 from utils.itemname_to_id import item_name_to_id,suggest_similar_item
 
@@ -75,7 +75,7 @@ class Inventory(commands.Cog):
             await ctx.respond(e)
 
     @commands.slash_command()
-    async def tranfer_item(self,ctx,target: discord.Member, item_name: str, amount:int):
+    async def transfer_item(self,ctx,target: discord.Member, item_name: str, amount:int):
         """
         Give your items to your friends!!
         """
@@ -100,21 +100,25 @@ class Inventory(commands.Cog):
 
         #If the target is bot
         if target.id == self.bot.user.id:
-            #create response for the transfer_item use case with mood 1 here it means when bot is target
-            response = create_response("transfer_item", 1, user=ctx.author.display_name, item_name=item_name)
-            await ctx.respond(response)
+            try:
+                take_item(ctx.author.id,item_id,amount)
+                #create response for the transfer_item use case with mood 1 here it means when bot is target
+                response = create_response("transfer_item", 2, user=ctx.author.display_name, item=item_name)
+                await ctx.respond(response)
+            except VeyraError as e:
+                await ctx.respond(str(e))
 
         #if target is user themselves
         elif target.id == ctx.author.id:
-            response = create_response("transfer_item",2, user=ctx.author.display_name, item_name=item_name)
+            response = create_response("transfer_item",1, user=ctx.author.display_name, item=item_name)
             await ctx.respond(response)
 
         #if target is someone else (normal transfer)
         else:
             try:
                 transfer_item(ctx.author.id, target.id, item_id, amount)
-                response = create_response("transfer_item", 3, user=ctx.author.id, target=target.id, amount=amount)
-                await ctx.respond("done")
+                response = create_response("transfer_item", 3, user=ctx.author.mention, target=target.mention, item=item_name, amount=amount)
+                await ctx.respond(response)
 
             except VeyraError as e:
                 await ctx.respond(str(e))
@@ -128,7 +132,7 @@ class Inventory(commands.Cog):
         status, embed = get_inventory(ctx.author.id, ctx.author.name)
 
         if status == "start_event":
-            await ctx.send("hiiiiiii")  # todo: replace with starter event logic
+            await ctx.send("Awww you poor thing it seems you don't own anything here take this flower from me :3")
         else:
             await ctx.send(embed=embed)
 

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType
 from services.exp_services import current_exp
-from services.response_serives import create_response
+from services.response_services import create_response
 class Exp(commands.Cog):
     def __init__(self,bot):
         self.bot=bot

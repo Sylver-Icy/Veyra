@@ -1,5 +1,5 @@
 from discord.ext import commands
-from services.inventory_services import give_item
+from services.inventory_services import give_item,take_item
 from services.lootbox_services import lootbox_reward, user_lootbox_count
 from services.economy_services import add_gold
 from utils.itemname_to_id import item_name_to_id
@@ -7,7 +7,7 @@ from utils.itemname_to_id import item_name_to_id
 class Lootbox(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    
+
     @commands.command()
     async def open(self,ctx,*,lootbox_name):
         lootbox_amount = user_lootbox_count(ctx.author.id, lootbox_name)
@@ -24,7 +24,7 @@ Choose among these :)"""
             await ctx.send(f"You don't have any {lootbox_name.title()}. What are you tryna open? Huh")
         else:
             item_id = item_name_to_id[lootbox_name.lower()]
-            give_item(ctx.author.id, item_id, -1) #Passing negative value to deduct 1 box from user inventory
+            take_item(ctx.author.id, item_id, 1)
             reward = lootbox_reward(lootbox_name)
             if "Gold" in reward:
                 await ctx.send(f"You got {reward['Gold']} Gold!!!")

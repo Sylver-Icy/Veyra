@@ -1,7 +1,7 @@
 """This module handles inventory-related services like adding items and assigning them to users."""
 import logging
 import discord
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 from database.sessionmaker import Session
 from models.inventory_model import Inventory, Items
 from models.users_model import User
@@ -128,19 +128,12 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
             session.add(new_entry)
         session.commit()
 
-def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
-    """
-    Fetches all items a user owns and turn them in a list of dicts,
-    and calls embed builder to return an embed.
-
-    Returns a tuple (status, embed) where:
-    - ("start_event", None): First-time user, trigger starter event.
-    - (None, embed): Regular inventory (including empty with troll message).
-    """
+def fetch_inventory(user_id: int) -> List[dict]:
+    """Returns a list of items in user's inventory (excluding zero quantity)."""
     with Session() as session:
         inventory = session.query(Inventory).filter_by(user_id=user_id).all()
-        user = session.get(User,(user_id))
         result = []
+
         for entry in inventory:
             if entry.item_quantity == 0:
                 continue
@@ -152,11 +145,27 @@ def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional
                 "item_rarity": item.item_rarity,
                 "item_description": item.item_description
             })
+
+        return result
+
+def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
+    """
+    Returns an embed of items owned by user
+    If user has no items it triggers the starter event
+    If starter event already done then skip
+    """
+    with Session() as session:
+        user = session.get(User, user_id)
+        result = fetch_inventory(user_id)
+
         if not result:
             if user.starter_given:
                 embed = build_inventory(user_name, result)
-                return (None,embed)
+                return (None, embed)
             else:
+                give_item(user_id, 2, 1)
                 user.starter_given = True
                 session.commit()
-                return ("start_event",None)
+                return ("start_event", None)
+        else:
+            return (None, build_inventory(user_name, result))

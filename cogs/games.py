@@ -4,13 +4,14 @@ from discord.ext import commands
 import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.custom_errors import VeyraError,WrongInputError
+from services.delievry_minigame_services import requested_items
 
 class Games(commands.Cog):
 
     def __init__(self,bot):
         self.bot=bot
         self.sessions = {}
-    
+
     @commands.command()
     async def ping(self,ctx):
         """The legendary Ping-Pong game"""
@@ -39,7 +40,7 @@ class Games(commands.Cog):
 
         with open("wordle.txt") as f:
             words = [w.strip() for w in f]
-        
+
         state = init_wordle(words)
         self.sessions[ctx.author.id] = state
 
@@ -72,7 +73,7 @@ class Games(commands.Cog):
 
 
     @commands.slash_command(name="wordle_hint", description="Get a Wordle hint based on your past guesses and feedbacks")
-    async def wordle_hint(self, ctx, 
+    async def wordle_hint(self, ctx,
         guess1: str = None, pattern1: str = None,
         guess2: str = None, pattern2: str = None,
         guess3: str = None, pattern3: str = None,
@@ -105,6 +106,11 @@ class Games(commands.Cog):
             await ctx.respond(f"Try: *{hint.upper()}*")
         except Exception as e:
             await ctx.respond(f"Error generating hint: {str(e)}")
+
+    @commands.slash_command(name = "quest")
+    async def quest(self,ctx):
+        embed, view = requested_items(ctx.author.display_name, ctx.author.id)
+        await ctx.respond(embed=embed, view=view)
 
 
 def setup(bot):

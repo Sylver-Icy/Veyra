@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -23,3 +24,11 @@ class Wallet(Base):
     gold = Column(Integer, default=0)
 
     user = relationship("User", back_populates="wallet")
+
+class Quests(Base):
+    __tablename__ = 'quests'
+
+    user_id = Column(BigInteger, primary_key=True)
+    delivery_items = Column(JSONB, default=list)
+    reward = Column(Integer, default=0)
+    limit = Column(Integer, default=1)

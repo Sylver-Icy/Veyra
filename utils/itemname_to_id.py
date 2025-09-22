@@ -28,6 +28,6 @@ def get_item_id_safe(user_input: str):
     """
     item_id = item_name_to_id.get(user_input.lower())
     if item_id is not None:
-        return item_id, []
+        return item_id, [] #if perfect match is found return the item name with empty list for suggestions
     suggestions = suggest_similar_item(user_input)
     return None, suggestions

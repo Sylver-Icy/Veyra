@@ -3,8 +3,8 @@ from database.sessionmaker import Session
 import logging
 
 exp_list = [
-    0,100, 250, 400, 600, 900, 1250, 1600, 2200, 3000, 4200, 
-    5500, 7000, 9000, 12000, 15000, 18000, 22000, 27000, 
+    0,100, 250, 400, 600, 900, 1250, 1600, 2200, 3000, 4200,
+    5500, 7000, 9000, 12000, 15000, 18000, 22000, 27000,
     32000, 38000, 48000, 60000, 78000, 100000
 ]
 
@@ -42,11 +42,10 @@ def calculate_level(exp: int) -> int:
             current_level += 1
         else:
             break
-    return current_level      
+    return current_level
 
 def current_exp(user_id: int):
     "Returns current user level and experience point"
     with Session() as session:
         user = session.get(User, user_id)
         return user.exp, user.level
-    

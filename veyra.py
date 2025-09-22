@@ -2,11 +2,9 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import os
-
 from services.users_services import is_user
 from responses import responses_loader
 from utils.chatexp import chatexp
-import utils.itemname_to_id
 from services.shop_services import scheduler, update_daily_shop
 # from nsfw_classifier.nsfw_classifier import classify
 from utils.logger import setup_logging
@@ -27,7 +25,7 @@ async def is_registered(ctx):
     if not is_user(ctx.author.id): #If user is not registered ask them to register first
         await ctx.send("You are not frnds with Veyra! Use `!helloVeyra` to get started")
         return False
-    
+
     return True #Allow command execution if registered
 
 @bot.event
