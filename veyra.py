@@ -5,7 +5,7 @@ import os
 from services.users_services import is_user
 from responses import responses_loader
 from utils.chatexp import chatexp
-from services.shop_services import scheduler, update_daily_shop
+from utils.jobs import scheduler,run_at_startup
 # from nsfw_classifier.nsfw_classifier import classify
 from utils.logger import setup_logging
 setup_logging()
@@ -30,8 +30,8 @@ async def is_registered(ctx):
 
 @bot.event
 async def on_ready():
-    """Fill the daily shop and start a schedule also send a conformation message when bot boots up"""
-    update_daily_shop()
+    """Start a scheduler and also send a conformation message when bot boots up"""
+    run_at_startup()
     if not scheduler.running:
         scheduler.start()
     print(f"logged in as {bot.user}")

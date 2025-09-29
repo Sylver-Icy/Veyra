@@ -38,22 +38,37 @@ def create_quest(user_id: int):
         ).scalars().all()  #pick 1/2 random common items from table
         reward = calculate_reward(delivery_items) #get the reward for quest based on items picked
         delivery_items_name_list = [item.item_name for item in delivery_items] # Convert ORM items to string names for JSON storage
-        new_quest = Quests(
-            user_id = user_id,
-            delivery_items = delivery_items_name_list,
-            reward = reward,
-            limit =1
-        ) #add the newly made quest
-        session.add(new_quest)
-        session.commit()
+
+        #check if there is a quest for user already
+        existing_quest = session.execute(select(Quests).where(Quests.user_id==user_id)).scalar_one_or_none()
+        if existing_quest:
+            existing_quest.delivery_items = delivery_items_name_list
+            existing_quest.reward = reward
+            existing_quest.limit +=1
+            session.commit()
+        else:
+            new_quest = Quests(
+                user_id = user_id,
+                delivery_items = delivery_items_name_list,
+                reward = reward,
+                limit = 0,
+                skips = 0
+            ) #add the newly made quest
+            session.add(new_quest)
+            session.commit()
     return delivery_items_name_list,reward
+
 def delete_quest(user_id: int):
     with Session() as session:
-        session.execute(
-            delete(Quests)
-            .where(Quests.user_id == user_id)
-            )
-        session.commit()
+        quest = session.execute(select(Quests).where(Quests.user_id == user_id)).scalar_one_or_none()
+        if quest.skips>=3:
+            return False #return false if user has already skipped quests 3 times today
+        else:
+            quest.delivery_items = None
+            quest.reward = 0
+            quest.skips += 1
+            session.commit()
+            return True #return true if quest was skipped succesfully
 
 def fetch_quest(user_id: int):
     """
@@ -99,3 +114,9 @@ def items_check(user_id: int, items: list):
         item_id,a = get_item_id_safe(item) #placeholder 'a' coz this func returns item_name and suggestions
         take_item(user_id, item_id, 1)
     return True
+
+def reset_skips():
+    with Session() as session:
+        session.query(Quests).update({Quests.skips: 0})
+        session.commit()
+

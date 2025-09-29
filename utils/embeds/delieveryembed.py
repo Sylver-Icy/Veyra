@@ -32,7 +32,11 @@ class DeliveryView(discord.ui.View):
             await interaction.response.edit_message(content="✅ You delivered the items!", embed=None, view=None)
 
         else:
-            await interaction.response.send_message("You don't have all the required items")
+            button.disabled =True
+            await interaction.response.edit_message(
+                content="You don't have all the required items right now use `/quest` again once u r done gathering em",
+                view=self
+                )
 
     @discord.ui.button(label="Skip Request", style=discord.ButtonStyle.blurple, custom_id="skip_request_button", emoji="🚫")
     async def skip_button(self,button: discord.ui.Button, interaction: discord.Interaction):
@@ -43,12 +47,16 @@ class DeliveryView(discord.ui.View):
             await interaction.response.send_message("❌ This button isn't for you!", ephemeral=True)
             return
         from services.delievry_minigame_services import delete_quest, create_quest
-        delete_quest(self.user_id)
-        create_quest(self.user_id)
-        #disable the button after use well i'm deleting entire embed so this is lowkey useless
-        button.disabled = True
-        await interaction.response.edit_message(content="Request skipped use /quest again to get new request", embed=None, view=None)
-        return
+        if delete_quest(self.user_id):
+            create_quest(self.user_id)
+            #disable the button after use well i'm deleting entire embed so this is lowkey useless
+            button.disabled = True
+            await interaction.response.edit_message(content="Request skipped use /quest again to get new request", embed=None, view=None)
+            return
+        else:
+            button.disabled = True
+            await interaction.response.edit_message(content="You have already used your 3 skips Today", view=self)
+            return
 def delievery_embed(user_name: str, items: list, reward: int, user_id: int):
     embed = discord.Embed(
         title=f"Hii! {user_name}",

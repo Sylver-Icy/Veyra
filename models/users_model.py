@@ -31,4 +31,5 @@ class Quests(Base):
     user_id = Column(BigInteger, primary_key=True)
     delivery_items = Column(JSONB, default=list)
     reward = Column(Integer, default=0)
-    limit = Column(Integer, default=1)
+    limit = Column(Integer, default=0)
+    skips = Column(Integer, default =0)
