@@ -16,6 +16,7 @@ class User(Base):
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
+    marketplace = relationship('Marketplace', back_populates = 'user')
 
 class Wallet(Base):
     __tablename__ = 'wallet'

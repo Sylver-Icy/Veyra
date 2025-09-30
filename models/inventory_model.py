@@ -28,3 +28,4 @@ class Items(Base):
     item_price = Column(Integer,nullable=False)
 
     inventory = relationship('Inventory', back_populates='item')
+    marketplace = relationship('Marketplace', back_populates='item')

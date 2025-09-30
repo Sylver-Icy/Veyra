@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands,pages
 import discord
 from discord import Option  # pylint: disable=no-name-in-module
 import logging
@@ -129,12 +129,13 @@ class Inventory(commands.Cog):
         """
         Prefix command to check your own inventory
         """
-        status, embed = get_inventory(ctx.author.id, ctx.author.name)
+        status, embed_pages = get_inventory(ctx.author.id, ctx.author.name)
 
         if status == "start_event":
             await ctx.send("Awww you poor thing it seems you don't own anything here take this flower from me :3")
         else:
-            await ctx.send(embed=embed)
+            paginator = pages.Paginator(pages=embed_pages)
+            await paginator.send(ctx)
 
 
 

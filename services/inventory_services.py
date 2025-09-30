@@ -135,7 +135,7 @@ def fetch_inventory(user_id: int) -> List[dict]:
         result = []
 
         for entry in inventory:
-            if entry.item_quantity == 0:
+            if entry.item_quantity < 1:
                 continue
             item = session.get(Items, entry.item_id)
             result.append({
@@ -160,8 +160,8 @@ def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional
 
         if not result:
             if user.starter_given:
-                embed = build_inventory(user_name, result)
-                return (None, embed)
+                embed_pages = build_inventory(user_name, result)
+                return (None, embed_pages)
             else:
                 give_item(user_id, 2, 1)
                 user.starter_given = True
