@@ -1,3 +1,4 @@
+import logging
 import random
 from sqlalchemy.sql import func
 from database.sessionmaker import Session
@@ -6,6 +7,8 @@ from utils.embeds.shopembed import get_shop_view_and_embed
 from utils.emotes import GOLD_EMOJI
 from services.inventory_services import give_item, take_item, fetch_inventory
 from services.economy_services import remove_gold, add_gold, check_wallet
+
+logger = logging.getLogger(__name__)
 
 daily_shop_items = [] #List to store items in shop for current day
 def update_daily_shop():
@@ -151,7 +154,10 @@ def sell_item(user_id: int, item_id: int, item_quantity: int):
     # Remove the item from user's inventory and add gold
     take_item(user_id, item_id, item_quantity)
     add_gold(user_id, (item_price * item_quantity))
-
+    logger.info("Items sold to Veyra", extra={
+        "user": user_id,
+        "flex": f"item sold-> {item_id} at rate of-> {item_price} pieces sold-> {item_quantity} "
+    })
     return (
         f"Great doing bussiness with you, I transferred you your {item_price * item_quantity} {GOLD_EMOJI},\n"
         "You can check with `!checkwallet` :3"

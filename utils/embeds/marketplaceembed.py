@@ -1,5 +1,6 @@
 import discord
 from math import ceil
+from utils.emotes import GOLD_EMOJI
 
 def build_marketplace(listings: list):
     # Split listings into pages of 9
@@ -32,10 +33,11 @@ def build_marketplace(listings: list):
             embed.add_field(
                 name=f"📌 Listing #{listing['listing_id']}",
                 value=(
-                    f"🪶 **{listing['item_name']}**\n"
-                    f"💰 Price: `{listing['price']}` per unit\n"
-                    f"📦 Quantity: `{listing['quantity']}` available\n"
-                    f"👤 Seller: `{listing['user_name']}`"
+                    f" **{listing['item_name']}**\n"
+                    f"Price: `{listing['price']}`{GOLD_EMOJI} per unit\n"
+                    f"In stock: `{listing['quantity']}` left\n"
+                    f"👤 Seller: `{listing['user_name']}` \n"
+                    "---------------------"
                 ),
                 inline=True
             )

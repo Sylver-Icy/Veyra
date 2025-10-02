@@ -1,11 +1,11 @@
-import asyncio
-import discord
+import logging
 from discord.ext import commands, pages
 from discord.commands import Option
 
 from services.marketplace_services import create_listing, load_marketplace, buy_listed_item
 from utils.itemname_to_id import get_item_id_safe
 
+logger = logging.getLogger(__name__)
 
 class Marketplace(commands.Cog):
     def __init__(self, bot):
@@ -16,9 +16,9 @@ class Marketplace(commands.Cog):
     async def create_listing(
         self,
         ctx,
-        item_name: Option(str, "Name of the item you want to list"),
-        quantity: Option(int, "Number of items to list"),
-        price: Option(int, "Cost for each item")
+        item_name = Option(str, "Name of the item you want to list"),
+        quantity = Option(int, "Number of items to list"),
+        price = Option(int, "Cost for each item")
     ):
         """
         Create a marketplace listing for a given item name, quantity, and price.
@@ -50,6 +50,11 @@ class Marketplace(commands.Cog):
             await ctx.respond(
                 f"Hi, your listing of {quantity}x {item_name.capitalize()} @ {price} per unit is online with ID → `{listing_id}`"
             )
+            logger.info("Market Place listing was created", extra={
+                "user": ctx.author.name,
+                "flex": f"item_name {item_name} | amount {quantity}",
+                "cmd": "create listing"
+            })
         else:
             await ctx.respond("You don't own enough items to create that listing. Maybe try selling fewer items?")
 

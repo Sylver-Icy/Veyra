@@ -1,6 +1,9 @@
+import logging
 from discord.ext import commands
 from utils.itemname_to_id import get_item_id_safe
 from services.shop_services import buy_item, sell_item, daily_shop
+
+logger = logging.getLogger(__name__)
 class Shop(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
@@ -27,6 +30,9 @@ class Shop(commands.Cog):
         response = buy_item(ctx.author.id, item_id, quantity)
         if response == "Purchase successful":
             await ctx.send(f"You bought {quantity} of {item_name.capitalize()}!!!")
+            logger.info("%s bought %dX%s from bot", ctx.author.name, quantity, item_name)
+
+
         else:
             await ctx.send(response)
 

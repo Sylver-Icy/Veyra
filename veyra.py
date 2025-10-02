@@ -1,17 +1,15 @@
 # veyra.py
-from services import marketplace_services
 import os
+from utils.logger import setup_logging
+# SQLAlchemy model registration
+import models  # Ensures all models are registered
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
 # Setup early
 load_dotenv("veyra.env")
-from utils.logger import setup_logging
 setup_logging()
-
-# SQLAlchemy model registration
-import models  # Ensures all models are registered
 
 # Services
 from services.users_services import is_user

@@ -1,3 +1,4 @@
+import logging
 from sqlalchemy import select
 from models.marketplace_model import Marketplace
 from database.sessionmaker import Session
@@ -7,8 +8,7 @@ from utils.custom_errors import VeyraError, NotEnoughGoldError
 from utils.embeds.marketplaceembed import build_marketplace
 from utils.emotes import GOLD_EMOJI
 
-
-
+logger = logging.getLogger(__name__)
 
 def create_listing(user_id: int, item_id: int, quantity: int, price: int) -> int:
     """
@@ -85,6 +85,10 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
             listing.quantity -= quantity
 
         session.commit()
+        logger.info("Items traded on marketplace", extra={
+            "user": buyer_id,
+            "flex": f"Item bought-> {item_name} at rate-> {price} amount->{quantity} from {seller_name}"
+        })
         return f"Successfully bought {quantity}×{item_name} from {seller_name} for {quantity * price} {GOLD_EMOJI}"
 
 

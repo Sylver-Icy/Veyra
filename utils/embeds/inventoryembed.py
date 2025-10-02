@@ -23,9 +23,9 @@ def build_inventory(user_name: str,items: list):
             )
             for item in current_items:
                 embed.add_field(
-                    name=f"`{item['item_name']}` X {item['item_quantity']}",
-                    value=f"*{item['item_description']}* \nRarity: {item['item_rarity']}",
-                    inline=True
+                    name=f"`{item['item_name']}` X {item['item_quantity']}     `{item['item_rarity']}` ",
+                    value=f"*{item['item_description']}* \n  ------------------------------------------------------",
+                    inline=False
                 )
             embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/921681249817493554/1385546878485266532/2897785.png?ex=68567696&is=68552516&hm=f88a7b1a913ba04fded51cc41024747011e3cce42acbd2d95e2b83c2b8a21ae4")
             pages.append(embed)
