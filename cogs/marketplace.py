@@ -13,12 +13,13 @@ class Marketplace(commands.Cog):
 
 
     @commands.slash_command()
+    @commands.cooldown(2,3600,commands.BucketType.user)
     async def create_listing(
         self,
         ctx,
         item_name = Option(str, "Name of the item you want to list"),
         quantity = Option(int, "Number of items to list"),
-        price = Option(int, "Cost for each item")
+        price = Option(int, "Cost for each item", min_value=0, max_value=9999)
     ):
         """
         Create a marketplace listing for a given item name, quantity, and price.
@@ -44,7 +45,7 @@ class Marketplace(commands.Cog):
             return
 
         # Create the listing
-        listing_id = await create_listing(ctx.author.id, item_id, quantity, price)
+        listing_id = create_listing(ctx.author.id, item_id, quantity, price)
 
         if listing_id > 0:
             await ctx.respond(
@@ -70,6 +71,7 @@ class Marketplace(commands.Cog):
 
 
     @commands.slash_command()
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def buy_from_marketplace(self, ctx, listing_id: int, quantity: int):
         """
         Buy any  item from a marketplace listing using the ID.

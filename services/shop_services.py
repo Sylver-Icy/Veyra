@@ -1,6 +1,7 @@
 import logging
 import random
 from sqlalchemy.sql import func
+
 from database.sessionmaker import Session
 from models.inventory_model import Items
 from utils.embeds.shopembed import get_shop_view_and_embed
@@ -10,26 +11,47 @@ from services.economy_services import remove_gold, add_gold, check_wallet
 
 logger = logging.getLogger(__name__)
 
-daily_shop_items = [] #List to store items in shop for current day
+# List to store items available in the shop for the current day
+daily_shop_items = []
+
+# List to store items the bot will buy back today
+daily_buyback_shop_items = []
+
+ITEM_RATE = {
+    "Common": (5, 10),
+    "Rare": (15, 25),
+    "Epic": (50, 80),
+    "Legendary": (200, 300),
+    "Paragon": (600, 900)
+}
+
 def update_daily_shop():
+    """
+    Updates the daily shop with 6 random items from the database.
+    """
     with Session() as session:
         random_items = session.query(Items).order_by(func.random()).limit(6).all()
 
-        # clear the list and refill it
         daily_shop_items.clear()
         daily_shop_items.extend([
             {
                 "name": item.item_name,
                 "id": item.item_id,
-                "price": item.item_price,
+                "price": calculate_buy_price(item.item_rarity,False),
                 "description": item.item_description,
                 "rarity": item.item_rarity
             }
             for item in random_items
         ])
 
-daily_buyback_shop_items = [] #List to store items bot is gonna be buying
+    logger.info("Daily shop updated")
+
+
 def update_daily_buyback_shop():
+    """
+    Updates the daily buyback shop with 4 random items of certain rarities.
+    The 4th item gets a bonus price multiplier.
+    """
     with Session() as session:
         random_items = (
             session.query(Items)
@@ -38,43 +60,53 @@ def update_daily_buyback_shop():
             .limit(4)
             .all()
         )
+
         daily_buyback_shop_items.clear()
         daily_buyback_shop_items.extend([
-    {
-        "name": item.item_name,
-        "id": item.item_id,
-        "description": item.item_description,
-        "price": calculate_buy_price(item.item_rarity, bonus=(i == 3))  # bonus only for 4th item
-    }
-    for i, item in enumerate(random_items)
-    ])
+            {
+                "name": item.item_name,
+                "id": item.item_id,
+                "description": item.item_description,
+                "price": calculate_buy_price(item.item_rarity, bonus=(i == 3))  # Bonus for 4th item
+            }
+            for i, item in enumerate(random_items)
+        ])
 
-def calculate_buy_price(rarity: str, bonus: bool):
+    logger.info("Daily buyback shop updated")
+
+
+def calculate_buy_price(rarity: str, bonus: bool) -> int:
     """
-    Dynamically calculates the price at which bot will be buying items based on rarity
-    Applies bonus in certain cases
+    Dynamically calculates the price at which the bot will buy items, based on rarity.
+
+    Parameters:
+    - rarity (str): The rarity level of the item.
+    - bonus (bool): Whether to apply a bonus multiplier to the price.
+
+    Returns:
+    - int: The calculated price.
     """
-    BUY_PRICE = {
-        "Common": (7,10),
-        "Rare": (17,20),
-        "Epic": (59,65),
-        "Legendary": (250,300),
-        "Paragon": (500,600)
-    }
+    low, high = ITEM_RATE.get(rarity, (0, 0))
+
     if bonus:
-        low,high = BUY_PRICE.get(rarity,(0,0)) # select the lowest and highest possible price from dic
-        price = random.randint(low, high) # randomly select the price for current item
-        bonus_multiplier = random.uniform(1.3,2.2) #calucate a random multiplier for inflate the price of item
-        return int(price*bonus_multiplier)
+        price = random.randint(low, high)
+        bonus_multiplier = random.uniform(1.3, 2.2)
+        return int(price * bonus_multiplier)
     else:
-        low,high = BUY_PRICE.get(rarity,(0,0))
-        return random.randint(low,high)
+        return random.randint(low, high)
+
 
 def daily_shop():
-   """Returns today's shop"""
-   return get_shop_view_and_embed(daily_shop_items, daily_buyback_shop_items)
+    """
+    Returns the shop view and embed for today's shop items.
 
-def buy_item(user_id, item_id, item_quantity):
+    Returns:
+    - Tuple[discord.Embed, discord.ui.View]: The visual representation of the shop.
+    """
+    return get_shop_view_and_embed(daily_shop_items, daily_buyback_shop_items)
+
+
+def buy_item(user_id: int, item_id: int, item_quantity: int) -> str:
     """
     Handles purchasing an item from the shop.
 
@@ -86,34 +118,33 @@ def buy_item(user_id, item_id, item_quantity):
     Returns:
     - str: A message indicating the result of the purchase attempt.
     """
-
-    # Validate that user wants to buy at least one item
     if item_quantity <= 0:
         return "Its not funny ._."
 
     # Check if the item exists in the current daily shop
     if item_id not in [item["id"] for item in daily_shop_items]:
-        return "That item is not currently in shop use /shop to look available items"
+        return "That item is not currently in shop. Use `/shop` to see available items."
 
     # Get the price of the item
     item_price = next(item["price"] for item in daily_shop_items if item["id"] == item_id)
 
-    # Check if the user has enough gold to buy the desired quantity
+    # Check if the user has enough gold
     user_gold = check_wallet(user_id)
-    if user_gold < item_price * item_quantity:
-        if user_gold < item_price:
-            return "Nuh uh! TOOO BROKE BRUH. Next time check your wallet before coming here 🔪"
-        # Suggest the max quantity user can afford
-        return f"You can't buy that many... HOWEVERRRR you can get `{user_gold // item_price}` of it"
+    total_cost = item_price * item_quantity
 
-    # Give the item to the user and deduct the gold
+    if user_gold < total_cost:
+        if user_gold < item_price:
+            return "Nuh uh! TOO BROKE BRUH. Next time check your wallet before coming here 🔪"
+        return f"You can't buy that many... HOWEVER, you can get `{user_gold // item_price}` of it."
+
+    # Process purchase
     give_item(user_id, item_id, item_quantity)
-    remove_gold(user_id, item_price * item_quantity)
+    remove_gold(user_id, total_cost)
 
     return "Purchase successful"
 
 
-def sell_item(user_id: int, item_id: int, item_quantity: int):
+def sell_item(user_id: int, item_id: int, item_quantity: int) -> str:
     """
     Handles selling an item back to the buyback shop.
 
@@ -125,40 +156,39 @@ def sell_item(user_id: int, item_id: int, item_quantity: int):
     Returns:
     - str: A message indicating the result of the sell attempt.
     """
-
-    # Validate that user wants to sell at least one item
     if item_quantity <= 0:
-        return "You need to sell atleast 1 bruh"
+        return "You need to sell at least 1 bruh."
 
-    # Check if the item is currently wanted by the buyback shop
+    # Check if the item is wanted by the buyback shop
     if item_id not in [item["id"] for item in daily_buyback_shop_items]:
-        return "I don't need that right now, use `/shop` to see items I need today"
+        return "I don't need that right now. Use `/shop` to see items I need today."
 
-    # Fetch the user's inventory and find how many of the item they own
+    # Check user's inventory for the item
     inventory = fetch_inventory(user_id)
-    item_quantity_owned_by_user = next(
+    item_quantity_owned = next(
         (item["item_quantity"] for item in inventory if item["item_id"] == item_id),
-        0  # default if not found
+        0
     )
 
-    # Check if user has enough quantity to sell
-    if item_quantity_owned_by_user < item_quantity:
-        if item_quantity_owned_by_user == 0:
-            return "What are you tryna sell? your soul?"
-        else:
-            return f"You have only {item_quantity_owned_by_user}... How were you planning to sell me {item_quantity}?"
+    if item_quantity_owned < item_quantity:
+        if item_quantity_owned == 0:
+            return "What are you tryna sell? Your soul?"
+        return f"You have only {item_quantity_owned}... How were you planning to sell me {item_quantity}?"
 
-    # Get the price at which the buyback shop will buy the item
+    # Get item price
     item_price = next((item["price"] for item in daily_buyback_shop_items if item["id"] == item_id), 0)
+    total_gold = item_price * item_quantity
 
-    # Remove the item from user's inventory and add gold
+    # Process sale
     take_item(user_id, item_id, item_quantity)
-    add_gold(user_id, (item_price * item_quantity))
+    add_gold(user_id, total_gold)
+
     logger.info("Items sold to Veyra", extra={
         "user": user_id,
-        "flex": f"item sold-> {item_id} at rate of-> {item_price} pieces sold-> {item_quantity} "
+        "flex": f"Item sold -> {item_id} at rate of -> {item_price} | Quantity -> {item_quantity}"
     })
+
     return (
-        f"Great doing bussiness with you, I transferred you your {item_price * item_quantity} {GOLD_EMOJI},\n"
+        f"Great doing business with you! I transferred your {total_gold} {GOLD_EMOJI}.\n"
         "You can check with `!checkwallet` :3"
     )

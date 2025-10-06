@@ -1,71 +1,226 @@
+import random
 from sqlalchemy.sql.expression import func
 from models.inventory_model import Items, Inventory
 from database.sessionmaker import Session
+from services.inventory_services import give_item
 from utils.itemname_to_id import item_name_to_id
-import random
+from utils.embeds.lootboxembed import lootbox_embed_and_view
 
-#All the boxes with their respective rewards distribution
-wooden_box_rarities = {"Gold": 91, "Common": 8, "Rare": 0.9, "Epic": 0.1}
-stone_box_rarities = {"Gold": 78, "Common": 20, "Rare": 1.9, "Epic": 0.1}
-iron_box_rarities = {"Gold": 62, "Common": 29, "Rare": 8.5, "Epic": 0.5}
-platinum_box_rarities = {"Gold": 51, "Common": 30, "Rare": 18, "Epic": 0.9,"Legendary": 0.1}
+def open_box(user_id, lootbox: str):
+    rewards = lootbox_reward(user_id, lootbox)
+    return lootbox_embed_and_view(rewards)
 
-LOOTBOX_CONFIGS = {
-    "Wooden Box": wooden_box_rarities,
-    "Stone Box": stone_box_rarities,
-    "Iron Box": iron_box_rarities,
-    "Platinum Box": platinum_box_rarities
-}
-
-
-def lootbox_reward(lootbox: str):
+def lootbox_reward(user_id: int,lootbox: str):
     """
-    Calculates the reward of any box
-    Take the box dic then assign weight to items according to weight in dic to calculate reward
-    """
-    rarity_dic = LOOTBOX_CONFIGS.get(lootbox.title())
-    result = random.choices(
-        population=list(rarity_dic.keys()),
-        weights=list(rarity_dic.values()),
-        k=1
-    )[0] #Choosing what does player gets item or gold
+    Generates the reward for opening a given lootbox and gives it to the user.
 
-    if result == "Gold": #if reward is gold then calculate the gold amount
-        return {"Gold": decide_gold(lootbox.title())}
-    else: #else pick random item of rewarded rarity
-        return {"Item": pick_random_item(result),"Rarity": result}
+    Args:
+        lootbox (str): The name of the lootbox (e.g., "wooden box").
+
+    Returns:
+        dict: A dictionary containing 'gold' (int) and 'items' (list of dicts),
+              where each dict in 'items' has keys: 'item', 'rarity', and 'quantity'.
+
+    Raises:
+        ValueError: If the lootbox name is invalid.
+    """
+    lootbox = lootbox.strip().lower()
+
+    drop_rates = {
+        "wooden box": {"common": 88, "rare": 10, "epic": 2},
+        "stone box": {"common": 67, "rare": 28, "epic": 5},
+        "iron box": {"common": 48, "rare": 35, "epic": 17},
+        "platinum box": {"common": 15, "rare": 50, "epic": 31, "legendary": 4}
+    }
+
+    box_config = drop_rates.get(lootbox)
+    if not box_config:
+        raise ValueError("Wrong box name")
+
+    # Initialize the reward output structure
+    reward_output = {
+        "gold": 0,
+        "items": []
+    }
+
+    # Determine how many rolls the lootbox will produce
+    rolls = count_rolls(lootbox)
+
+    # First roll always yields gold amount
+    reward_output["gold"] = decide_gold(lootbox)
+
+    # Keep track of items already picked to avoid duplicates
+    picked_items = set()
+
+    # For remaining rolls, select items based on rarity and quantity
+    for _ in range(rolls - 1):
+        rarity = random.choices(
+            population=list(box_config.keys()),
+            weights=list(box_config.values()),
+            k=1
+        )[0]
+
+        # Attempt up to 10 times to find a unique item of chosen rarity
+        for _ in range(10):
+            reward_item = pick_random_item(rarity)
+            if reward_item.item_name not in picked_items:
+                picked_items.add(reward_item.item_name)
+                break
+        else:
+            # Skip this roll if no unique item found after 10 tries
+            continue
+
+        item_quantity = count_amount(lootbox, rarity)
+
+        reward_output["items"].append({
+            "item": reward_item.item_name,
+            "rarity": rarity,
+            "description": reward_item.item_description,
+            "icon": reward_item.item_icon,
+            "quantity": item_quantity
+        })
+        #Give the selected items to the user
+        give_item(user_id,reward_item.item_id,item_quantity)
+
+    return reward_output
+
 
 def pick_random_item(rarity: str):
     """
-    Uses sqlalchemy's fucn to pick random item of set rarirty from items table
+    Selects a random item of the specified rarity from the database.
+
+    Args:
+        rarity (str): Rarity of the item to pick (e.g., "Common", "Rare").
+
+    Returns:
+        str: The name of the randomly selected item, or "Unknown item" if none found.
     """
+    rarity = rarity.capitalize()
     with Session() as session:
-        item = session.query(Items).filter_by(item_rarity=rarity).order_by(func.random()).first() # pylint: disable=not-callable
-        return item.item_name
+        item = session.query(Items).filter_by(item_rarity=rarity).order_by(func.random()).first()  # pylint: disable=not-callable
+        return item if item else "Unknown item"
 
-def decide_gold(lootbox:str):
-    """
-    Takes name of lootbox as input then rewards gold based on that
-    """
-    if lootbox == "Wooden Box":
-        return random.randint(3,12)
-    if lootbox == "Stone Box":
-        return random.randint(11,22)
-    if lootbox == "Iron Box":
-        return random.randint(65,110)
-    if lootbox == "Platinum Box":
-        return random.randint(200,500)
 
-def user_lootbox_count(user_id: int,lootbox_name: str):
+def decide_gold(lootbox: str):
     """
-    Queries the database to check how many of the required lootbox user has
+    Determines the gold reward for opening a specific lootbox.
+
+    Args:
+        lootbox (str): Name of the lootbox.
+
+    Returns:
+        int: Random gold amount within defined range for the lootbox.
+    """
+    gold_ranges = {
+        "wooden box": (3, 12),
+        "stone box": (11, 22),
+        "iron box": (65, 110),
+        "platinum box": (200, 500)
+    }
+    min_gold, max_gold = gold_ranges.get(lootbox, (0, 0))
+    return random.randint(min_gold, max_gold)
+
+
+def count_rolls(lootbox_name: str):
+    """
+    Determines the number of item rolls for a given lootbox.
+
+    Args:
+        lootbox_name (str): The name of the lootbox.
+
+    Returns:
+        int: Number of rolls (items) to be awarded.
+
+    Raises:
+        ValueError: If the lootbox name is unknown.
+    """
+    rolls = {
+        "wooden box": {1: 85, 2: 15},
+        "stone box": {1: 60, 2: 40},
+        "iron box": {1: 13, 2: 70, 3: 17},
+        "platinum box": {3: 33, 4: 38, 5: 20, 6: 9}
+    }
+
+    box_config = rolls.get(lootbox_name.lower())
+    if box_config is None:
+        raise ValueError(f"Unknown lootbox name: {lootbox_name}")
+
+    result = random.choices(
+        population=list(box_config.keys()),
+        weights=list(box_config.values()),
+        k=1
+    )
+    return result[0]
+
+
+def count_amount(lootbox_name: str, rarity_of_item: str):
+    """
+    Determines the quantity of an item based on lootbox and item rarity.
+
+    Args:
+        lootbox_name (str): Name of the lootbox.
+        rarity_of_item (str): Rarity of the item.
+
+    Returns:
+        int: Quantity of the item to be rewarded.
+
+    Raises:
+        ValueError: If lootbox or rarity is invalid.
+    """
+    amount_table = {
+        "wooden box": {
+            "common": (1, 2),
+            "rare": (1, 1),
+            "epic": (1, 1),
+        },
+        "stone box": {
+            "common": (1, 3),
+            "rare": (1, 2),
+            "epic": (1, 1),
+        },
+        "iron box": {
+            "common": (2, 5),
+            "rare": (1, 3),
+            "epic": (1, 2),
+        },
+        "platinum box": {
+            "common": (4, 7),
+            "rare": (3, 6),
+            "epic": (1, 4),
+            "legendary": (1, 1),
+        }
+    }
+
+    box_data = amount_table.get(lootbox_name)
+    if not box_data:
+        raise ValueError(f"Unknown lootbox: {lootbox_name}")
+
+    rarity_range = box_data.get(rarity_of_item)
+    if not rarity_range:
+        raise ValueError(f"{lootbox_name} cannot drop items of rarity: {rarity_of_item}")
+
+    # Return a random amount within the allowed range for this rarity
+    return random.randint(*rarity_range)
+
+
+def user_lootbox_count(user_id: int, lootbox_name: str):
+    """
+    Queries the user's inventory to find how many of the specified lootbox they own.
+
+    Args:
+        user_id (int): The user's ID.
+        lootbox_name (str): The lootbox name.
+
+    Returns:
+        int: Quantity of lootbox the user has, -1 if lootbox is unknown.
     """
     item_id = item_name_to_id.get(lootbox_name.lower())
     if item_id is None:
         return -1
+
     with Session() as session:
         lootbox = session.query(Inventory).filter_by(
-            user_id = user_id,
-            item_id = item_id
-            ).first()
+            user_id=user_id,
+            item_id=item_id
+        ).first()
         return lootbox.item_quantity if lootbox else 0

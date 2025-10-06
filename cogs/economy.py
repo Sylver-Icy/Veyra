@@ -12,6 +12,7 @@ class Economy(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def checkwallet(self, ctx):
         """Check the wallet balance of the command user."""
         gold = check_wallet(ctx.author.id)
@@ -34,7 +35,7 @@ class Economy(commands.Cog):
 
     @commands.slash_command()
     async def transfer_gold(self, ctx, target_user: discord.Member, amount: int):
-        """Transfer gold from your wallet to another user."""
+        """Transfer gold from your wallet to another user. There is a 5% fee"""
         if target_user.id == ctx.author.id:
             response = create_response("transfer_gold", 1)
             await ctx.respond(response)
@@ -48,8 +49,10 @@ class Economy(commands.Cog):
             return
 
         try:
-            user_balance, transferred_gold = remove_gold(ctx.author.id, amount)
-            target_balance, transferred_gold = add_gold(target_user.id, amount)
+            taxed_amount = (5/100)*amount #calculating 5% of total amount
+            new_amount = amount-taxed_amount
+            user_balance, transferred_gold = remove_gold(ctx.author.id, new_amount)
+            target_balance, transferred_gold = add_gold(target_user.id, new_amount)
 
             response = create_response(
                 "transfer_gold",

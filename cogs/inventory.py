@@ -10,6 +10,7 @@ from services.inventory_services import (
     transfer_item as transfer_item_service,
     take_item,
     get_inventory,
+    get_item_details
 )
 from services.users_services import is_user
 from services.response_services import create_response
@@ -168,6 +169,7 @@ class Inventory(commands.Cog):
                 await ctx.respond(str(e))
 
     @commands.command()
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def checkinventory(self, ctx):
         """Check your own inventory (prefix command)."""
         status, embed_pages = get_inventory(ctx.author.id, ctx.author.name)
@@ -178,6 +180,15 @@ class Inventory(commands.Cog):
             paginator = pages.Paginator(pages=embed_pages)
             await paginator.send(ctx)
 
+    @commands.command()
+    # @commands.cooldown(1,15,commands.BucketType.user)
+    async def info(self, ctx, *, item_name: str):
+       id,suggestions = get_item_id_safe(item_name)
+       if suggestions:
+           await ctx.send(f"There is no such item as {item_name} perhaps you meant {suggestions[0]}")
+           return
+       embed = get_item_details(id)
+       await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Inventory(bot))

@@ -30,3 +30,22 @@ def build_inventory(user_name: str,items: list):
             embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/921681249817493554/1385546878485266532/2897785.png?ex=68567696&is=68552516&hm=f88a7b1a913ba04fded51cc41024747011e3cce42acbd2d95e2b83c2b8a21ae4")
             pages.append(embed)
     return pages
+
+def build_item_info_embed(item: dict):
+    rarity_colors = {
+            "common": discord.Color.light_grey(),
+            "rare": discord.Color.blue(),
+            "epic": discord.Color.purple(),
+            "legendary": discord.Color.orange(),
+        }
+    embed = discord.Embed(
+        title= item['name'],
+        description= item['description'],
+        color= rarity_colors.get(item['rarity'])
+    )
+    embed.add_field(
+        name="Rarity",
+        value=item['rarity']
+    )
+    embed.set_thumbnail(url=item['icon'])
+    return embed

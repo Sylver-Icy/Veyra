@@ -1,7 +1,7 @@
 import logging
-from discord.ext import commands
+from discord.ext import commands, pages
 from services.inventory_services import give_item, take_item
-from services.lootbox_services import lootbox_reward, user_lootbox_count
+from services.lootbox_services import lootbox_reward, user_lootbox_count, open_box
 from services.economy_services import add_gold
 from utils.itemname_to_id import item_name_to_id
 
@@ -42,36 +42,8 @@ class Lootbox(commands.Cog):
         take_item(ctx.author.id, item_id, 1)
 
         # Get reward
-        reward = lootbox_reward(lootbox_name)
-
-        if "Gold" in reward:
-            gold_amount = reward["Gold"]
-            await ctx.send(f"💰 You got **{gold_amount} Gold**!!!")
-            add_gold(ctx.author.id, gold_amount)
-            logger.info("Gold recieved from %s", lootbox_name, extra={
-                "user": ctx.author.name,
-                "flex": f"Gold received, {gold_amount}",
-                "cmd": "open"
-            })
-        else:
-            rarity = reward.get("Rarity", "Unknown")
-            item = reward.get("Item", "???")
-            await ctx.send(
-                f"🎉 You got a **{rarity}** item!\n"
-                f"✨ It isssss... **{item}**. Let’s Goooooo!"
-            )
-
-            reward_id = item_name_to_id.get(item.lower())
-            if reward_id:
-                give_item(ctx.author.id, reward_id, 1)
-                logger.info("Items received from %s box", lootbox_name, extra={
-                    "user": ctx.author.name,
-                    "flex": f"items received {item}",
-                    "cmd": "open"
-                })
-            else:
-                await ctx.send(f"⚠️ Couldn’t add `{item}` to your inventory (not found in database).")
-
+        embed,view = open_box(ctx.author.id, lootbox_name)
+        await ctx.send(embed=embed, view=view)
 
 def setup(bot):
     bot.add_cog(Lootbox(bot))
