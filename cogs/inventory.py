@@ -181,7 +181,7 @@ class Inventory(commands.Cog):
             await paginator.send(ctx)
 
     @commands.command()
-    # @commands.cooldown(1,15,commands.BucketType.user)
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def info(self, ctx, *, item_name: str):
        id,suggestions = get_item_id_safe(item_name)
        if suggestions:
