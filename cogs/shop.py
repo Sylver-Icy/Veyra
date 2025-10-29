@@ -37,7 +37,7 @@ class Shop(commands.Cog):
             await ctx.send(response)
 
     @commands.command()
-    @commands.cooldown(2,45,commands.BucketType.user)
+    # @commands.cooldown(2,45,commands.BucketType.user)
     async def sell(self, ctx, *args):
         if len(args) < 2:
             await ctx.send("Usage: !sell [item name] [quantity]")

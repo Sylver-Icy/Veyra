@@ -19,7 +19,7 @@ def race_cooldown_embed(cooldown_time: float):
     """
     embed = discord.Embed(
         title="🏁 A Race Just Finished!",
-        description="A race took place in this server recently — wait till the next one :3\n\n"
+        description="A race took place in this server recently — wait till the next one \n\n"
                     "If you don’t wanna miss the next race, press the button below and I'll remind you!",
         color=discord.Color.gold()
     )

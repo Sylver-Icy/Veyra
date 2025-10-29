@@ -13,7 +13,7 @@ class Marketplace(commands.Cog):
 
 
     @commands.slash_command()
-    @commands.cooldown(2,3600,commands.BucketType.user)
+    # @commands.cooldown(2,3600,commands.BucketType.user)
     async def create_listing(
         self,
         ctx,
@@ -71,7 +71,7 @@ class Marketplace(commands.Cog):
 
 
     @commands.slash_command()
-    @commands.cooldown(1,15,commands.BucketType.user)
+    # @commands.cooldown(1,15,commands.BucketType.user)
     async def buy_from_marketplace(self, ctx, listing_id: int, quantity: int):
         """
         Buy any  item from a marketplace listing using the ID.

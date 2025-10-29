@@ -23,7 +23,7 @@ def build_inventory(user_name: str,items: list):
             )
             for item in current_items:
                 embed.add_field(
-                    name=f"`{item['item_name']}` X {item['item_quantity']}     `{item['item_rarity']}` ",
+                    name=f"`{item['item_name']}` X {item['item_quantity']}       `{item['item_rarity']}` ",
                     value=f"*{item['item_description']}* \n  ------------------------------------------------------",
                     inline=False
                 )

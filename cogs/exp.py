@@ -9,7 +9,7 @@ class Exp(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1, 10, BucketType.user)
+    # @commands.cooldown(1, 10, BucketType.user)
     async def checkexp(self, ctx):
         """Check your current EXP and level."""
         exp, level = current_exp(ctx.author.id)

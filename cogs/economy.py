@@ -12,7 +12,7 @@ class Economy(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1,15,commands.BucketType.user)
+    # @commands.cooldown(1,15,commands.BucketType.user)
     async def checkwallet(self, ctx):
         """Check the wallet balance of the command user."""
         gold = check_wallet(ctx.author.id)
