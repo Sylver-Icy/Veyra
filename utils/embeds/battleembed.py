@@ -1,6 +1,6 @@
 import discord
 from discord.ui import View, button, Button
-
+from services.economy_services import check_wallet, remove_gold
 class BattleRequestView(View):
     def __init__(self, challenger: discord.User, target: discord.User, bet_amount: int):
         super().__init__(timeout=60)
@@ -14,7 +14,18 @@ class BattleRequestView(View):
         if interaction.user.id != self.target.id:
             await interaction.response.send_message("You can't accept someone else's challenge!", ephemeral=True)
             return
-
+        if self.bet_amount > check_wallet(self.target.id):
+            await interaction.response.send_message("You don't have enough gold to accept this. Aborting challenge.")
+            self.accepted = False
+            for child in self.children:
+                child.disabled = True
+            await interaction.response.edit_message(
+            content="❌ Challenee aborted coz of insuffiecient balance.",
+            view=self
+        )
+        self.stop()
+        #accept the challange only if target has enough gold
+        remove_gold(self.target.id, self.bet_amount) #deduct the gold amount for pot
         self.accepted = True
         for child in self.children:
             child.disabled = True
@@ -156,7 +167,7 @@ def build_final_embed(winner_name: str | None, loser_name: str | None, bet: int,
         desc = (
             f"**{winner_name}** triumphs in a glorious 1v1!\n"
             f"⚰️ **{loser_name}** falls where they stood.\n\n"
-            f"💰 **Reward:** `{bet * 2}`"
+            f"💰 **Reward:** `{(bet * 2) * 0.9}`"
         )
         color = discord.Color.gold()
 

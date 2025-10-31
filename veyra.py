@@ -1,5 +1,15 @@
 # veyra.py
+"""
+Main module for the Veyra Discord bot.
+
+This module initializes the bot, sets up global checks, event handlers,
+loads cogs, and starts the bot. It also manages background jobs and
+handles inline command invocation and EXP system integration.
+"""
+
 import os
+import sys
+import logging
 from utils.logger import setup_logging
 # SQLAlchemy model registration
 import models  # Ensures all models are registered
@@ -10,6 +20,7 @@ from dotenv import load_dotenv
 # Setup early
 load_dotenv("veyra.env")
 setup_logging()
+logger = logging.getLogger(__name__)
 
 # Services
 from services.users_services import is_user
@@ -19,6 +30,10 @@ from utils.chatexp import chatexp
 
 # Bot setup
 TOKEN = os.getenv("DISCORD_TOKEN")
+if not TOKEN:
+    logger.critical("DISCORD_TOKEN is not set or empty. Exiting.")
+    sys.exit(1)
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True)
 
@@ -46,54 +61,60 @@ async def is_registered(ctx):
 @bot.event
 async def on_ready():
     """Run background jobs and log when the bot is ready."""
-    run_at_startup()
-    if not scheduler.running:
-        scheduler.start()
-    print(f"✅ Veyra is online as {bot.user}")
+    try:
+        run_at_startup()
+        if not scheduler.running:
+            scheduler.start()
+        logger.info(f"✅ Veyra is online as {bot.user}")
+    except Exception as e:
+        logger.error(f"Error during on_ready: {e}", exc_info=True)
 
 
 @bot.event
 async def on_message(message):
-    """Handle custom message logic (inline commands, EXP system, etc.)"""
+    """Handle custom message logic (inline commands, EXP system, etc.)."""
     if message.author.bot:
         return
 
-    # --- Optional NSFW check ---
-    # result, proba = classify(message.content)
-    # if result == 1:
-    #     await message.reply(f"Perv detected 🚨, {proba[1]:.2f}")
-    # else:
-    #     print(f"SFW, {proba[0]:.2f}")
+    msg_lower = message.content.lower()
 
-    # Inline command support
+    # Inline command support: check if message contains a command invocation inline
     for command in bot.commands:
-        if f"!{command.name}" in message.content:
-            command_start = message.content.index(f"!{command.name}")
-            new_content = message.content[command_start:]
+        if f"!{command.name.lower()}" in msg_lower:
+            try:
+                command_start = msg_lower.index(f"!{command.name.lower()}")
+                new_content = message.content[command_start:]
 
-            class ModifiedMessage(discord.Message):
-                def __init__(self, original, new_content):
-                    self._original = original
-                    self._new_content = new_content
+                # Create a modified message object that overrides content with the command substring
+                class ModifiedMessage(discord.Message):
+                    def __init__(self, original, new_content):
+                        self._original = original
+                        self._new_content = new_content
 
-                @property
-                def content(self):
-                    return self._new_content
+                    @property
+                    def content(self):
+                        return self._new_content
 
-                def __getattr__(self, attr):
-                    return getattr(self._original, attr)
+                    def __getattr__(self, attr):
+                        return getattr(self._original, attr)
 
-            modified = ModifiedMessage(message, new_content)
-            ctx = await bot.get_context(modified)
-            await bot.invoke(ctx)
-            return
+                modified = ModifiedMessage(message, new_content)
+                ctx = await bot.get_context(modified)
+                await bot.invoke(ctx)
+                return
+            except Exception as e:
+                logger.error(f"Error invoking inline command '{command.name}': {e}", exc_info=True)
+                # Do not swallow the message, continue processing
 
     await bot.process_commands(message)
 
     # Give EXP for chatting
     if is_user(message.author.id):
-        ctx = await bot.get_context(message)
-        await chatexp(ctx)
+        try:
+            ctx = await bot.get_context(message)
+            await chatexp(ctx)
+        except Exception as e:
+            logger.error(f"Error processing chatexp for user {message.author.id}: {e}", exc_info=True)
 
 
 # ─── LOAD COGS ────────────────────────────────────────────────────
@@ -113,9 +134,17 @@ cogs_list = [
 ]
 
 for cog in cogs_list:
-    bot.load_extension(f'cogs.{cog}')
+    try:
+        bot.load_extension(f'cogs.{cog}')
+        logger.info(f"Loaded cog: {cog}")
+    except Exception as e:
+        logger.error(f"Failed to load cog {cog}: {e}", exc_info=True)
 
 
 # ─── START BOT ────────────────────────────────────────────────────
 
-bot.run(TOKEN)
+try:
+    bot.run(TOKEN)
+except Exception as e:
+    logger.critical(f"Bot failed to start: {e}", exc_info=True)
+    sys.exit(1)

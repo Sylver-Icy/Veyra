@@ -3,6 +3,7 @@ from discord.ext import commands
 import discord
 from services.economy_services import add_gold, remove_gold, check_wallet
 from services.response_services import create_response
+from services.users_services import is_user
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
 
@@ -19,23 +20,18 @@ class Economy(commands.Cog):
         response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
         await ctx.send(response)
 
-    @commands.slash_command()
-    async def give_gold(self, ctx, target_user: discord.Member, amount: int):
-        """Give gold directly to another user."""
-        if target_user.id == self.bot.user.id:
-            await ctx.respond("I don't need it, fk off.")
-            return
 
-        try:
-            new_gold, transferred_gold = add_gold(target_user.id, amount)
-            logger.info("Free gold generated", extra={"user": ctx.author.id, "flex": amount, "cmd": "give_gold"})
-            await ctx.respond(f"✅ Gave {transferred_gold} gold to {target_user.display_name}. New balance: {new_gold}")
-        except VeyraError as e:
-            await ctx.respond(str(e))
 
     @commands.slash_command()
     async def transfer_gold(self, ctx, target_user: discord.Member, amount: int):
         """Transfer gold from your wallet to another user. There is a 5% fee"""
+        if not is_user(target_user.id):
+            await ctx.respond(f"They are not my friend. They don't even have a wallet where am I supposed to send this money to? Hmm <@{ctx.author.id}> ??")
+            return
+        if amount <=0:
+            await ctx.respond("Atleast send 1 gold comeon", ephemeral = True)
+            return
+        
         if target_user.id == ctx.author.id:
             response = create_response("transfer_gold", 1)
             await ctx.respond(response)

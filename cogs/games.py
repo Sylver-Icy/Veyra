@@ -5,6 +5,8 @@ import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.custom_errors import VeyraError,WrongInputError
 from services.delievry_minigame_services import requested_items
+from services.guessthenumber_services import Guess
+from services.response_services import create_response
 
 class Games(commands.Cog):
 
@@ -16,9 +18,15 @@ class Games(commands.Cog):
     async def ping(self,ctx):
         """The legendary Ping-Pong game"""
         await ctx.send("🏓Pong!")
+
     @commands.command()
     async def solve_wordle(self, ctx):
         """Solve wordle"""
+        # prevent duplicate sessions per user
+        if ctx.author.id in self.sessions:
+            await ctx.send("⚠️ You already have an active Wordle game running! Finish that one first. :)")
+            return
+
         msg = await ctx.send("Solving a Wordle game...")
 
         thread = await msg.create_thread(
@@ -112,6 +120,42 @@ class Games(commands.Cog):
         embed, view = requested_items(ctx.author.display_name, ctx.author.id)
         await ctx.respond(embed=embed, view=view)
 
+    @commands.command()
+    async def play(self, ctx):
+        player = Guess(ctx.author)
+
+        for stage in range(1, 5):
+            low, high = player.pick_number_range(stage)
+            correct = player.guess_number(low, high)
+            response = create_response("win",stage, low=low, high=high)
+            await ctx.send(f"{response}----{correct}")
+
+            msg = await self.bot.wait_for(
+                "message",
+                check=lambda m: m.author == ctx.author and m.channel == ctx.channel,
+                timeout=30
+            )
+
+            try:
+                guess = int(msg.content)
+            except:
+                await ctx.send("That’s not even a number 💀")
+                return
+
+            if guess != correct:
+                if stage == 1:
+                    response = create_response("loose", 1, guess=guess, number=correct)
+                elif stage == 4:
+                    response = create_response("loose", 4, guess=guess, number=correct)
+                elif abs(guess - correct) <= 3:
+                    response = create_response("loose", 3, guess=guess, number=correct)
+                else:
+                    response = create_response("loose", 2, guess=guess, number=correct)
+
+                await ctx.send(response)
+                break
+
+        await ctx.send("Game over! Thanks for playing 💫")
 
 def setup(bot):
     """Setup the Cog"""

@@ -2,6 +2,7 @@ import asyncio
 from discord.ext import commands
 
 from services.users_services import is_user, add_user
+from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed
 
 class Profile(commands.Cog):
 
@@ -35,6 +36,17 @@ class Profile(commands.Cog):
 
             except asyncio.TimeoutError: #If user didn't reply in 30 sec let them know command ended
                 await ctx.send(f"Too slow ig you don't wanna be frnds {user_name}")
+
+    @commands.slash_command()
+    async def help(self,ctx):
+        embed, view = get_help_embed(ctx.author)
+        await ctx.respond(embed=embed, view=view)
+
+    @commands.command()
+    async def commandhelp(self, ctx, command_name):
+        embed = get_command_info_embed(command_name)
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     """

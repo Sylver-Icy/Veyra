@@ -5,6 +5,7 @@ from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
 
 from services.battle.battle_view import BattleRoundView
+from services.economy_services import add_gold
 from utils.embeds.battleembed import (
     build_round_embed,
     build_result_embed,
@@ -104,10 +105,13 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p1.hp <= 0:
+                #P2 won give reward
+                add_gold(target.id, (bet * 2) * 0.9)
                 final_embed = build_final_embed(target.name, challenger.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
+                add_gold(challenger.id, (bet * 2) * 0.9)
                 final_embed = build_final_embed(challenger.name, target.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
