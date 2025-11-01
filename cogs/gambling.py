@@ -22,16 +22,16 @@ class Gambling(commands.Cog):
         self.betting_phase = False
 
     @commands.slash_command()
-    @commands.cooldown(1,280, commands.BucketType.guild)
+    @commands.cooldown(1,900, commands.BucketType.guild)
     async def start_race(self, ctx):
         """
         Slash command to start an animal race.
 
         This command initiates the betting phase, sends an embed with race info,
-        waits for the betting period (99 seconds), then closes betting and starts the race.
+        waits for the betting period (180 seconds), then closes betting and starts the race.
 
         Cooldown:
-            Limited to once every 280 seconds per guild to prevent spam.
+            Limited to once every 900 seconds per guild to prevent spam.
 
         Args:
             ctx: The context of the command invocation.
@@ -43,8 +43,8 @@ class Gambling(commands.Cog):
         embed, mentions = race_start_embed(ctx.author)
         await ctx.respond(content = mentions, embed= embed)
 
-        # Wait for betting phase duration (99 seconds)
-        await asyncio.sleep(99)  # 5 minutes
+        # Wait for betting phase duration (180 seconds)
+        await asyncio.sleep(180)  # 3minutes
 
         # Disable betting phase to prevent further bets
         self.betting_phase = False

@@ -9,6 +9,7 @@ class Shop(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.cooldown(1,5,commands.BucketType.user)
     async def buy(self, ctx, *args):
         """
         Buy Items from shop
@@ -37,7 +38,7 @@ class Shop(commands.Cog):
             await ctx.send(response)
 
     @commands.command()
-    # @commands.cooldown(2,45,commands.BucketType.user)
+    @commands.cooldown(1,5,commands.BucketType.user)
     async def sell(self, ctx, *args):
         if len(args) < 2:
             await ctx.send("Usage: !sell [item name] [quantity]")
@@ -56,6 +57,7 @@ class Shop(commands.Cog):
         await ctx.send(response)
 
     @commands.slash_command()
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def shop(self,ctx):
        embed,view = daily_shop()
        await ctx.respond(embed=embed,view=view)

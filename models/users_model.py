@@ -34,3 +34,10 @@ class Quests(Base):
     reward = Column(Integer, default=0)
     limit = Column(Integer, default=0)
     skips = Column(Integer, default =0)
+
+class Daily(Base):
+    __tablename__ = 'daily'
+
+    user_id = Column(BigInteger, primary_key=True)
+    number_game = Column(Boolean, default=False)
+    

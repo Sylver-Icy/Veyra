@@ -12,6 +12,7 @@ class Lootbox(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.cooldown(1,5,commands.BucketType.user)
     async def open(self, ctx, *, lootbox_name: str):
         """Open a lootbox and receive a random reward."""
         lootbox_amount = user_lootbox_count(ctx.author.id, lootbox_name)

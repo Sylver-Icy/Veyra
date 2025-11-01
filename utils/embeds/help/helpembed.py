@@ -33,8 +33,10 @@ class HelpView(discord.ui.View):
             embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets if there's an ongoing race.", inline=False)
             embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
                                                  "`!solve_wordle` - Let me solve the entire Wordle for you if the hints aren't enough, cutie :3\n"
-                                                 "`!quest` - Maybe I need some items? Why not check it out? You'll be rewarded for your efforts!", inline=False)
-            embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See what items you have and how many.", inline=False)
+                                                 "`!quest` - Maybe I need some items? Why not check it out? You'll be rewarded for your efforts!" \
+                                                 "\n`!play - We can play a number guess game :3`", inline=False)
+            embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See what items you have and how many." \
+            "\n`!info - Confused? I can tell you about anyitem just name it.`", inline=False)
             embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
             embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything from the currently active shop.\n"
                                                   "`!sell` - Sell your items if they're in the buyback shop.", inline=False)

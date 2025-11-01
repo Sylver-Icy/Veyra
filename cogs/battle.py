@@ -3,13 +3,22 @@ from discord.ext import commands
 from utils.embeds.battleembed import send_battle_challenge
 from services.battle.battle_simulation import start_battle_simulation
 from services.economy_services import check_wallet, remove_gold, add_gold
-
+from services.users_services import is_user
 class Battle(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
     @commands.slash_command(description="Challenge someone to a 1v1 battle.")
     async def battle(self, ctx, target: discord.User, bet: int):
+        if target.id == ctx.author.id:
+            await ctx.respond("Loner ultra pro max plus.", ephemeral = True)
+            return
+        if target.id == self.bot.user.id:
+            await ctx.respond("You ain't gonna win so lets save ourselves some hassle.")
+            return
+        if not is_user:
+            await ctx.respond(f"I can't initiate a battle with {target.display_name} they're not frnds with me.")
+            return
         if bet <= 0:
             await ctx.respond("Bruh don't gamble if you can't afford T-T", ephemeral=True)
             return

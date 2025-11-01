@@ -10,6 +10,7 @@ class Profile(commands.Cog):
         self.bot=bot
 
     @commands.command()
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def helloVeyra(self, ctx):
         """
         Command for people to register themselves in the database.
@@ -38,11 +39,13 @@ class Profile(commands.Cog):
                 await ctx.send(f"Too slow ig you don't wanna be frnds {user_name}")
 
     @commands.slash_command()
+    @commands.cooldown(1,25,commands.BucketType.user)
     async def help(self,ctx):
         embed, view = get_help_embed(ctx.author)
         await ctx.respond(embed=embed, view=view)
 
     @commands.command()
+    @commands.cooldown(1,5,commands.BucketType.user)
     async def commandhelp(self, ctx, command_name):
         embed = get_command_info_embed(command_name)
         await ctx.send(embed=embed)

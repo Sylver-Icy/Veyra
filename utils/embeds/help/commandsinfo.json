@@ -44,7 +44,7 @@
     "description": "Starts a thread with instructions for inputting your guesses. Follow the guidelines to solve any Wordle puzzle within 3-4 attempts.",
     "usage": "!solve_wordle",
     "category": "Fun / Utility",
-    "cooldown": "10s per user",
+    "cooldown": "1 Session at a time",
     "examples": ["!solve_wordle"],
     "notes": "Utilizes logical deduction rather than random guesses for solving."
   },
@@ -104,7 +104,7 @@
     "description": "Onboarding command to save your name in the database. If already registered, it serves as a friendly greeting.",
     "usage": "!helloVeyra",
     "category": "Profile / Fun",
-    "cooldown": "10s per user",
+    "cooldown": "15s per user",
     "examples": ["!helloVeyra"],
     "notes": "You must use this command before accessing other commands. Veyra needs to recognize you to interact properly."
   },
@@ -124,7 +124,7 @@
     "description": "Transfer gold to another user. This can be a gift or a bribe—your choice.",
     "usage": "/transfer_gold <user> <amount>",
     "category": "Economy",
-    "cooldown": "10s per user",
+    "cooldown": "None",
     "examples": ["/transfer_gold @Sylver 1000"],
     "notes": "Transfers incur a 5% fee, so if you send 1000 gold, the recipient will receive 950."
   },
@@ -144,7 +144,7 @@
     "description": "Initiate an animal race and allow players to place bets. Only one animal will win.",
     "usage": "/start_race",
     "category": "Games / Gambling",
-    "cooldown": "30 minutes since the last race",
+    "cooldown": "15 minutes since the last race",
     "examples": ["/start_race"],
     "notes": "Race outcomes are random with no animal having a higher chance of winning. RNG governs the results."
   },
@@ -154,7 +154,7 @@
     "description": "Display the current shop inventory, showing items available for purchase and buyback.",
     "usage": "/shop",
     "category": "Shop",
-    "cooldown": "10s per user",
+    "cooldown": "15s per user",
     "examples": ["/shop"],
     "notes": "The shop inventory rotates daily."
   },
@@ -164,7 +164,7 @@
     "description": "List items on the player marketplace for others to purchase at your specified price.",
     "usage": "/create_listing <item> <quantity> <price/unit>",
     "category": "Marketplace",
-    "cooldown": "10s per user",
+    "cooldown": "Twice per hour per user",
     "examples": ["/create_listing Apple 5 200"],
     "notes": "Set prices thoughtfully; overpriced items may not sell."
   },
@@ -174,7 +174,7 @@
     "description": "View the live marketplace to see items currently listed by players, including yourself.",
     "usage": "/load_marketplace",
     "category": "Marketplace",
-    "cooldown": "5s per user",
+    "cooldown": "15s per user",
     "examples": ["/load_marketplace"],
     "notes": "Prices and availability update dynamically. Don’t miss limited-time deals!"
   },
@@ -204,7 +204,7 @@
     "description": "Displays the main help menu.",
     "usage": "/help",
     "category": "Utility",
-    "cooldown": "2s per user",
+    "cooldown": "25s per user",
     "examples": ["/help"],
     "notes": "Opens an embed listing all command names with brief descriptions."
   },
@@ -213,8 +213,27 @@
     "description": "Provides detailed help for a specific command.",
     "usage": "!commandhelp <command name>",
     "category": "Utility",
-    "cooldown": "None",
+    "cooldown": "5s per user",
     "examples": ["!commandhelp buy", "Definitely not !commandhelp commandhelp"],
     "Notes": "Use this command to get comprehensive information about any command."
+  },
+  "info": {
+    "title": "ℹ️ Item Info",
+    "description": "Get detailed information about a specific item, including its rarity, value, and details if available.",
+    "usage": "!info <item name>",
+    "category": "Inventory",
+    "cooldown": "5s per user",
+    "examples": ["!info Healing Potion", "!info Dragon Scale"],
+    "notes": "If you misspell an item name, Veyra will suggest the closest matches. Useful for checking item details before trading or selling."
+  },
+  "play": {
+    "title": "🎮 Play",
+    "description": "Play Veyra’s number-guessing game! Try to guess the correct number through multiple stages — the further you reach, the better your rewards. Even if you fail early, you still earn prizes based on your progress.",
+    "usage": "!play",
+    "category": "Games",
+    "cooldown": "Once a day",
+    "examples": ["!play"],
+    "notes": "Each stage requires a guess; rewards increase with progress. Losing early still grants partial rewards."
   }
 }
+

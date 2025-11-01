@@ -2,7 +2,7 @@
 
 > Why settle for 10 bots... when you can have **one** that does it better?
 
-Veyra’s a modular Discord bot I’m building with a bunch of fun, useful, and just plain chaotic features — like **moderation**, **economy**, **RPG**, and **cool minigames** — all running on a production-grade codebase.  
+Veyra’s a modular Discord bot I’m building with a bunch of fun, useful, and just plain chaotic features — like **moderation**, **economy**, **RPG**, and **cool minigames** — all running on a production-grade codebase.
 More features coming soon… because I can’t stop adding stuff T-T
 
 ---
@@ -43,7 +43,7 @@ Veyra is:
 - ✅ Built like a real product
 - ✅ Actually fun
 
-She’s a **Discord-native experiment** in modular bot design, scalable AI integration, and a lot of creativity.  
+She’s a **Discord-native experiment** in modular bot design, scalable AI integration, and a lot of creativity.
 
 
 ---
@@ -63,8 +63,8 @@ Pull requests? Ideas? Wanna test new features?
 
 ## ⭐ Show Some Love
 
-If you like the idea,  
-**star the repo**,  
+If you like the idea,
+**star the repo**,
 share it with your server.
 
 
@@ -75,7 +75,7 @@ share it with your server.
 > This ain’t plug-and-play (yet), but if you know your way around Python and Discord bots:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/veyra
+git clone https://github.com/sylver-icy/veyra
 cd veyra
 pip install -r requirements.txt
 # Add your token, DB config, and start Veyra!

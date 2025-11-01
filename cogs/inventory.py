@@ -120,7 +120,7 @@ class Inventory(commands.Cog):
                 await ctx.respond(str(e))
 
     @commands.command()
-    # @commands.cooldown(1,15,commands.BucketType.user)
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def checkinventory(self, ctx):
         """
         Check your own inventory (prefix command).
@@ -139,7 +139,7 @@ class Inventory(commands.Cog):
             await paginator.send(ctx)
 
     @commands.command()
-    # @commands.cooldown(1,15,commands.BucketType.user)
+    @commands.cooldown(1,5,commands.BucketType.user)
     async def info(self, ctx, *, item_name: str):
         """
         Get detailed information about a specific item.
@@ -149,12 +149,12 @@ class Inventory(commands.Cog):
         - item_name: The name of the item to get information about.
         """
         # Convert item name to ID and get suggestions if not found
-        id, suggestions = get_item_id_safe(item_name)
+        item_id, suggestions = get_item_id_safe(item_name)
         if suggestions:
             # Inform user about possible intended item if no exact match
             await ctx.send(f"There is no such item as {item_name} perhaps you meant {suggestions[0]}")
             return
-        embed = get_item_details(id)
+        embed = get_item_details(item_id)
         await ctx.send(embed=embed)
 
 

@@ -13,7 +13,7 @@ class Economy(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    # @commands.cooldown(1,15,commands.BucketType.user)
+    @commands.cooldown(1,10,commands.BucketType.user)
     async def checkwallet(self, ctx):
         """Check the wallet balance of the command user."""
         gold = check_wallet(ctx.author.id)
@@ -31,7 +31,7 @@ class Economy(commands.Cog):
         if amount <=0:
             await ctx.respond("Atleast send 1 gold comeon", ephemeral = True)
             return
-        
+
         if target_user.id == ctx.author.id:
             response = create_response("transfer_gold", 1)
             await ctx.respond(response)

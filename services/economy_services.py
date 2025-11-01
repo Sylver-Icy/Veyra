@@ -10,7 +10,7 @@ def add_gold(user_id: int, gold_amount: int):
     if not isinstance(gold_amount, int) or gold_amount <= 0:
         logger.warning("Invalid gold amount: %s", gold_amount)
         raise NegativeGoldError()
-    
+
     with Session() as session:
         user = session.get(Wallet, user_id)
         if not user:
@@ -28,16 +28,16 @@ def add_gold(user_id: int, gold_amount: int):
 def remove_gold(user_id:int, gold_amount:int):
     if not isinstance(gold_amount, int) or gold_amount <=0:
         raise NegativeGoldError()
-    
+
     with Session() as session:
         user = session.get(Wallet,user_id)
         if not user:
             logger.warning("Failed to deduct %s gold from User- %s coz they are not in database", gold_amount, user_id)
             raise UserNotFoundError(user_id)
-        
+
         if user.gold - gold_amount < 0:
             raise NotEnoughGoldError(gold_amount,user.gold)
-        
+
         try:
             user.gold -= gold_amount
             session.commit()
