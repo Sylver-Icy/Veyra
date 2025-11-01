@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Services
 from services.users_services import is_user
+from services.onboadingservices import greet
 from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
 # from nsfw_classifier.nsfw_classifier import classify  # Optional feature
@@ -69,6 +70,12 @@ async def on_ready():
     except Exception as e:
         logger.error(f"Error during on_ready: {e}", exc_info=True)
 
+@bot.event
+async def on_member_join(member):
+    channel = discord.utils.get(member.guild.text_channels, name='welcum')
+    if channel:
+        embed = greet(member.display_name)
+        await channel.send(content=member.mention, embed=embed)
 
 @bot.event
 async def on_message(message):

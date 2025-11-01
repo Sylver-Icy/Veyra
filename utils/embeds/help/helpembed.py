@@ -25,7 +25,7 @@ class HelpView(discord.ui.View):
         if self.current_page == "prefix":
             embed = discord.Embed(
                 title="📜 Prefix Commands",
-                description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
+                description="Use these commands with `!` before the command name.\nAll commands are case-insensitive except for `!helloVeyra`\n\n**Example:** `!balance`, `!shop`",
                 color=discord.Color.blurple()
             )
             embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much stash you've got!", inline=False)
