@@ -6,6 +6,7 @@ from services.response_services import create_response
 from services.users_services import is_user
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
+from utils.embeds.leaderboard.leaderboardembed import gold_leaderboard_embed
 
 logger = logging.getLogger(__name__)
 class Economy(commands.Cog):
@@ -19,6 +20,13 @@ class Economy(commands.Cog):
         gold = check_wallet(ctx.author.id)
         response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
         await ctx.send(response)
+
+
+    @commands.slash_command()
+    @commands.cooldown(1,120,commands.BucketType.user)
+    async def leaderboard(self,ctx):
+        embed = await gold_leaderboard_embed(self.bot)
+        await ctx.respond(embed=embed)
 
 
 
@@ -45,8 +53,7 @@ class Economy(commands.Cog):
             return
 
         try:
-            taxed_amount = (5/100)*amount #calculating 5% of total amount
-            new_amount = amount-taxed_amount
+            new_amount = int(amount * 0.95)  #calculating 5% of total amount
             user_balance, transferred_gold = remove_gold(ctx.author.id, new_amount)
             target_balance, transferred_gold = add_gold(target_user.id, new_amount)
 

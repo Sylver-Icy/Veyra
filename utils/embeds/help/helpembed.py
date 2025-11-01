@@ -58,7 +58,8 @@ class HelpView(discord.ui.View):
             embed.add_field(name="🛍️ Shop and Marketplace", value="`/shop` - View the shop embed. Check what items I'm selling and buying.\n"
                                                                   "`/create_listing` - Create a marketplace listing others can buy at the price you set.\n"
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
-                                                                  "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!", inline=False)
+                                                                  "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
+                                                                  "`/delete_listing - Delete one of your active listings.`", inline=False)
             embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn't you??")
 
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
@@ -97,7 +98,8 @@ def get_help_embed(user: discord.User):
     view = HelpView(user=user)
     embed = discord.Embed(
         title="📜 Prefix Commands",
-        description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
+        description="Use these commands with `!` before the command name.\nAll commands are case-insensitive except for `!helloVeyra`\n\n**Example:** `!balance`, `!shop`",
+
         color=discord.Color.blurple()
     )
     embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much stash you've got!", inline=False)

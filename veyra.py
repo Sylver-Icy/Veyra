@@ -27,6 +27,7 @@ from services.users_services import is_user
 from services.onboadingservices import greet
 from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
+from utils.jobs import schedule_jobs
 # from nsfw_classifier.nsfw_classifier import classify  # Optional feature
 
 # Bot setup
@@ -64,6 +65,8 @@ async def on_ready():
     """Run background jobs and log when the bot is ready."""
     try:
         run_at_startup()
+        schedule_jobs(bot)
+
         if not scheduler.running:
             scheduler.start()
         logger.info(f"✅ Veyra is online as {bot.user}")

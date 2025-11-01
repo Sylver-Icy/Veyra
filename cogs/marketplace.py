@@ -2,7 +2,7 @@ import logging
 from discord.ext import commands, pages
 from discord.commands import Option
 
-from services.marketplace_services import create_listing, load_marketplace, buy_listed_item
+from services.marketplace_services import create_listing, remove_listing, load_marketplace, buy_listed_item
 from utils.itemname_to_id import get_item_id_safe
 
 logger = logging.getLogger(__name__)
@@ -58,6 +58,12 @@ class Marketplace(commands.Cog):
             })
         else:
             await ctx.respond("You don't own enough items to create that listing. Maybe try selling fewer items?")
+
+    @commands.slash_command()
+    @commands.cooldown(1,30,commands.BucketType.user)
+    async def delete_listing(self, ctx, listing_id):
+        response = remove_listing(ctx.author.id, listing_id)
+        await ctx.respond(response)
 
 
     @commands.slash_command()

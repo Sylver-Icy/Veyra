@@ -58,9 +58,28 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             # Execute + resolve the round via your engine
             bm.execute_turn(p1_move, p2_move)
             result_text = bm.resolve_round()
+            bm.execute_turn(p1_move, p2_move)
+            result_text = bm.resolve_round()
+
+            # 🧠 Early exit check: if someone died inside resolve_round()
+            if p1.hp <= 0 and p2.hp <= 0:
+                final_embed = build_final_embed(None, None, bet, both_dead=True)
+                await ctx.channel.send(embed=final_embed)
+                return
+            elif p1.hp <= 0:
+                add_gold(target.id, int((bet * 2) * 0.9))
+                final_embed = build_final_embed(target.name, challenger.name, bet)
+                await ctx.channel.send(embed=final_embed)
+                return
+            elif p2.hp <= 0:
+                add_gold(challenger.id, int((bet * 2) * 0.9))
+                final_embed = build_final_embed(challenger.name, target.name, bet)
+                await ctx.channel.send(embed=final_embed)
+                return
 
             # Apply timeout penalties AFTER resolution
             penalty_notes = []
+
             if p1_timed_out:
                 p1.hp = max(0, p1.hp - TIMEOUT_PENALTY)
                 penalty_notes.append(f"{challenger.name} suffered an extra **-{TIMEOUT_PENALTY} HP** for hesitation.")
@@ -106,12 +125,12 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 return
             elif p1.hp <= 0:
                 #P2 won give reward
-                add_gold(target.id, (bet * 2) * 0.9)
+                add_gold(target.id, int((bet * 2) * 0.9))
                 final_embed = build_final_embed(target.name, challenger.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
-                add_gold(challenger.id, (bet * 2) * 0.9)
+                add_gold(challenger.id, int((bet * 2) * 0.9))
                 final_embed = build_final_embed(challenger.name, target.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return

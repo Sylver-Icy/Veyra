@@ -76,7 +76,7 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
 
         # Transfer item and gold
         give_item(buyer_id, item_id, quantity)
-        add_gold(listing.user_id, quantity * price)
+        add_gold(listing.user_id, int((quantity * price) * 0.93)) #Charge the 7 % listing fee
 
         # Remove or update listing
         if items_in_stock == quantity:
@@ -91,7 +91,46 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
         })
         return f"Successfully bought {quantity}×{item_name} from {seller_name} for {quantity * price} {GOLD_EMOJI}"
 
+def remove_listing(user_id: int, listing_id: int) -> str:
+    """
+    Delete a user's marketplace listing and return escrowed items.
 
+    Args:
+        user_id (int): The ID of the user requesting deletion.
+        listing_id (int): The marketplace listing ID to delete.
+
+    Returns:
+        str: Success or error message.
+    """
+    with Session() as session:
+        listing = session.get(Marketplace, listing_id)
+        if not listing:
+            return f"No listing found with ID {listing_id}."
+
+        # Prevent others from deleting someone else's listing
+        if listing.user_id != user_id:
+            return "You can only delete your own listings."
+
+        # Refund items back to user inventory
+        try:
+            give_item(user_id, listing.item_id, listing.quantity)
+
+        except Exception as e:
+            logger.error(f"Failed to refund items for listing {listing_id}: {e}")
+            return "Failed to refund items — please contact support."
+
+        # Delete the listing
+        listing_name = listing.item.item_name
+        quantity = listing.quantity
+        session.delete(listing)
+        session.commit()
+
+        logger.info("Listing deleted", extra={
+            "user": user_id,
+            "flex": f"Deleted listing {listing_id} ({listing_name})"
+        })
+
+        return f"Your listing for {listing_name} ×{quantity} has been removed and refunded successfully!"
 
 def fill_marketplace_list():
     """

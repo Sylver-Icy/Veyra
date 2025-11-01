@@ -3,6 +3,7 @@ from sqlalchemy.sql.expression import func
 from models.inventory_model import Items, Inventory
 from database.sessionmaker import Session
 from services.inventory_services import give_item
+from services.economy_services import add_gold
 from utils.itemname_to_id import item_name_to_id
 from utils.embeds.lootboxembed import lootbox_embed_and_view
 
@@ -47,7 +48,10 @@ def lootbox_reward(user_id: int,lootbox: str):
     rolls = count_rolls(lootbox)
 
     # First roll always yields gold amount
-    reward_output["gold"] = decide_gold(lootbox)
+    gold_amount = decide_gold(lootbox)
+    reward_output["gold"] = gold_amount
+    add_gold(user_id, gold_amount)
+
 
     # Keep track of items already picked to avoid duplicates
     picked_items = set()

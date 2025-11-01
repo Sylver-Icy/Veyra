@@ -1,14 +1,18 @@
 from models.users_model import Wallet
 from database.sessionmaker import Session
-from utils.custom_errors import UserNotFoundError, NegativeGoldError, NotEnoughGoldError
+from utils.custom_errors import UserNotFoundError, NegativeGoldError, NotEnoughGoldError, WrongInputError
 import logging
 
 logger =  logging.getLogger(__name__)
 
 def add_gold(user_id: int, gold_amount: int):
     "Gives users required amount of gold"
-    if not isinstance(gold_amount, int) or gold_amount <= 0:
-        logger.warning("Invalid gold amount: %s", gold_amount)
+    try:
+        gold_amount = int(gold_amount)
+    except (TypeError, ValueError):
+        raise WrongInputError()
+
+    if gold_amount <= 0:
         raise NegativeGoldError()
 
     with Session() as session:
@@ -26,7 +30,12 @@ def add_gold(user_id: int, gold_amount: int):
             logger.error("Error updating %s gold for user- %s: %s", gold_amount, user_id, str(e))
 
 def remove_gold(user_id:int, gold_amount:int):
-    if not isinstance(gold_amount, int) or gold_amount <=0:
+    try:
+        gold_amount = int(gold_amount)
+    except (TypeError, ValueError):
+        raise WrongInputError()
+
+    if gold_amount <= 0:
         raise NegativeGoldError()
 
     with Session() as session:
@@ -51,3 +60,14 @@ def check_wallet(user_id):
     with Session() as session:
         user = session.get(Wallet,user_id)
         return user.gold
+
+def get_richest_users(limit=10):
+    with Session() as session:
+        richest_users = (
+            session.query(Wallet)
+            .order_by(Wallet.gold.desc())
+            .limit(limit)
+            .all()
+        )
+        return richest_users
+

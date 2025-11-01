@@ -75,7 +75,7 @@
     "usage": "!open <box name>",
     "category": "Lootbox",
     "cooldown": "5s per user",
-    "examples": ["!open platinumbox", "!open woodenbox"],
+    "examples": ["!open platinum box", "!open wooden box"],
     "notes": "Rewards scale according to the rarity of the lootbox."
   },
 
@@ -166,7 +166,7 @@
     "category": "Marketplace",
     "cooldown": "Twice per hour per user",
     "examples": ["/create_listing Apple 5 200"],
-    "notes": "Set prices thoughtfully; overpriced items may not sell."
+    "notes": "Set prices thoughtfully; overpriced items may not sell. There is 7% listing fee will be charged from revenue if item sold."
   },
 
   "load_marketplace": {
@@ -187,6 +187,16 @@
     "cooldown": "5s per user",
     "examples": ["/buy_from_marketplace 432 5"],
     "notes": "Once purchased, items are delivered directly to your inventory and gold is transferred to the seller. Transactions are secure and scam-free."
+  },
+
+  "delete_listing": {
+    "title": "🗑️ Delete Listing",
+    "description": "Remove one of your active marketplace listings. Useful if you change your mind or wish to adjust your prices.",
+    "usage": "/delete_listing <listing_id>",
+    "category": "Marketplace",
+    "cooldown": "30s per user",
+    "examples": ["/delete_listing 123"],
+    "notes": "Only the creator of a listing can delete it. Deleted listings automatically refund unsold items to the seller’s inventory."
   },
 
   "wordle_hint": {
@@ -236,4 +246,3 @@
     "notes": "Each stage requires a guess; rewards increase with progress. Losing early still grants partial rewards."
   }
 }
-

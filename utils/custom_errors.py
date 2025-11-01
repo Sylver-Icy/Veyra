@@ -44,12 +44,12 @@ class NotEnoughItemError(VeyraError):
 class WrongInputError(VeyraError):
     """Raise error if wrong input for wordle solver"""
     def __init__(self):
-        message = "Litreally explained you input format with an entire paragraph yet somehow you manage to blunder it ._. WOW!!!!!"
+        message = "Wrong input try again!"
         super().__init__(message)
 
 class NoValidWordsError(VeyraError):
     """Raise error if wordle has  no possible words left"""
-    
+
     def __init__(self):
         message = "I tried all 5 letter words nothing left prolly wrong inputs from your side or maybe you looking for some alien language word"
         super().__init__(message)
