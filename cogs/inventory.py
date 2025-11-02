@@ -20,11 +20,13 @@ from services.inventory_services import (
     transfer_item as transfer_item_service,
     take_item,
     get_inventory,
-    get_item_details
+    get_item_details,
+    use_item
 )
 from services.users_services import is_user
 from services.response_services import create_response
 from utils.itemname_to_id import get_item_id_safe
+from utils.custom_errors import NotEnoughItemError
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +56,7 @@ class Inventory(commands.Cog):
         if not is_user(target.id):
             await ctx.respond(f"Umm sorry {ctx.author.name}, they're not frnds with me. Can't interact")
             return
+        
         # Convert item name to ID and get suggestions if not found
         item_id, suggestions = get_item_id_safe(item_name)
 
@@ -138,8 +141,9 @@ class Inventory(commands.Cog):
             paginator = pages.Paginator(pages=embed_pages)
             await paginator.send(ctx)
 
+
     @commands.command()
-    @commands.cooldown(1,5,commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def info(self, ctx, *, item_name: str):
         """
         Get detailed information about a specific item.
@@ -148,15 +152,44 @@ class Inventory(commands.Cog):
         - ctx: The context of the command invocation.
         - item_name: The name of the item to get information about.
         """
-        # Convert item name to ID and get suggestions if not found
         item_id, suggestions = get_item_id_safe(item_name)
-        if suggestions:
-            # Inform user about possible intended item if no exact match
-            await ctx.send(f"There is no such item as {item_name} perhaps you meant {suggestions[0]}")
+
+        # Case 1: item not found, but suggestions exist
+        if item_id is None and suggestions:
+            await ctx.send(f"There is no such item as **{item_name}**, perhaps you meant **{suggestions[0]}**?")
             return
+
+        # Case 2: item not found, no suggestions at all
+        if item_id is None and not suggestions:
+            await ctx.send("Idk about anything like that.")
+            return
+
+        # Case 3: item found successfully
         embed = get_item_details(item_id)
+        if embed is None:
+            await ctx.send("No such item.")
+            return
+
         await ctx.send(embed=embed)
 
+
+    @commands.command()
+    async def use(self, ctx, *, item_name: str):
+        item_id, sugestions = get_item_id_safe(item_name)
+        if item_id:
+            try:
+                result = use_item(ctx.author.id, item_id)
+                await ctx.send(result)
+                return
+            except NotEnoughItemError:
+                await ctx.send (f"You don't have any {item_name.capitalize()}. Can't use!")
+                return
+
+        if sugestions != []:
+            await ctx.send(f"Tf is {item_name}? You prolly meant {sugestions[0]}.")
+            return
+
+        await ctx.send(f"Hmm how can one use something which doesn't even exist?" )
 
 def setup(bot):
     bot.add_cog(Inventory(bot))

@@ -12,6 +12,8 @@ class Guess:
     Handles the core logic for the number guessing game, including picking number ranges,
     generating guesses, distributing rewards based on stages, and tracking daily game status.
     """
+    def __init__(self):
+        self.key_used = False
 
     @staticmethod
     def pick_number_range(stage):
@@ -102,8 +104,8 @@ class Guess:
                 return False
             return daily.number_game
 
-    @staticmethod
-    async def play_game(ctx, bot, sessions):
+
+    async def play_game(self, ctx, bot, sessions):
         """
         Runs the full logic of the guessing game, including session check, daily check,
         handling user guesses, generating responses, calculating rewards, and sending messages.
@@ -120,14 +122,17 @@ class Guess:
             await ctx.send(response)
             return
 
-        sessions[ctx.author.id] = "guess_game_active"
+        sessions[ctx.author.id] = self
         try:
             loss_round = 5
-            for stage in range(1, 5):
+            stage = 1
+            while stage <= 4:
                 low, high = Guess.pick_number_range(stage)
                 correct = Guess.guess_number(low, high)
                 response = create_response("win", stage, low=low, high=high)
                 await ctx.send(response)
+
+                stage_complete = False  # flag to track if player clears the stage
 
                 while True:
                     try:
@@ -137,21 +142,43 @@ class Guess:
                             timeout=30
                         )
                         guess = int(msg.content)
-                        break
                     except ValueError:
                         continue
-                if guess != correct:
-                    loss_round = stage
-                    if stage == 1:
-                        response = create_response("loose", 1, guess=guess, number=correct)
-                    elif stage == 4:
-                        response = create_response("loose", 4, guess=guess, number=correct)
-                    elif abs(guess - correct) <= 3:
-                        response = create_response("loose", 3, guess=guess, number=correct)
+
+                    if guess != correct:
+                        if self.key_used:
+                            await ctx.send("🔑 Your Hint Key activates!")
+                            await ctx.send("Hint: Try higher!" if guess < correct else "Hint: Try lower!")
+                            self.key_used = False
+                            # retry same stage without progressing
+                            continue
+
+                        # no key active or already used — lose
+                        loss_round = stage
+                        if stage == 1:
+                            response = create_response("loose", 1, guess=guess, number=correct)
+                        elif stage == 4:
+                            response = create_response("loose", 4, guess=guess, number=correct)
+                        elif abs(guess - correct) <= 3:
+                            response = create_response("loose", 3, guess=guess, number=correct)
+                        else:
+                            response = create_response("loose", 2, guess=guess, number=correct)
+                        await ctx.send(response)
+                        stage = 5  # end game
+                        break
+
                     else:
-                        response = create_response("loose", 2, guess=guess, number=correct)
-                    await ctx.send(response)
-                    break
+                        # correct guess — stage cleared
+                        stage_complete = True
+                        if self.key_used:
+                            await ctx.send("🔑 Key effect wore off! 🗝️")
+                            self.key_used = False
+                        break
+
+                if not stage_complete:
+                    break  # end outer loop if player loses
+                stage += 1
+
             reward = Guess.calculate_and_distribute_reward(loss_round, ctx.author.id)
             await ctx.send(f"Well and with that, game over. You get:\n{reward}")
 

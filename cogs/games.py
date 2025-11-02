@@ -1,6 +1,7 @@
 from discord.ext import commands
 import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
+from utils.global_sessions_registry import sessions
 from utils.custom_errors import VeyraError,WrongInputError
 from services.delievry_minigame_services import requested_items
 from services.guessthenumber_services import Guess
@@ -10,7 +11,8 @@ class Games(commands.Cog):
 
     def __init__(self,bot):
         self.bot=bot
-        self.sessions = {}
+        self.wordle_sessions = sessions["wordle"]
+        self.guess_sessions = sessions["guess"]
 
     @commands.command()
     async def ping(self,ctx):
@@ -21,7 +23,7 @@ class Games(commands.Cog):
     async def solve_wordle(self, ctx):
         """Solve wordle"""
         # prevent duplicate sessions per user
-        if ctx.author.id in self.sessions:
+        if ctx.author.id in self.wordle_sessions:
             await ctx.send("⚠️ You already have an active Wordle game running! Finish that one first. :)")
             return
 
@@ -48,10 +50,10 @@ class Games(commands.Cog):
             words = [w.strip() for w in f]
 
         state = init_wordle(words)
-        self.sessions[ctx.author.id] = state
+        self.wordle_sessions[ctx.author.id] = state
 
-        while self.sessions.get(ctx.author.id, {}).get("attempts", 0) > 0 and self.sessions[ctx.author.id].get("guess"):
-            guess = self.sessions[ctx.author.id]["guess"]
+        while self.wordle_sessions.get(ctx.author.id, {}).get("attempts", 0) > 0 and self.wordle_sessions[ctx.author.id].get("guess"):
+            guess = self.wordle_sessions[ctx.author.id]["guess"]
             await thread.send(f"Guess: {guess}")  # <- send in thread now
 
             def check(msg):
@@ -62,20 +64,20 @@ class Games(commands.Cog):
                 result = msg.content.strip()
             except asyncio.TimeoutError:
                 await thread.send("Too slow, try again later.")
-                del self.sessions[ctx.author.id]
+                del self.wordle_sessions[ctx.author.id]
                 return
             except WrongInputError as e:
                 await thread.send(e)
 
             if result == "22222":
                 await thread.send("Congratulations 🎉")
-                del self.sessions[ctx.author.id]
+                del self.wordle_sessions[ctx.author.id]
                 return
 
-            self.sessions[ctx.author.id], _ = update_wordle(self.sessions[ctx.author.id], result)
+            self.wordle_sessions[ctx.author.id], _ = update_wordle(self.wordle_sessions[ctx.author.id], result)
 
         await thread.send("Game over! You're out of attempts.")
-        del self.sessions[ctx.author.id]
+        del self.wordle_sessions[ctx.author.id]
 
 
     @commands.slash_command(name="wordle_hint", description="Get a Wordle hint based on your past guesses and feedbacks")
@@ -97,8 +99,7 @@ class Games(commands.Cog):
             pattern = locals().get(f"pattern{i}")
             if guess and pattern:
                 if len(guess) != 5 or len(pattern) != 5 or not all(c in "012" for c in pattern):
-                    await ctx.respond(f"Invalid input in guess{i} or pattern{i}. Make sure it's 5 letters and pattern uses only 0, 1, 2. \
-                                      0 for white, 1 for yellow, for green")
+                    await ctx.respond(f"Invalid input in guess{i} or pattern{i}. Make sure it's 5 letters and pattern uses only 0, 1, 2. \n0 for white, 1 for yellow, for green")
                     return
                 history.append((guess.lower(), pattern))
 
@@ -121,7 +122,9 @@ class Games(commands.Cog):
 
     @commands.command()
     async def play(self, ctx):
-        await Guess.play_game(ctx, self.bot, self.sessions)
+        guess = Guess()
+        await guess.play_game(ctx, self.bot, self.guess_sessions)
+
 
 def setup(bot):
     """Setup the Cog"""

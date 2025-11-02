@@ -35,10 +35,7 @@ class Lootbox(commands.Cog):
             return
 
         # Consume one lootbox
-        item_id = item_name_to_id.get(lootbox_name.lower())
-        if not item_id:
-            await ctx.send(f"❌ `{lootbox_name}` doesn’t exist in my database. Skill issue?")
-            return
+        item_id = lootbox_amount #the func returns item_id when box exists
 
         take_item(ctx.author.id, item_id, 1)
 

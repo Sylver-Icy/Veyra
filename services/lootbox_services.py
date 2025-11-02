@@ -4,7 +4,7 @@ from models.inventory_model import Items, Inventory
 from database.sessionmaker import Session
 from services.inventory_services import give_item
 from services.economy_services import add_gold
-from utils.itemname_to_id import item_name_to_id
+from utils.itemname_to_id import get_item_id_safe
 from utils.embeds.lootboxembed import lootbox_embed_and_view
 
 def open_box(user_id, lootbox: str):
@@ -218,7 +218,7 @@ def user_lootbox_count(user_id: int, lootbox_name: str):
     Returns:
         int: Quantity of lootbox the user has, -1 if lootbox is unknown.
     """
-    item_id = item_name_to_id.get(lootbox_name.lower())
+    item_id, suggestions = get_item_id_safe(lootbox_name)
     if item_id is None:
         return -1
 
@@ -227,4 +227,4 @@ def user_lootbox_count(user_id: int, lootbox_name: str):
             user_id=user_id,
             item_id=item_id
         ).first()
-        return lootbox.item_quantity if lootbox else 0
+        return item_id if lootbox else 0

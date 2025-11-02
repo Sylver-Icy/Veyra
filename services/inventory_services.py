@@ -8,6 +8,7 @@ from models.users_model import User
 from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError
 from utils.itemname_to_id import item_name_to_id
 from utils.embeds.inventoryembed import build_inventory, build_item_info_embed
+from utils.usable_items import UsableItemHandler
 from services.users_services import is_user
 
 logger = logging.getLogger('__name__')
@@ -163,7 +164,7 @@ def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional
                 embed_pages = build_inventory(user_name, result)
                 return (None, embed_pages)
             else:
-                give_item(user_id, 2, 1)
+                give_item(user_id, 164, 1)
                 user.starter_given = True
                 session.commit()
                 return ("start_event", None)
@@ -174,8 +175,30 @@ def get_item_details(item_id: int):
     item_details = {}
     with Session() as session:
         item = session.get(Items, item_id)
+        if not item:
+            return None
         item_details['name'] = item.item_name
         item_details['description'] = item.item_description
         item_details['rarity'] = item.item_rarity
         item_details['icon'] = item.item_icon
     return build_item_info_embed(item_details)
+
+def use_item(user_id: int, item_id: str):
+    with Session() as session:
+        print(f"Fetching item with ID: {item_id} ({type(item_id)})")
+        item = session.get(Items, item_id)
+        if not item:
+            return "That item doesn't exist."
+        if not item.item_usable:
+            return f"{item.item_name} can’t be used."
+
+        handler = UsableItemHandler.get_handler(item.item_name)
+        if not handler:
+            return f"{item.item_name} is marked as usable but has no handler (dev issue)."
+
+        # Run item logic
+        result = handler(user_id)
+
+        # Remove the item after use
+        take_item(user_id, item.item_id, 1)
+        return result

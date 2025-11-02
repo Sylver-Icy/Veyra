@@ -30,7 +30,13 @@ def update_daily_shop():
     Updates the daily shop with 6 random items from the database.
     """
     with Session() as session:
-        random_items = session.query(Items).order_by(func.random()).limit(6).all()
+        random_items = (
+            session.query(Items)
+            .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
+            .order_by(func.random())
+            .limit(6)
+            .all()
+        )
 
         daily_shop_items.clear()
         daily_shop_items.extend([

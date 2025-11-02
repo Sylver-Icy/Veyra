@@ -25,22 +25,23 @@ class HelpView(discord.ui.View):
         if self.current_page == "prefix":
             embed = discord.Embed(
                 title="📜 Prefix Commands",
-                description="Use these commands with `!` before the command name.\nAll commands are case-insensitive except for `!helloVeyra`\n\n**Example:** `!balance`, `!shop`",
+                description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
                 color=discord.Color.blurple()
             )
-            embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much stash you've got!", inline=False)
-            embed.add_field(name="🔥 Exp", value="`!checkexp` - See your current level along with your experience points.", inline=False)
-            embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets if there's an ongoing race.", inline=False)
+            embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much gold you've got stashed away!", inline=False)
+            embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
+            embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
             embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                                 "`!solve_wordle` - Let me solve the entire Wordle for you if the hints aren't enough, cutie :3\n"
-                                                 "`!quest` - Maybe I need some items? Why not check it out? You'll be rewarded for your efforts!" \
-                                                 "\n`!play - We can play a number guess game :3`", inline=False)
-            embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See what items you have and how many." \
-            "\n`!info - Confused? I can tell you about anyitem just name it.`", inline=False)
+                                                 "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie :3\n"
+                                                 "`!quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" \
+                                                 "\n`!play` - We can play a number guessing game :3", inline=False)
+            embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
+            "\n`!info` - Confused? I can tell you about any item — just name it!" \
+            "\n`!use` - Use any usable item from your inventory.", inline=False)
             embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
-            embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything from the currently active shop.\n"
-                                                  "`!sell` - Sell your items if they're in the buyback shop.", inline=False)
-            embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp - Look down, bottom of this embed 👇🏻`", inline= False)
+            embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
+                                                  "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
+            embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
             embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
 
@@ -59,9 +60,9 @@ class HelpView(discord.ui.View):
                                                                   "`/create_listing` - Create a marketplace listing others can buy at the price you set.\n"
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
                                                                   "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
-                                                                  "`/delete_listing - Delete one of your active listings.`", inline=False)
-            embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn't you??")
-
+                                                                  "`/delete_listing` - Delete one of your active listings.", inline=False)
+            embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
+            embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
 
         # Update button states
@@ -98,20 +99,23 @@ def get_help_embed(user: discord.User):
     view = HelpView(user=user)
     embed = discord.Embed(
         title="📜 Prefix Commands",
-        description="Use these commands with `!` before the command name.\nAll commands are case-insensitive except for `!helloVeyra`\n\n**Example:** `!balance`, `!shop`",
+        description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
 
         color=discord.Color.blurple()
     )
-    embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much stash you've got!", inline=False)
-    embed.add_field(name="🔥 Exp", value="`!checkexp` - See your current level along with your experience points.", inline=False)
-    embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets if there's an ongoing race.", inline=False)
+    embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much gold you've got stashed away!", inline=False)
+    embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
+    embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
     embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                         "`!solve_wordle` - Let me solve the entire Wordle for you if the hints aren't enough, cutie :3\n"
-                                         "`!quest` - Maybe I need some items? Why not check it out? You'll be rewarded for your efforts!", inline=False)
-    embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See what items you have and how many.", inline=False)
+                                         "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie :3\n"
+                                         "`!quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" \
+                                         "\n`!play` - We can play a number guessing game :3", inline=False)
+    embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
+    "\n`!info` - Confused? I can tell you about any item — just name it!" \
+    "\n`!use` - Use any usable item from your inventory.", inline=False)
     embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
-    embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything from the currently active shop.\n"
-                                         "`!sell` - Sell your items if they're in the buyback shop.", inline=False)
+    embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
+                                         "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
     embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
     embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
     return embed, view

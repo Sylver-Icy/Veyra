@@ -244,5 +244,23 @@
     "cooldown": "Once a day",
     "examples": ["!play"],
     "notes": "Each stage requires a guess; rewards increase with progress. Losing early still grants partial rewards."
-  }
+  },
+  "use": {
+    "title": "🪄 Use Item",
+    "description": "Use a consumable or usable item from your inventory, such as potions, keys, or special items. Each item has unique effects when used.",
+    "usage": "!use <item name>",
+    "category": "Inventory / Utility",
+    "cooldown": "5s per user",
+    "examples": ["!use Potion of EXP", "!use Hint Key", "!use Bag of Gold"],
+    "notes": "Certain items can only be used in specific situations (e.g., Hint Key during number guessing). Using an item consumes one unit from your inventory."
+  },
+  "leaderboard": {
+  "title": "📈 Leaderboard",
+  "description": "Shows the richest players ranked by their total gold balance.",
+  "usage": "/leaderboard",
+  "category": "Economy / Stats",
+  "cooldown": "Once per hour per user",
+  "examples": ["/leaderboard"],
+  "notes": "This command updates real and  there is another also a automatic weekly tag that tags the top 3 users every Weekend."
+}
 }

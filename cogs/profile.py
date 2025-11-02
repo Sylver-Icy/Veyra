@@ -2,6 +2,7 @@ import asyncio
 from discord.ext import commands
 
 from services.users_services import is_user, add_user
+from services.inventory_services import give_item
 from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed
 
 class Profile(commands.Cog):
@@ -30,8 +31,10 @@ class Profile(commands.Cog):
                 msg = await self.bot.wait_for("message", timeout=30, check=check) #30 sec wait time for user to respond
 
                 if msg.content.lower() == "yes":
-                    await ctx.send("Yay! Welcome onboard 🎉")
+                    await ctx.send("Yay! Here keep these bags of gold as a gift for our new friendship ^^")
                     add_user(user_id, user_name)
+                    give_item(user_id, 183, 2)
+
                 else:
                     await ctx.send("Go fuck yourself 😇")
 

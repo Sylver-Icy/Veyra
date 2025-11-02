@@ -1,0 +1,4 @@
+sessions = {
+    "guess": {},
+    "wordle": {},
+}

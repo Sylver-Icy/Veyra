@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, PrimaryKeyConstraint, BigInteger, String, Integer
+from sqlalchemy import Column, ForeignKey, PrimaryKeyConstraint, BigInteger, String, Integer, Boolean
 from sqlalchemy.orm import relationship
 from models.users_model import Base
 
@@ -26,6 +26,7 @@ class Items(Base):
     item_icon = Column(String, nullable=True)
     item_durability = Column(Integer, nullable=True)
     item_price = Column(Integer,nullable=False)
+    item_usable = Column(Boolean, nullable=False, default=False)
 
     inventory = relationship('Inventory', back_populates='item')
     marketplace = relationship('Marketplace', back_populates='item')
