@@ -146,7 +146,7 @@
     "category": "Games / Gambling",
     "cooldown": "15 minutes since the last race",
     "examples": ["/start_race"],
-    "notes": "Race outcomes are random with no animal having a higher chance of winning. RNG governs the results."
+    "notes": "Race outcomes are random with no animal having a higher chance of winning. RNG governs the results.\nUse `<!commandshelp explainrace>` for in depth guide."
   },
 
   "shop": {

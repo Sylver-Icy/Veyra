@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from services.users_services import is_user, add_user
 from services.inventory_services import give_item
-from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed
+from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed
 
 class Profile(commands.Cog):
 
@@ -49,7 +49,17 @@ class Profile(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1,5,commands.BucketType.user)
-    async def commandhelp(self, ctx, command_name):
+    async def commandhelp(self, ctx, *, command_name):
+        if command_name.lower() in ("explainrace", "explain race"):
+            embed = race_guide_embed()
+            await ctx.send(embed=embed)
+            return
+
+        if command_name.lower() in ("explain battle", "explainbattle"):
+            embed = battle_guide_embed()
+            await ctx.send(embed=embed)
+            return
+
         embed = get_command_info_embed(command_name)
         await ctx.send(embed=embed)
 
