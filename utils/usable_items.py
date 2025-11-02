@@ -34,7 +34,7 @@ def use_jar_of_exp(user_id: int):
 @UsableItemHandler.register("Bag of Gold")
 def use_bag_of_gold(user_id: int):
     add_gold(user_id, 100)
-    return "You opened you Bag of Gold and found 100 gold :O \nUse it responsibly :>"
+    return "You opened your Bag of Gold and found 100 gold :O \nUse it responsibly :>"
 
 @UsableItemHandler.register("Hint Key")
 def use_hint_key(user_id: int):

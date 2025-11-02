@@ -15,6 +15,17 @@ class Lootbox(commands.Cog):
     @commands.cooldown(1,5,commands.BucketType.user)
     async def open(self, ctx, *, lootbox_name: str):
         """Open a lootbox and receive a random reward."""
+        if lootbox_name.lower() not in ("wooden box", "stone box", "iron box", "platinum box"):
+            await ctx.send(
+                "❌ Incorrect box name. Available boxes are:\n"
+                "• Wooden Box\n"
+                "• Stone Box\n"
+                "• Iron Box\n"
+                "• Platinum Box\n"
+                "Choose wisely :)"
+            )
+            return
+
         lootbox_amount = user_lootbox_count(ctx.author.id, lootbox_name)
 
         # Invalid lootbox
