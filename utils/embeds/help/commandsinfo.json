@@ -52,7 +52,7 @@
   "quest": {
     "title": "🎯 Quest",
     "description": "Check for active quests or mini-tasks available to you. Complete them to earn rewards.",
-    "usage": "!quest",
+    "usage": "/quest",
     "category": "Events",
     "cooldown": "30s per user",
     "examples": ["!quest"],

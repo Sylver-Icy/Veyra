@@ -32,8 +32,7 @@ class HelpView(discord.ui.View):
             embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
             embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
             embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                                 "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie :3\n"
-                                                 "`!quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" \
+                                                 "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
                                                  "\n`!play` - We can play a number guessing game :3", inline=False)
             embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
             "\n`!info` - Confused? I can tell you about any item — just name it!" \
@@ -55,7 +54,8 @@ class HelpView(discord.ui.View):
                                                   "`/start_race` - Start an animal race and bet your gold to win more!!!", inline=False)
             embed.add_field(name="💸 Economy", value="`/transfer_gold` - Send your gold to your friends :O", inline=False)
             embed.add_field(name="㊗️ Wordle", value="`/wordle_hint` - Get a hint if you just can't guess the next word.", inline=False)
-            embed.add_field(name="📦 Inventory", value="`/transfer_item` - Give items from your inventory to your friends.", inline=False)
+            embed.add_field(name="📦 Inventory", value="`/transfer_item` - Give items from your inventory to your friends." \
+                                         "`/quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" ,inline=False)
             embed.add_field(name="🛍️ Shop and Marketplace", value="`/shop` - View the shop embed. Check what items I'm selling and buying.\n"
                                                                   "`/create_listing` - Create a marketplace listing others can buy at the price you set.\n"
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
@@ -99,7 +99,7 @@ def get_help_embed(user: discord.User):
     view = HelpView(user=user)
     embed = discord.Embed(
         title="📜 Prefix Commands",
-        description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
+        description="Use these commands with `!` before the command name.\n\n**Example:** `!checkwallet`, `!quest`",
 
         color=discord.Color.blurple()
     )
@@ -107,8 +107,7 @@ def get_help_embed(user: discord.User):
     embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
     embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
     embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                         "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie :3\n"
-                                         "`!quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" \
+                                         "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
                                          "\n`!play` - We can play a number guessing game :3", inline=False)
     embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
     "\n`!info` - Confused? I can tell you about any item — just name it!" \

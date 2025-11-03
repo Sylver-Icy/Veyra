@@ -35,22 +35,30 @@ class BattleManager:
 
         # Both players choose to attack
         if player1.current_stance == 'attack' and player2.current_stance == 'attack':
-            p1_dmg = player1.deal_dmg(player2)
-            p2_dmg = player2.deal_dmg(player1)
 
             if player1.speed > player2.speed:  # p1 attacks first
+                p1_dmg = player1.deal_dmg(player2)
                 if player2.hp <= 0:
                     return (f"{player1.name} killed {player2.name} before they could attack")
+
+                p2_dmg = player2.deal_dmg(player1)
                 return (f"{player1.name} and {player2.name} both chose to attack. Since {player1.name} is faster "
                         f"they went first and dealt {p1_dmg} dmg, {player2.name} responded back with {p2_dmg} dmg")
 
             if player2.speed > player1.speed:  # p2 attacks first
+                p2_dmg = player2.deal_dmg(player1)
                 if player1.hp <= 0:
                     return (f"{player2.name} killed {player1.name} before they could attack")
+
+                p1_dmg = player1.deal_dmg(player2)
                 return (f"{player1.name} and {player2.name} both chose to attack. Since {player2.name} is faster "
                         f"they went first and dealt {p2_dmg} dmg, {player1.name} responded back with {p1_dmg} dmg")
 
             # Both players die at the same time (same speed)
+            p1_dmg = player1.deal_dmg(player2)
+            p2_dmg = player2.deal_dmg(player1)
+
+
             return (f"coz of same speed both attacked at same time {player1.name} dealt {p1_dmg} dmg and "
                     f"{player2.name} deal {p2_dmg}")
 

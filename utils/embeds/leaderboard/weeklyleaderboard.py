@@ -1,7 +1,7 @@
 import discord
 from utils.embeds.leaderboard.leaderboardembed import weekly_gold_leaderboard
 
-async def send_weekly_leaderboard(bot, guild_id = 1352515074886996062, channel_id = 1434228570380566559):
+async def send_weekly_leaderboard(bot, guild_id = 1419040189782818950, channel_id = 1419055380557992037):
     """
     Sends the weekly leaderboard embed to a specific channel.
 

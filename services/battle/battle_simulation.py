@@ -40,7 +40,7 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             try:
                 await asyncio.wait_for(view.wait(), timeout=TIMEOUT_SECONDS)
             except asyncio.TimeoutError:
-                # View might not have stopped; we'll handle penalties below
+                # View might not have stopped;  handle penalties below
                 pass
 
             # Determine selections and timeouts
@@ -55,27 +55,10 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             if p2_move is None:
                 p2_move = "attack"
 
-            # Execute + resolve the round via your engine
+            # Execute + resolve the round via  ngine
             bm.execute_turn(p1_move, p2_move)
             result_text = bm.resolve_round()
-            bm.execute_turn(p1_move, p2_move)
-            result_text = bm.resolve_round()
-
-            # 🧠 Early exit check: if someone died inside resolve_round()
-            if p1.hp <= 0 and p2.hp <= 0:
-                final_embed = build_final_embed(None, None, bet, both_dead=True)
-                await ctx.channel.send(embed=final_embed)
-                return
-            elif p1.hp <= 0:
-                add_gold(target.id, int((bet * 2) * 0.9))
-                final_embed = build_final_embed(target.name, challenger.name, bet)
-                await ctx.channel.send(embed=final_embed)
-                return
-            elif p2.hp <= 0:
-                add_gold(challenger.id, int((bet * 2) * 0.9))
-                final_embed = build_final_embed(challenger.name, target.name, bet)
-                await ctx.channel.send(embed=final_embed)
-                return
+           
 
             # Apply timeout penalties AFTER resolution
             penalty_notes = []

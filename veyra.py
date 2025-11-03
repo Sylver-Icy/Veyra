@@ -37,7 +37,8 @@ if not TOKEN:
     sys.exit(1)
 
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True)
+bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True, help_command=None)
+
 
 
 # ─── GLOBAL CHECKS ────────────────────────────────────────────────

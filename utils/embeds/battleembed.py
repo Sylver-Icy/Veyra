@@ -63,7 +63,7 @@ async def send_battle_challenge(ctx, challenger_id: int, target_id: int, bet_amo
     embed = discord.Embed(
         title="⚔️ 1v1 Battle Challenge",
         description=(
-            f"{target.mention}, **{challenger.name}** has challenged you to a duel!\n\n"
+            f"*Warrior* {target.name}, **{challenger.name}** has challenged you to a duel!\n\n"
             f"💰 **Bet:** {bet_amount}\n"
             f"🏆 **Winner Reward:** {bet_amount * 2}\n\n"
             f"Do you accept this challenge?"
@@ -73,7 +73,7 @@ async def send_battle_challenge(ctx, challenger_id: int, target_id: int, bet_amo
     embed.set_footer(text="You have 60 seconds to respond.")
 
     view = BattleRequestView(challenger, target, bet_amount)
-    msg = await ctx.respond(embed=embed, view=view)
+    msg = await ctx.respond(content = f"<@{target_id}>", embed=embed, view=view)
     await view.wait()
 
     if view.accepted is None:

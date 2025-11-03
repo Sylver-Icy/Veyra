@@ -9,6 +9,7 @@ class Profile(commands.Cog):
 
     def __init__(self,bot):
         self.bot=bot
+        self.users_pending = set()
 
     @commands.command()
     @commands.cooldown(1,15,commands.BucketType.user)
@@ -22,6 +23,10 @@ class Profile(commands.Cog):
         if is_user(user_id): #Checks if the an already registered user is using the command
             await ctx.send(f"Hello {user_name}! nice to see you again :)")
         else:
+            if user_id in self.users_pending:
+                await ctx.send("You haven't replied to me my previous message. YOU WANNA BE FRIEND WITH ME OR NOT.")
+                return
+            self.users_pending.add(user_id)
             await ctx.send("Hy there wanna be frnds with me? (Yes/No)") #Initiates the registration process
 
             def check(m): #Checks if the message sent is sent by same user in same channel and is in correct form
@@ -34,8 +39,10 @@ class Profile(commands.Cog):
                     await ctx.send("Yay! Here keep these bags of gold as a gift for our new friendship ^^")
                     add_user(user_id, user_name)
                     give_item(user_id, 183, 2)
+                    self.users_pending.remove(user_id)
 
                 else:
+                    self.users_pending.remove(user_id)
                     await ctx.send("Go fuck yourself 😇")
 
             except asyncio.TimeoutError: #If user didn't reply in 30 sec let them know command ended
