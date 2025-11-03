@@ -51,7 +51,8 @@ async def start_race(ctx):
             if positions[a] >= finish_line:
                 winner = emoji_to_name[a]
                 # Show final embed with winner
-                await message.edit(embed=create_final_embed(positions, winner))
+                embed, view = create_final_embed(positions, winner)
+                await message.edit(embed=embed, view=view)
                 # Distribute rewards to bettors
                 await distribute_rewards(ctx, winner)
                 return

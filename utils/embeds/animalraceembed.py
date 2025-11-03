@@ -71,7 +71,7 @@ def race_start_embed(starter: discord.User):
     embed = discord.Embed(
         title="🏁 Race Incoming!",
         description=f"{starter.mention} wants to start a race!\n"
-                    "The race will begin in **5 minutes** — place your bets now!",
+                    "The race will begin in **3 minutes** — place your bets now!",
         color=discord.Color.green()
     )
     # Mention users who requested reminders, if any
@@ -79,7 +79,7 @@ def race_start_embed(starter: discord.User):
     embed.description += "\n\n🔔 Ding ding! Reminder for my forgetful crew — don't miss this race!"
     # Footer info for betting instructions
     embed.set_footer(
-        text="Use `bet! <animal> <amount to bet>` to bet. \nAnimal name case insensitive btw:>"
+        text="Use `!bet <animal> <amount to bet>` to bet. \nAnimal names are case insensitive btw:>"
     )
     return embed, mentions
 
@@ -117,7 +117,7 @@ def create_final_embed(positions: dict, winner: str):
         winner (str): The animal emoji/name that won (e.g. '🐇').
 
     Returns:
-        discord.Embed: Embed summarizing the race results.
+        tuple: (discord.Embed, JoinBettersButtonView) - Embed summarizing the race results and a view with a join button.
     """
     track_length = 30
     # Build track lines with final positions, including numeric progress
@@ -138,6 +138,51 @@ def create_final_embed(positions: dict, winner: str):
     standings = sorted(positions.items(), key=lambda x: x[1], reverse=True)
     standings_text = "\n".join(f"{i+1}. {a} — {p} steps" for i, (a, p) in enumerate(standings))
     embed.add_field(name="Final Standings", value=standings_text, inline=False)
-    # Footer includes reward info
-    embed.set_footer(text="Distributing rewards... Good luck next time!")
-    return embed
+    # Footer includes reward info and new footer text
+    embed.set_footer(text="Had fun? Want me to remind you about future races?")
+    view = JoinBettersButtonView()
+    return embed, view
+
+class JoinBettersButtonView(discord.ui.View):
+    """
+    View containing a button for users to join the 'Betters' role.
+    Assigns the role to users who click the button if they don't already have it.
+    """
+    @discord.ui.button(label="Yes, I'm in!", style=discord.ButtonStyle.success, custom_id="join_betters")
+    async def join_betters(self, button: discord.ui.Button, interaction: discord.Interaction):
+        """
+        Handle the 'Yes, I'm in!' button click.
+        Checks for or creates the 'Betters' role and assigns it to the user.
+        """
+        guild = interaction.guild
+        member = interaction.user
+
+        if guild is None:
+            await interaction.response.send_message("This command can only be used in a server.", ephemeral=True)
+            return
+
+        # Check if role exists, else create it
+        role = discord.utils.get(guild.roles, name="Betters")
+        if role is None:
+            try:
+                role = await guild.create_role(name="Betters", reason="Role for race betters")
+            except discord.Forbidden:
+                await interaction.response.send_message("I don't have permission to create roles.", ephemeral=True)
+                return
+            except discord.HTTPException:
+                await interaction.response.send_message("Failed to create role due to an unexpected error.", ephemeral=True)
+                return
+
+        # Check if member already has the role
+        if role in member.roles:
+            await interaction.response.send_message("You already have the 'Betters' role! Thanks for participating.", ephemeral=True)
+            return
+
+        # Assign the role to the member
+        try:
+            await member.add_roles(role, reason="User joined Betters role via race embed button")
+            await interaction.response.send_message("You've been added to the 'Betters' role! Good luck with your bets!", ephemeral=True)
+        except discord.Forbidden:
+            await interaction.response.send_message("I don't have permission to assign roles.", ephemeral=True)
+        except discord.HTTPException:
+            await interaction.response.send_message("Failed to assign role due to an unexpected error.", ephemeral=True)

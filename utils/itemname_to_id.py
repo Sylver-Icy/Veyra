@@ -6,7 +6,7 @@ from rapidfuzz import process
 
 def clean_name(name: str) -> str:
     """Removes all non-alphabetic characters and converts to lowercase."""
-    return re.sub(r'[^a-z]', '', name.lower())
+    return re.sub(r'[^a-z ]', '', name.lower())
 
 
 def load_item_map():

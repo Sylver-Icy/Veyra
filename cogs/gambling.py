@@ -1,5 +1,5 @@
 """Cog module for managing gambling-related commands, including starting animal races and placing bets."""
-
+import discord
 from discord.ext import commands
 import asyncio
 from services.race_services import start_race, add_bets
@@ -41,7 +41,18 @@ class Gambling(commands.Cog):
 
         # Generate and send race start embed and mentions
         embed, mentions = race_start_embed(ctx.author)
-        await ctx.respond(content = mentions, embed= embed)
+        role = discord.utils.get(ctx.guild.roles, name="Betters")
+
+        allowed_mentions = discord.AllowedMentions(roles=True, users=True, everyone=False)
+
+        if role:
+            await ctx.respond(
+                content=f"{mentions} {role.mention}",
+                embed=embed,
+                allowed_mentions=allowed_mentions
+            )
+        else:
+            await ctx.respond(content=mentions, embed=embed, allowed_mentions=allowed_mentions)
 
         # Wait for betting phase duration (180 seconds)
         await asyncio.sleep(180)  # 3minutes
