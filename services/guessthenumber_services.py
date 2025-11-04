@@ -183,11 +183,11 @@ class Guess:
             await ctx.send(f"Well and with that, game over. You get:\n{reward}")
 
             # Mark as played for today
-            # with Session() as session:
-            #     daily = session.get(Daily, ctx.author.id)
-            #     if daily:
-            #         daily.number_game = True
-            #         session.commit()
+            with Session() as session:
+                daily = session.get(Daily, ctx.author.id)
+                if daily:
+                    daily.number_game = True
+                    session.commit()
         except asyncio.TimeoutError:
             await ctx.send("I'm not gonna be waiting forever for your guess. Arghhh")
         finally:

@@ -196,9 +196,14 @@ def use_item(user_id: int, item_id: str):
         if not handler:
             return f"{item.item_name} is marked as usable but has no handler (dev issue)."
 
-        # Run item logic
-        result = handler(user_id)
 
-        # Remove the item after use
-        take_item(user_id, item.item_id, 1)
+
+        # Remove the item before use
+        try:
+            take_item(user_id, item.item_id, 1)
+             # Run item logic
+            result = handler(user_id)
+
+        except NotEnoughItemError:
+            return(f"You don't have any {item.item_name} left. Buy or trade some to use it.")
         return result

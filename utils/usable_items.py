@@ -41,6 +41,7 @@ def use_hint_key(user_id: int):
     guess_sessions = sessions["guess"]
     print("Current guess sessions:", guess_sessions)
     print("Session type for user:", type(guess_sessions.get(user_id)))
+    
     if user_id in guess_sessions:
         guess_sessions[user_id].key_used = True
         return "🔑 You activated your Hint Key! Your next wrong guess will give a hint instead of ending the game.\n**Valid only for current stage**."
