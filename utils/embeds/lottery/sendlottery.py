@@ -4,7 +4,7 @@ from services.lottery_services import reset_lottery
 last_lottery_message = None  # store the latest message object globally
 
 
-async def send_lottery(bot, ticket_price: int, channel_id=1419055651207909467, guild_id=1419040189782818950):
+async def send_lottery(bot, ticket_price: int, channel_id=1436044897340887191, guild_id=1419040189782818950):
     global last_lottery_message  # to modify the global variable
 
     guild = bot.get_guild(guild_id)
@@ -30,7 +30,7 @@ async def send_lottery(bot, ticket_price: int, channel_id=1419055651207909467, g
 
 
 
-async def send_result(bot, channel_id=1419055651207909467, guild_id=1419040189782818950):
+async def send_result(bot, channel_id=1436044897340887191, guild_id=1419040189782818950):
 
     guild = bot.get_guild(guild_id)
     if not guild:

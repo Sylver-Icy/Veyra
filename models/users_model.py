@@ -46,6 +46,7 @@ class LotteryEntries(Base):
 
     user_id = Column(BigInteger, primary_key=True)
     tickets = Column(JSONB, default=list)
+    ticket_price = Column(Integer, default=10)
 
 class Friendship(Base):
     __tablename__ = 'friendship'

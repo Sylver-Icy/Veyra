@@ -1,7 +1,8 @@
 import discord
 from discord.ui import View, Button
 
-from services.lottery_services import create_ticket, pick_lottery_winner
+from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool
+from services.economy_services import add_gold
 
 from utils.emotes import GOLD_EMOJI
 
@@ -51,9 +52,14 @@ def create_result_embed():
 
 
     winner_id, ticket_id = result
+    prize = calculate_prize_pool()
     embed = discord.Embed(
         title="🎉 Lottery Winner 🎊",
         description=f"The winning ticket number is **{ticket_id}**!\nOwned by <@{winner_id}>.",
         color=discord.Color.red()
     )
+
+    embed.add_field(name=f"Congratulations on winning {prize} {GOLD_EMOJI}", value="Your winnings have been deposited")
+    add_gold(winner_id, prize)
+
     return embed

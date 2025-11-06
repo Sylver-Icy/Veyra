@@ -1,5 +1,7 @@
 import random
 
+from sqlalchemy.orm.attributes import flag_modified
+
 from database.sessionmaker import Session
 from models.users_model import LotteryEntries
 
@@ -10,28 +12,29 @@ from utils.custom_errors import UserNotFoundError
 tickets_created = set()
 
 def create_ticket(user_id: int, ticket_price: int):
-
-    #return 0 if user doesn't have money for ticket
+    # return 0 if user doesn't have money for ticket
     if ticket_price > check_wallet(user_id):
         return 0
     try:
         remove_gold(user_id, ticket_price)
-
     except UserNotFoundError:
-        return 1 #return 1 if unregistered user tries to buy tickets
+        return 1  # return 1 if unregistered user tries to buy tickets
 
     ticket_id = random.randint(1000000, 9999999)
     while ticket_id in tickets_created:
         ticket_id = random.randint(1000000, 9999999)
     tickets_created.add(ticket_id)
+
     with Session() as session:
-        entry = session.query(LotteryEntries).filter_by(user_id=user_id).first()
+        entry = session.get(LotteryEntries, user_id)
         if entry:
-            tickets = entry.tickets or []
-            tickets.append(ticket_id)
-            entry.tickets = tickets
+            entry.tickets = entry.tickets + [ticket_id]
         else:
-            entry = LotteryEntries(user_id=user_id, tickets=[ticket_id])
+            entry = LotteryEntries(
+                user_id=user_id,
+                tickets=[ticket_id],
+                ticket_price=ticket_price
+            )
             session.add(entry)
 
         session.commit()
@@ -65,3 +68,17 @@ def reset_lottery():
         session.commit()
     tickets_created.clear()
 
+
+def calculate_prize_pool():
+    """Calculate the total gold in the prize pool based on all tickets sold."""
+    with Session() as session:
+        entries = session.query(LotteryEntries).all()
+        if not entries:
+            return 0
+
+        total = 0
+        for entry in entries:
+            print(entry.tickets)
+            total += len(entry.tickets) * entry.ticket_price
+        print (total)
+        return total
