@@ -4,6 +4,9 @@ import discord
 from services.economy_services import add_gold, remove_gold, check_wallet
 from services.response_services import create_response
 from services.users_services import is_user
+from services.friendship_services import add_friendship
+
+
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
 from utils.embeds.leaderboard.leaderboardembed import gold_leaderboard_embed
@@ -50,6 +53,13 @@ class Economy(commands.Cog):
             await ctx.respond(response)
             remove_gold(ctx.author.id, amount)
             logger.info("Gold was given to Veyra", extra={"user": ctx.author.name, "flex": f"Gold amount: {amount}", "cmd": "transfer_gold"})
+
+            if amount >= 10:
+                friendship_gain = amount // 10  # 1 EXP per 10 gold
+                add_friendship(ctx.author.id, friendship_gain)
+
+            add_friendship(ctx.author.id, 1)
+
             return
 
         try:

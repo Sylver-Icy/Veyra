@@ -25,6 +25,8 @@ from services.inventory_services import (
 )
 from services.users_services import is_user
 from services.response_services import create_response
+from services.friendship_services import add_friendship
+
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError
 
@@ -56,7 +58,7 @@ class Inventory(commands.Cog):
         if not is_user(target.id):
             await ctx.respond(f"Umm sorry {ctx.author.name}, they're not frnds with me. Can't interact")
             return
-        
+
         # Convert item name to ID and get suggestions if not found
         item_id, suggestions = get_item_id_safe(item_name)
 
@@ -85,6 +87,9 @@ class Inventory(commands.Cog):
         if target.id == self.bot.user.id:
             try:
                 take_item(ctx.author.id, item_id, amount)
+
+                add_friendship(ctx.author.id, 9*amount)
+
                 response = create_response("transfer_item", 2, user=ctx.author.display_name, item=item_name)
                 await ctx.respond(response)
                 logger.info("%s was given to the bot", item_name, extra={"user": ctx.author.name, "flex": f"amount: {amount}", "cmd": "transfer_item"})

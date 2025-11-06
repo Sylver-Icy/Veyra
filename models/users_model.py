@@ -40,4 +40,16 @@ class Daily(Base):
 
     user_id = Column(BigInteger, primary_key=True)
     number_game = Column(Boolean, default=False)
-    
+
+class LotteryEntries(Base):
+    __tablename__ = 'lottery_entries'
+
+    user_id = Column(BigInteger, primary_key=True)
+    tickets = Column(JSONB, default=list)
+
+class Friendship(Base):
+    __tablename__ = 'friendship'
+
+    user_id = Column(BigInteger, primary_key=True)
+    friendship_exp = Column(Integer, default=0)
+    daily_exp = Column(Integer, default=0)

@@ -77,7 +77,7 @@ class BattleManager:
 
             player2.hp -= dmg
             return (
-                f"{player2.name} tried to block {player1.name}'s attack but was too slow, "
+                f"{player2.name} tried to block {player1.name}'s attack they were too slow, "
                 f"taking the full {dmg} damage."
     )
 
@@ -144,13 +144,9 @@ class BattleManager:
             recovered_amount = regen_result[recovered_stat]
             block_result = player2.block(player1, 0)
 
-            if block_result['status'] == 'failed':
-                return f"{player1.name} successfully got his {recovered_stat} by {recovered_amount} points while {player2.name} blocked loosing {block_result['defense_drain']} defense and {block_result['hp_drain']} hp."
+            if block_result['status'] == 'wrong_guess':
+                return f"{player1.name} successfully got his {recovered_stat} by {recovered_amount} points while {player2.name} blocked loosing {block_result['defense_debuff']} defense."
 
-            return (
-                f"{player1.name} successfully got their {recovered_stat} by {recovered_amount} points. \n"
-                f"{player2.name} was too low on defense so they lost extra hp. {block_result['hp_drain']} Hp lost."
-                    )
 
         # Player1 recovers, Player2 counters
         if player1.current_stance == 'recover' and player2.current_stance == 'counter':
@@ -175,13 +171,9 @@ class BattleManager:
             recovered_amount = regen_result[recovered_stat]
             block_result = player1.block(player2, 0)
 
-            if block_result['status'] == 'failed':
-                return f"{player2.name} successfully got his {recovered_stat} by {recovered_amount} points while {player1.name} blocked loosing {block_result['defense_drain']} defense and {block_result['hp_drain']} hp."
+            if block_result['status'] == 'wrong_guess':
+                return f"{player2.name} successfully got his {recovered_stat} by {recovered_amount} points while {player1.name} blocked loosing {block_result['defense_debuff']} defense."
 
-            return (
-                f"{player2.name} successfully got their {recovered_stat} by {recovered_amount} points. \n"
-                f"{player1.name} was too low on defense so they lost extra hp. {block_result['hp_drain']} Hp lost."
-                    )
 
         # Player1 attacks, Player2 recovers
         if player1.current_stance == 'attack' and player2.current_stance == 'recover':

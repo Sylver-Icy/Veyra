@@ -3,6 +3,9 @@ from discord.ext import commands
 
 from services.users_services import is_user, add_user
 from services.inventory_services import give_item
+from services.friendship_services import check_friendship
+from services.response_services import create_response
+
 from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed
 
 class Profile(commands.Cog):
@@ -21,7 +24,17 @@ class Profile(commands.Cog):
         user_name = ctx.author.name
 
         if is_user(user_id): #Checks if the an already registered user is using the command
-            await ctx.send(f"Hello {user_name}! nice to see you again :)")
+            title, progress = check_friendship(user_id)
+            if title in ("Stranger", "Acquaintance", "Casual"):
+                response = create_response("friendship_check", 1, user=user_name, title=title, progress=progress)
+
+            elif title in ("Friend, Close Friend"):
+                response = create_response("friendship_check", 2, user=user_name, title=title, progress=progress)
+
+            else:
+                response = create_response("friendship_check", 3, user=user_name, title=title, progress=progress)
+
+            await ctx.send(response)
         else:
             if user_id in self.users_pending:
                 await ctx.send("You haven't replied to me my previous message. YOU WANNA BE FRIEND WITH ME OR NOT.")

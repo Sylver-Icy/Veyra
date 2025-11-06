@@ -1,5 +1,14 @@
 import discord
 from math import ceil
+import random
+
+footers = (
+    "Hmmm why don't you sell some of these on marketplace?",
+    "Try /quest maybe you can make money off your items",
+    "You know I can buy these? /shop then checkbuy to know what I need today",
+    "What are you checking? Planning to trade these with others or sell them back to me?"
+)
+
 def build_inventory(user_name: str,items: list):
     pages=[] #empty list to store pages
     if not items:
@@ -30,8 +39,10 @@ def build_inventory(user_name: str,items: list):
                     inline=False
                 )
             embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/921681249817493554/1385546878485266532/2897785.png?ex=68567696&is=68552516&hm=f88a7b1a913ba04fded51cc41024747011e3cce42acbd2d95e2b83c2b8a21ae4")
+            random_footer = random.choice(footers)
+            embed.set_footer(text=random_footer)
             pages.append(embed)
-            
+
     return pages
 
 def build_item_info_embed(item: dict):

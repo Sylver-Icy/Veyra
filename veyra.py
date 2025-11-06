@@ -65,7 +65,7 @@ async def is_registered(ctx):
 async def on_ready():
     """Run background jobs and log when the bot is ready."""
     try:
-        run_at_startup()
+        await run_at_startup(bot)
         schedule_jobs(bot)
 
         if not scheduler.running:

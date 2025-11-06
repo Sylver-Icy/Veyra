@@ -18,9 +18,9 @@ def shop_embed(shop_items: list) -> discord.Embed:
             inline=True
         )
 
-    embed.set_author(name="Shop refreshes every 5 minutes")
+    embed.set_author(name="Shop refreshes every 24 hours")
     embed.set_footer(text="**How to buy** -> !buy <item_name> <amount>  e.g.  !buy sword 4")
-    embed.set_image(url="https://cdn.discordapp.com/attachments/921681249817493554/1385331424252657765/images-3.jpeg")
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1275870091002777643/1435918001621827604/image.png")
     return embed
 
 
@@ -37,7 +37,7 @@ def buyback_shop_embed(shop_items: list) -> discord.Embed:
             value=item['description'],
             inline=False
         )
-    embed.set_author(name="Shop refreshes every 5 minutes")
+    embed.set_author(name="Shop refreshes every 24 hours")
     embed.set_footer(text="How to sell -> !sell <item_name> <amount>  e.g.  !sell sword 4")
     return embed
 

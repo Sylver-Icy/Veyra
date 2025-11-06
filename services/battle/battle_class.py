@@ -18,7 +18,7 @@ class Battle:
         self.defense = 10
         self.speed = 10
         self.hp = 50
-        self.mana = 10
+        self.mana = 12
         self.current_stance = 'idle'
         self.status_effect = 'none'
         self.name = name
@@ -76,7 +76,7 @@ class Battle:
                 }
 
             # Successful block: increase defense and reduce HP damage to 30%
-            random_defense_buff = random.randint(6, 9)
+            random_defense_buff = random.randint(16, 29)
             self.defense += random_defense_buff
             self.hp -= int(dmg * 0.3)
             return {
@@ -86,24 +86,11 @@ class Battle:
 
         else:
             # Incorrect prediction: suffer defense and HP penalties
-            random_defense_debuff = random.randint(1, 5)
-            random_hp_drain = random.randint(1, 5)
-
-            if self.defense < random_defense_debuff:
-                self.hp -= int(random_hp_drain * 2.3)
-                return {
-                    'status': 'failed_with_low_def',
-                    'hp_drain': int(random_hp_drain *2.3)
-                }
-
-            else:
-                self.hp -= random_hp_drain
-                self.defense -= random_defense_debuff
-                return {
-                    'status': 'failed',
-                    'hp_drain': random_hp_drain,
-                    'defense_drain': random_defense_debuff
-                }
+            random_defense_debuff = random.randint(5, 10)
+            return{
+                'status': 'wrong_guess',
+                'defense_debuff': random_defense_debuff
+            }
 
     def counter(self, target: 'Battle', dmg):
         """
@@ -252,7 +239,7 @@ class Battle:
             new_value = max(0, current_value - 2)
             setattr(self, stat_affected, new_value)
             return (stat_affected, new_value)
-        
+
 
     def set_stance(self, stance: str):
         """
