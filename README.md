@@ -1,82 +1,78 @@
-# ✨ Veyra — The Discord Bot That Does It All (WIP)
+<img src="banner.png"  width="100%" />
 
-> Why settle for 10 bots... when you can have **one** that does it better?
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
+![Status](https://img.shields.io/badge/Status-WIP-yellow)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Built With Love](https://img.shields.io/badge/Built%20With-Love-purple)
 
-Veyra’s a modular Discord bot I’m building with a bunch of fun, useful, and just plain chaotic features — like **moderation**, **economy**, **RPG**, and **cool minigames** — all running on a production-grade codebase.
-More features coming soon… because I can’t stop adding stuff T-T
 
----
+# :gear: Veyra — The Discord Bot That Does It All (WIP)
 
-## 🚀 What Can Veyra Do (as of now)?
+> **Modular. Intelligent. Beautifully Over-engineered.**
 
-| Feature        | Status   | Description                                                                 |
-|----------------|----------|-----------------------------------------------------------------------------|
-| 💬 AI Chat     | ⚙️ WIP    | NSFW-safe routing, GPT for SFW, Kobold AI for wild mode                     |
-| 🎮 Mini-Games  | ✅        | Wordle Solver + Hinting, Reaction games, and more incoming                  |
-| 📈 Leveling    | ✅        | EXP system with custom rewards, roles, gifs and progression tracking        |
-| 💰 Economy     | ✅        | Gold system, shop, inventory, lootboxes, marketplace (soon™)                |
-| 🧩 Gacha RPG    | ⚙️ Soon  | PvP battles, card placement mechanics, spells, and base building            |
-| 🔨 Moderation  | ⚙️ WIP    | Custom NSFW classifier to auto mod creeps                                   |
+Veyra isn’t *a* Discord bot — she’s an entire ecosystem.  
+A self-learning, AI-integrated, event-driven framework that combines utility, RPG systems, social simulation, and procedural dialogue — all designed to feel alive inside your server.
 
 ---
 
-## 🧠 Tech Stack
+## :rocket: Core Features
 
-- **Python 3.11**
-- **[Pycord](https://docs.pycord.dev/)** – latest build
-- **PostgreSQL + SQLAlchemy ORM**
-- **Tenor API (for gifs)** & custom async logic
-- Full modular cog architecture – no spaghetti allowed
+| Module | Status | Description |
+|:--------|:--------:|:------------|
+| :speech_balloon: **AI Chat & Companions** | :gear: WIP | GPT-based SFW chat + Kobold AI sandbox for uncensored fun. Each user builds a unique bond with Veyra. |
+| :moneybag: **Economy & Marketplace** | :white_check_mark: | Dynamic economy with rarity tiers, player-driven trading, and fluctuating shop prices. |
+| :video_game: **Mini-Games & Events** | :white_check_mark: | Wordle, delivery runs, reaction duels, and timed global events. Instant dopamine. |
+| :school_satchel: **Inventory System** | :white_check_mark: | Track, trade, and flex hundreds of collectible items — all procedurally generated. |
+| :person_standing: **Friendship System** | :white_check_mark: | Talk, gift, and level up your relationship with Veyra. Unlock new dialogue and perks. |
+| :coin: **Work & Mining** | :white_check_mark: | Generate resources, find rare ores, and fuel the economy. |
+| :jigsaw: **Gacha RPG** | :white_check_mark: | PvP arena, mana-based combat, spell mechanics, and base building. |
+| :hammer: **Moderation Tools** | :gear: WIP | AI-powered NSFW classifier, auto-warns, and anti-spam — protects servers intelligently. |
+| :brain: **Procedural Dialogue Engine** | :white_check_mark: | Slot-based response generator ensuring no two interactions feel the same. |
 
 ---
 
-## 💡 Why Veyra Exists
+## :toolbox: Built With
+- **Language:** Python 3.11  
+- **Libraries:** Pycord, SQLAlchemy ORM  
+- **Database:** PostgreSQL  
+- **Extras:** Tenor API (GIFs), async event logic, full modular cog system  
+
+---
+
+## :bulb: Design Philosophy
 
 Most bots are:
-- ❌ Limited
-- ❌ Ugly
-- ❌ Dumb
-- ❌ Overpriced
+> :x: Bloated • :x: Shallow • :x: Boring
 
 Veyra is:
-- ✅ All-in-one
-- ✅ Built like a real product
-- ✅ Actually fun
+> :white_check_mark: Alive • :white_check_mark: Modular • :white_check_mark: Smart 
 
-She’s a **Discord-native experiment** in modular bot design, scalable AI integration, and a lot of creativity.
-
+She’s built like a **product**, not a script — architected for high uptime, plug-and-play features, and expandable AI logic.
 
 ---
 
-## 📸 Screenshots
-
-> Coming soon
-
----
-
-## 🧪 Wanna Help?
-
-Pull requests? Ideas? Wanna test new features?
-> **DM me on Discord(`sylver.icy`)** or open an issue.
+## :brain: What Makes Veyra Special
+- Dynamic dialogue system using weighted slot selection (no repetition, human-like variance)  
+- Global economy loop balancing inflation + rarity  
+- Real social systems (friendship XP, personality memory)  
+- Codebase structured for scaling — new modules can be added without rewriting a line of core logic  
+- 100% asynchronous, event-driven backend  
 
 ---
 
-## ⭐ Show Some Love
+## :chart_with_upwards_trend: Vision
 
-If you like the idea,
-**star the repo**,
-share it with your server.
-
+Veyra’s goal isn’t just to *automate Discord servers.*  
+It’s to **simulate a living world inside one** — economy, relationships, stories, and personalities — all in one modular AI shell.
 
 ---
 
-## 🛠️ Setup
-
-> This ain’t plug-and-play (yet), but if you know your way around Python and Discord bots:
+## :test_tube: Setup (for Developers)
 
 ```bash
-git clone https://github.com/sylver-icy/veyra
-cd veyra
+git clone https://github.com/Sylver-Icy/Veyra.git
+cd Veyra
 pip install -r requirements.txt
-# Add your token, DB config, and start Veyra!
+
+# Add your Discord token + PostgreSQL credentials to .env and responses.txt
 python veyra.py
