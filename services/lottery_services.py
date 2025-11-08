@@ -12,6 +12,10 @@ from utils.custom_errors import UserNotFoundError
 tickets_created = set()
 
 def create_ticket(user_id: int, ticket_price: int):
+    """
+    create a lottery draw ticket
+
+    """
     # return 0 if user doesn't have money for ticket
     if ticket_price > check_wallet(user_id):
         return 0
