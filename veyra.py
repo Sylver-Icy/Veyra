@@ -141,7 +141,8 @@ cogs_list = [
     'lootbox',
     'marketplace',
     'gambling',
-    'battle'
+    'battle',
+    "crafting"
 ]
 
 for cog in cogs_list:

@@ -35,5 +35,6 @@ def schedule_jobs(bot):
 async def run_at_startup(bot):
     """Runs the functions that need to fill values at bot startup"""
     await send_lottery(bot, 10)
-    update_daily_buyback_shop()
     update_daily_shop()
+    update_daily_buyback_shop()
+

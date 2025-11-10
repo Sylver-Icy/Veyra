@@ -13,6 +13,7 @@ class User(Base):
     level = Column(SmallInteger, default=1)
     joined = Column(TIMESTAMP, nullable=False)
     starter_given = Column(Boolean, nullable=False, default=False)
+    energy = Column(Integer, default=0)
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
