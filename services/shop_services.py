@@ -34,7 +34,7 @@ def update_daily_shop():
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
             .order_by(func.random())
-            .limit(6)
+            .limit(9)
             .all()
         )
 
@@ -56,14 +56,20 @@ def update_daily_shop():
 def update_daily_buyback_shop():
     """
     Updates the daily buyback shop with 4 random items of certain rarities.
+    Ensures no overlap with today's shop.
     The 4th item gets a bonus price multiplier.
     """
     with Session() as session:
+        # Collect all item IDs currently in daily shop
+        excluded_ids = [item["id"] for item in daily_shop_items]
+
+        # Fetch random items excluding those in daily shop
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
+            .where(~Items.item_id.in_(excluded_ids))
             .order_by(func.random())
-            .limit(4)
+            .limit(6)
             .all()
         )
 
@@ -73,12 +79,12 @@ def update_daily_buyback_shop():
                 "name": item.item_name,
                 "id": item.item_id,
                 "description": item.item_description,
-                "price": calculate_buy_price(item.item_rarity, bonus=(i == 3))  # Bonus for 4th item
+                "price": calculate_buy_price(item.item_rarity, bonus=(i == 5))  # Bonus for 6th item
             }
             for i, item in enumerate(random_items)
         ])
 
-    logger.info("Daily buyback shop updated")
+    logger.info("Daily buyback shop updated (no overlap with daily shop)")
 
 
 def calculate_buy_price(rarity: str, bonus: bool) -> int:
