@@ -19,9 +19,9 @@ daily_buyback_shop_items = []
 
 ITEM_RATE = {
     "Common": (5, 10),
-    "Rare": (15, 25),
-    "Epic": (50, 80),
-    "Legendary": (200, 300),
+    "Rare": (15, 22),
+    "Epic": (50, 70),
+    "Legendary": (200, 280),
     "Paragon": (600, 900)
 }
 
@@ -49,7 +49,7 @@ def update_daily_shop():
             }
             for item in random_items
         ])
-
+    print([(item["id"]) for item in daily_shop_items])
     logger.info("Daily shop updated")
 
 
@@ -67,7 +67,7 @@ def update_daily_buyback_shop():
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
-            .where(~Items.item_id.in_(excluded_ids))
+            .where(Items.item_id.notin_(excluded_ids))
             .order_by(func.random())
             .limit(6)
             .all()
@@ -83,8 +83,8 @@ def update_daily_buyback_shop():
             }
             for i, item in enumerate(random_items)
         ])
-
-    logger.info("Daily buyback shop updated (no overlap with daily shop)")
+    print([(item["id"]) for item in daily_buyback_shop_items])
+    logger.info("Daily buyback shop updated")
 
 
 def calculate_buy_price(rarity: str, bonus: bool) -> int:
