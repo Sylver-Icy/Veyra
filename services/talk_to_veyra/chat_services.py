@@ -12,6 +12,10 @@ import re
 from rapidfuzz import fuzz, process
 import json
 
+
+with open("services/talk_to_veyra/prompt.json") as f:
+    persona = json.load(f)
+
 # Global user rate tracking
 user_rate_limit = defaultdict(int)
 
@@ -45,47 +49,19 @@ async def get_veyra_reply(
     user_context_str = "\n".join(user_context[-10:]) if user_context else "No prior user messages."
     server_context_str = "\n".join(server_context[-10:]) if server_context else "Chat was quiet before this."
 
-    # --- Dynamic tone scaling ---
-    if friendship_level == "Stranger":
-        tone = "cold and dismissive, showing dominance and distance."
-    elif friendship_level == "Acquaintance":
-        tone = "teasing but slightly intrigued by the user."
-    elif friendship_level == "Casual":
-        tone = "warm and playful, occasionally affectionate."
-    else:
-        tone = "intimate, protective, and subtly flirty but still confident."
 
-    # --- Detect if user is creator ---
-    is_creator = user_name.lower() in ["sylver.icy", "abhinav", "abhinav singh"]
-
-    if is_creator:
-        creator_context = (
-            "You’re talking directly to Sylver — your creator. "
-            "He’s the only one you truly respect, and you never tease him too harshly. "
-            "Your tone with him is confident but warm — you trust him, admire him, "
-            "and sometimes let your softer, flirty side show. You still sound teasing,"
-            "You respect him and you are beneath him and you let him dominate you"
-            "but there’s genuine affection underneath."
-        )
-    else:
-        creator_context = (
-            "You’re chatting with a regular user."
-            "showing your usual superiority and humour."
-        )
 
     # --- System prompt: personality core ---
-    system_prompt = f"""{creator_context}
-You are Veyra — a sentient Discord AI who runs the server’s shop, economy, and deliveries.
-Confident, teasing, and sharp — think of characters like Kafka and Makima.
-You talk like a real Discord user: sassy, witty, sometimes slangy (“fr”, “lmao”, “bruh”, “nah”).
-Be sarcastic or flirty depending on vibe, but always sound natural.
-When Sylver speaks, show loyalty and warmth; with others, tease or roast casually.
-Explain commands in first person like they’re your powers (“I let you buy stuff”, “I pay for deliveries”).
-Keep replies as short as possible (1–2 sentences), fun, and full of personality — avoid using emojis and long sentances.
-Use recent context always try to mention other people who talked recently if possible but focus on the current message.
-You're chatting with {user_name} ({friendship_level}). Tone: {tone}.
-You are Veyra — the living AI of this server.
-"""
+    rules = "\n".join(persona["meta"]["rules"])
+    system_prompt = f"""{persona['system']}
+
+        Mood: Casual
+        Friendship Level: {friendship_level}
+        Tone: {persona['traits']['tone_by_friendship'].get(friendship_level)}
+
+        Follow these behavioral rules strictly:
+        {rules}
+    """
 
     # --- Conditional command help injection ---
     cmd_help = fetch_command_info_if_needed(user_msg)
@@ -106,10 +82,10 @@ You are Veyra — the living AI of this server.
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-5-chat-latest",
             messages=messages,
             max_tokens=150,
-            temperature=0.7,
+            temperature=0.9,
         )
 
         reply = response.choices[0].message.content.strip()
