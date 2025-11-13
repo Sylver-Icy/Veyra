@@ -262,5 +262,59 @@
   "cooldown": "Once per hour per user",
   "examples": ["/leaderboard"],
   "notes": "This command updates real and  there is another also a automatic weekly tag that tags the top 3 users every Weekend."
+},
+"smelt": {
+  "title": "🔥 Smelt",
+  "description": "Turn raw ores into their refined bars using your smelter. Higher smelter levels unlock better bars and reduce coal cost.",
+  "usage": "/smelt <bar name> <amount>",
+  "category": "Crafting",
+  "cooldown": "No cooldown",
+  "examples": ["/smelt copper bar 5", "/smelt iron bar 3"],
+  "notes": "Requires owning a smelter. Coal cost scales with smelter level."
+},
+"flipcoin": {
+  "title": "🪙 Flip Coin",
+  "description": "Flip a coin and let fate decide—heads or tails, no rigging, pure RNG.",
+  "usage": "!flipcoin",
+  "category": "Fun",
+  "cooldown": "No cooldown",
+  "examples": ["!flipcoin"],
+  "notes": "Responses are procedurally generated."
+},
+"upgrade": {
+  "title": "📈 Upgrade Building",
+  "description": "Upgrade one of your unlocked buildings to improve its performance. Each level grants specific bonuses.",
+  "usage": "!upgrade <building name>",
+  "category": "Crafting",
+  "cooldown": "20s per user",
+  "examples": ["!upgrade smelter"],
+  "notes": "Shows next upgrade effects and cost before asking for confirmation."
+},
+"unlock": {
+  "title": "🔓 Unlock Building",
+  "description": "Unlock a new crafting building such as the smelter. Required before you can upgrade or use it.",
+  "usage": "!unlock <building name>",
+  "category": "Crafting",
+  "cooldown": "10s per user",
+  "examples": ["!unlock smelter"],
+  "notes": "Buildings must be unlocked before upgrades or crafting commands can be used."
+},
+"checkenergy":{
+  "title": "Check Energy",
+  "description": "Check you current energy levels.",
+  "usage": "!checkenergy",
+  "category": "Job",
+  "cooldown": "7s per user",
+  "examples": ["!checkenergy"],
+  "notes": "Its same as checkwallet and checkinventory."
+},
+"work": {
+  "title": "🛠️ Work Job",
+  "description": "Perform a job in Natlade to earn gold, lootboxes, or ores depending on the job you choose. Each job consumes energy and has unique rewards.",
+  "usage": "!work <job name>",
+  "category": "Job",
+  "cooldown": "No cooldown (limited only by your energy)",
+  "examples": ["!work knight", "!work digger", "!work miner", "!work thief @target"],
+  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Knights earn flat gold, Diggers find lootboxes, Miners gather ores, and Thieves risk stealing from other players."
 }
 }

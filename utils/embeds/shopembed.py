@@ -20,7 +20,7 @@ def shop_embed(shop_items: list) -> discord.Embed:
 
     embed.set_author(name="Shop refreshes every 24 hours")
     embed.set_footer(text="**How to buy** -> !buy <item_name> <amount>  e.g.  !buy sword 4")
-    embed.set_image(url="https://cdn.discordapp.com/attachments/1275870091002777643/1435918001621827604/image.png")
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1275870091002777643/1438383438406090782/image.png")
     return embed
 
 

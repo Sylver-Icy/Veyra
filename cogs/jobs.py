@@ -7,8 +7,6 @@ class Jobs(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1, 7, commands.BucketType.user)
-
     async def work(self, ctx, job: str, target: discord.Member = None):
         """Perform a job (knight, digger, miner, thief)."""
         valid_jobs = ("knight", "digger", "miner", "thief")
@@ -32,6 +30,14 @@ class Jobs(commands.Cog):
             result = worker.thief(target)
 
         await ctx.send(result)
+
+    @commands.command()
+    @commands.cooldown(1, 7, commands.BucketType.user)
+    async def checkenergy(self, ctx):
+        worker = JobsClass(ctx.author.id)
+        energy =  worker.check_energy()
+        await ctx.send(f"You current have {energy} energy...")
+
 
 def setup(bot):
     bot.add_cog(Jobs(bot))

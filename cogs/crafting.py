@@ -10,10 +10,14 @@ class Crafting(commands.Cog):
 
     @commands.slash_command()
     async def smelt(self, ctx, bar_name: str, amount: int):
+        if bar_name.lower() not in ("copper bar", "iron bar", "silver bar"):
+            await ctx.respond("Ermm.. There is no such metal?")
+            return
+
         smelter_lvl = building_lvl(ctx.author.id, "smelter")
 
         if  smelter_lvl == 0:
-            await ctx.respond("You don't have a smelter yet! Buy one first.\n`!unlock smelter`")
+            await ctx.respond("You tryna smelt with your bare hands? Buy a furnace first, genius.\n`!unlock smelter`")
             return
 
         level = smelter_lvl
@@ -22,12 +26,12 @@ class Crafting(commands.Cog):
 
         if 1 <= level <= 2:
             allowed_bars = ["copper bar"]
-            coal_cost = 5
+            coal_cost = 5 if level == 1 else 4
         elif 3 <= level <= 4:
-            allowed_bars.append("iron bar")
+            allowed_bars = ["copper bar", "iron bar"]
             coal_cost = 4 if level == 3 else 3
         elif 5 <= level <= 6:
-            allowed_bars.append("silver bar")
+            allowed_bars = ["copper bar", "iron bar", "silver bar"]
             coal_cost = 3 if level == 5 else 2
         elif level == 7:
             allowed_bars = ["copper bar", "iron bar", "silver bar"]

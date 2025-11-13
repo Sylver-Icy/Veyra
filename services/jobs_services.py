@@ -61,9 +61,13 @@ class JobsClass:
         """
         with Session() as session:
             user = session.get(User, self.user_id)
-            return user.energy
+            if user:
+                return user.energy
+            return 0
 
-    def knight(self, energy_cost = 85):
+    
+
+    def knight(self, energy_cost = 80):
         """
         Perform the 'knight' job, consuming energy and awarding gold if successful.
 
@@ -96,11 +100,11 @@ class JobsClass:
             return response
 
         reward_distribution = {
-            "gold": 20,
+            "gold": 29,
             "woodenbox": 40,
             "stonebox": 25,
-            "ironbox": 10,
-            "platinumbox": 5
+            "ironbox": 5,
+            "platinumbox": 1
         }
 
         reward = random.choices(
@@ -135,7 +139,7 @@ class JobsClass:
 
 
 
-    def miner(self, energy_cost = 50):
+    def miner(self, energy_cost = 90):
         """
         Perform the 'miner' job, consuming energy and awarding a random ore or gold reward.
 
@@ -163,8 +167,8 @@ class JobsClass:
     )[0]
 
         if reward == "gold":
-            add_gold(self.user_id, 10)
-            response = create_response("miner", 2, gold=10)
+            add_gold(self.user_id, 15)
+            response = create_response("miner", 2, gold=15)
             return response
 
         ore_amount = random.randint(1, 3)
@@ -220,13 +224,13 @@ class JobsClass:
             response = create_response("thief", 2, target=target_name, gold=0)
             return response
 
-        stolen_amount = int(target_wealth * 0.1)
-        fine_amount = int(target_wealth * 0.01)
+        stolen = int(min(target_wealth * 0.10, 150))
+        fine = int(min(target_wealth * 0.01, 50))
 
-        add_gold(self.user_id, stolen_amount)
-        remove_gold(target_id, fine_amount)
+        add_gold(self.user_id, stolen)
+        remove_gold(target_id, fine)
 
-        response = create_response("thief", 1, target=target_name, gold=stolen_amount)
+        response = create_response("thief", 1, target=target_name, gold=stolen)
 
         return response
 

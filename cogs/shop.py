@@ -2,6 +2,7 @@ import logging
 from discord.ext import commands
 from utils.itemname_to_id import get_item_id_safe
 from services.shop_services import buy_item, sell_item, daily_shop
+from services.economy_services import add_gold
 
 logger = logging.getLogger(__name__)
 class Shop(commands.Cog):
@@ -49,6 +50,21 @@ class Shop(commands.Cog):
             await ctx.send("Quantity must be a number.")
             return
         item_name = " ".join(args[:-1]).lower()
+        minerals = ("iron bar", "copper bar", "silver bar")
+        if item_name.lower() in minerals:
+            if item_name.lower() == "iron bar":
+                price = 150
+            elif item_name.lower() == "copper bar":
+                price = 50
+            else:
+                price = 450
+
+            revenue = price * quantity
+            add_gold(ctx.author.id, revenue)
+            await ctx.send(f"You sold {quantity} X {item_name.title()}!! Gold gained -> {revenue} ")
+            return
+
+
         item_id,suggestions= get_item_id_safe(item_name) #gets the item id if name matches else suggests similiar names in case of typo
         if suggestions: #if suggestions has items it means not correct match was found
             await ctx.send(f"Item not found in database. You meant {suggestions[0]} ???")

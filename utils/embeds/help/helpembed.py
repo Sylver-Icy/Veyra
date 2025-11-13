@@ -33,13 +33,21 @@ class HelpView(discord.ui.View):
             embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
             embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
                                                  "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
-                                                 "\n`!play` - We can play a number guessing game :3", inline=False)
+                                                 "\n`!play` - We can play a number guessing game :3" \
+                                                 "\n`!flipcoin` - Let gacha decide your fate", inline=False)
             embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
             "\n`!info` - Confused? I can tell you about any item — just name it!" \
             "\n`!use` - Use any usable item from your inventory.", inline=False)
             embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
             embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
                                                   "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
+            embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich" \
+            "\n`!upgrade` -  Gotta upgrade those machines don't we?", inline=False)
+            embed.add_field(
+    name="🛠️ Jobs",
+    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
+    inline=False
+)
             embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
             embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
@@ -61,6 +69,7 @@ class HelpView(discord.ui.View):
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
                                                                   "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
                                                                   "`/delete_listing` - Delete one of your active listings.", inline=False)
+            embed.add_field(name="🔥 Smelting", value="`!smelt` - Turn your ores into bars", inline=False)
             embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
             embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
@@ -108,13 +117,22 @@ def get_help_embed(user: discord.User):
     embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
     embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
                                          "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
-                                         "\n`!play` - We can play a number guessing game :3", inline=False)
+                                         "\n`!play` - We can play a number guessing game :3"
+                                         "\n`!flipcoin` - Let gacha decide your fate", inline=False)
     embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
     "\n`!info` - Confused? I can tell you about any item — just name it!" \
     "\n`!use` - Use any usable item from your inventory.", inline=False)
     embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
     embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
                                          "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
+    embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich"
+                                             "\n`!upgrade` - Upgrade machines for better gains",
+                                              inline=False)
+    embed.add_field(
+    name="🛠️ Jobs",
+    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
+    inline=False
+)
     embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
     embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
     return embed, view

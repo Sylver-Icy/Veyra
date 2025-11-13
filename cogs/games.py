@@ -27,7 +27,9 @@ class Games(commands.Cog):
 
     @commands.command()
     async def flipcoin(self, ctx):
-        await ctx.send(random.choice(["head", "tail"]))
+        result = random.choice(["head", "tail"])
+        response = create_response("flipcoin", 1, result=result)
+        await ctx.send(response)
 
     @commands.command()
     async def solve_wordle(self, ctx):
@@ -125,7 +127,7 @@ class Games(commands.Cog):
             await ctx.respond(f"Error generating hint: {str(e)}")
 
     @commands.slash_command(name = "quest")
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1,15,commands.BucketType.user)
     async def quest(self,ctx):
         embed, view = requested_items(ctx.author.display_name, ctx.author.id)
         await ctx.respond(embed=embed, view=view)
