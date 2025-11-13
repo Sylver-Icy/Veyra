@@ -7,6 +7,8 @@ loads cogs, and starts the bot. It also manages background jobs and
 handles inline command invocation and EXP system integration.
 """
 
+import asyncio
+
 import os
 import sys
 import logging
@@ -27,10 +29,12 @@ from services.users_services import is_user
 from services.talk_to_veyra.chat_services import fetch_channel_msgs, fetch_user_msgs, get_veyra_reply, reset_rate_limits
 from services.onboadingservices import greet
 from services.friendship_services import check_friendship
+from services.response_services import create_response
 
 from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
 from utils.jobs import schedule_jobs
+from utils.fuzzy import get_closest_command
 # from nsfw_classifier.nsfw_classifier import classify  # Optional feature
 
 # Bot setup
@@ -92,12 +96,39 @@ async def on_message(message):
         return
 
     msg_lower = message.content.lower()
-    if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
-        title, _ = check_friendship(message.author.id)
-        user_msgs = await fetch_user_msgs(message.channel, message.author.id)
-        channel_msgs = await fetch_channel_msgs(message.channel, message.author.id)
-        reply = await get_veyra_reply(message.author.name, title, message.content, user_msgs, channel_msgs)
-        await message.reply(reply)
+    # Fuzzy command correction
+    if msg_lower.startswith("!"):
+        raw_cmd = msg_lower[1:].split(" ")[0]  # text after !
+        closest = get_closest_command(raw_cmd)
+
+        if closest and closest != raw_cmd:
+            fixed_message = f"!{closest}" + message.content[len(raw_cmd)+1:]
+
+            class ModifiedMessage(discord.Message):
+                def __init__(self, original, new_content):
+                    self._original = original
+                    self._new_content = new_content
+
+                @property
+                def content(self):
+                    return self._new_content
+
+                def __getattr__(self, attr):
+                    return getattr(self._original, attr)
+
+            modified = ModifiedMessage(message, fixed_message)
+            ctx = await bot.get_context(modified)
+            response = create_response("typo", 1, typo = raw_cmd, correct = closest)
+            await ctx.send(response)
+            await asyncio.sleep(3)
+            await bot.invoke(ctx)
+            return
+    # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+    #     title, _ = check_friendship(message.author.id)
+    #     user_msgs = await fetch_user_msgs(message.channel, message.author.id)
+    #     channel_msgs = await fetch_channel_msgs(message.channel, message.author.id)
+    #     reply = await get_veyra_reply(message.author.name, title, message.content, user_msgs, channel_msgs)
+    #     await message.reply(reply)
 
 
     # Inline command support: check if message contains a command invocation inline
