@@ -3,7 +3,7 @@ from services.inventory_services import give_item, take_item
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError
 
-def smelt(user_id: int, bar_name: str, amount: int):
+def smelt(user_id: int, bar_name: str, amount: int, coal_cost: int):
     """
     Smelts a specified amount of bars for a user by consuming ores and coal.
 
@@ -25,11 +25,11 @@ def smelt(user_id: int, bar_name: str, amount: int):
     if amount <= 0:
         return "Invalid smelting amount."
 
-    # Define required ores and coal cost per bar
+    # Define required ores
     bars = {
-        "copper bar": ("copper ore", 1),
-        "iron bar": ("iron ore", 2),
-        "silver bar": ("silver ore", 4)
+        "copper bar": "copper ore",
+        "iron bar": "iron ore",
+        "silver bar": "silver ore"
     }
 
     # Validate bar name
@@ -37,7 +37,7 @@ def smelt(user_id: int, bar_name: str, amount: int):
         return "Invalid bar name."
 
     # Retrieve ore and bar item IDs
-    ore_name, coal_cost = bars[bar_name]
+    ore_name  = bars[bar_name]
     ore_id, _ = get_item_id_safe(ore_name)
     bar_id, _ = get_item_id_safe(bar_name)
     coal_id, _ = get_item_id_safe("coal")

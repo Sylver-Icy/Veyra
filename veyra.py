@@ -92,12 +92,12 @@ async def on_message(message):
         return
 
     msg_lower = message.content.lower()
-    # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
-    title, _ = check_friendship(message.author.id)
-    user_msgs = await fetch_user_msgs(message.channel, message.author.id)
-    channel_msgs = await fetch_channel_msgs(message.channel, message.author.id)
-    reply = await get_veyra_reply(message.author.name, title, message.content, user_msgs, channel_msgs)
-    await message.reply(reply)
+    if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+        title, _ = check_friendship(message.author.id)
+        user_msgs = await fetch_user_msgs(message.channel, message.author.id)
+        channel_msgs = await fetch_channel_msgs(message.channel, message.author.id)
+        reply = await get_veyra_reply(message.author.name, title, message.content, user_msgs, channel_msgs)
+        await message.reply(reply)
 
 
     # Inline command support: check if message contains a command invocation inline
@@ -153,7 +153,9 @@ cogs_list = [
     'marketplace',
     'gambling',
     'battle',
-    "crafting"
+    "crafting",
+    "jobs",
+    "upgrades"
 ]
 
 for cog in cogs_list:

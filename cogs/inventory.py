@@ -180,6 +180,10 @@ class Inventory(commands.Cog):
 
     @commands.command()
     async def use(self, ctx, *, item_name: str):
+        lootboxes = ("wooden box", "iron box", "stone box", "platinum box")
+        if item_name.lower() in lootboxes:
+            await ctx.send(f"What are you tryna use it for??? you gonna eat it??\n use `!open {item_name.lower()}` to open that thing Einstein")
+            return
         item_id, sugestions = get_item_id_safe(item_name)
         if item_id:
             try:

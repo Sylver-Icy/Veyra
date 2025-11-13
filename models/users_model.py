@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -18,6 +18,7 @@ class User(Base):
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
     marketplace = relationship('Marketplace', back_populates = 'user')
+    upgrades = relationship("Upgrades", back_populates="user")
 
 class Wallet(Base):
     __tablename__ = 'wallet'
@@ -55,3 +56,28 @@ class Friendship(Base):
     user_id = Column(BigInteger, primary_key=True)
     friendship_exp = Column(Integer, default=0)
     daily_exp = Column(Integer, default=0)
+
+class Upgrades(Base):
+    __tablename__ = 'user_upgrades'
+    __table_args__ = (
+        PrimaryKeyConstraint('user_id', 'upgrade_name'),
+    )
+
+    user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'))
+    upgrade_name = Column(String(50), ForeignKey('upgrade_definitions.upgrade_name'), nullable=False)
+    level = Column(Integer, default=0)
+
+    user = relationship("User", back_populates="upgrades")
+    definition = relationship("UpgradeDefinitions", back_populates="upgrades")
+
+class UpgradeDefinitions(Base):
+    __tablename__ = 'upgrade_definitions'
+    __table_args__ = (
+        PrimaryKeyConstraint('upgrade_name', 'level'),
+    )
+
+    upgrade_name = Column(String(50), primary_key=True)
+    level = Column(Integer, primary_key=True)
+    cost = Column(Integer, nullable=False)
+    effect_description = Column(Text)
+    upgrades = relationship("Upgrades", back_populates="definition")

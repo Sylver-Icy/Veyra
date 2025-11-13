@@ -29,3 +29,7 @@ wordle.txt
 
 #bot responses
 responses/
+
+#models
+nsfw_classifier/
+*.pkl

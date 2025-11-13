@@ -1,3 +1,5 @@
+import random
+
 from discord.ext import commands
 import asyncio
 
@@ -22,6 +24,10 @@ class Games(commands.Cog):
     async def ping(self,ctx):
         """The legendary Ping-Pong game"""
         await ctx.send("🏓Pong!")
+
+    @commands.command()
+    async def flipcoin(self, ctx):
+        await ctx.send(random.choice(["head", "tail"]))
 
     @commands.command()
     async def solve_wordle(self, ctx):
