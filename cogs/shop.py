@@ -1,8 +1,12 @@
 import logging
 from discord.ext import commands
+
+from utils.custom_errors import NotEnoughItemError
 from utils.itemname_to_id import get_item_id_safe
+
 from services.shop_services import buy_item, sell_item, daily_shop
 from services.economy_services import add_gold
+from services.inventory_services import take_item
 
 logger = logging.getLogger(__name__)
 class Shop(commands.Cog):
@@ -53,10 +57,25 @@ class Shop(commands.Cog):
         minerals = ("iron bar", "copper bar", "silver bar")
         if item_name.lower() in minerals:
             if item_name.lower() == "iron bar":
+                try:
+                    take_item(ctx.author.id, 190, quantity)
+                except NotEnoughItemError:
+                    await ctx.send(f"You don't have enough {item_name} to sell")
+                    return
                 price = 150
             elif item_name.lower() == "copper bar":
+                try:
+                    take_item(ctx.author.id, 189, quantity)
+                except NotEnoughItemError:
+                    await ctx.send(f"You don't have enough {item_name} to sell")
+                    return
                 price = 50
             else:
+                try:
+                    take_item(ctx.author.id, 191, quantity)
+                except NotEnoughItemError:
+                    await ctx.send(f"You don't have enough {item_name} to sell")
+                    return
                 price = 450
 
             revenue = price * quantity
