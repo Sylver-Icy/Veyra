@@ -25,7 +25,7 @@ class Jobs(commands.Cog):
             result = worker.miner()
         elif job == "thief":
             if not target:
-                await ctx.send("You need to specify someone to steal from! You can rob air can you?")
+                await ctx.send("You need to specify someone to steal from! You can't rob air can you?")
                 return
             result = worker.thief(target)
 

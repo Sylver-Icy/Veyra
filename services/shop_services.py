@@ -32,9 +32,9 @@ def update_daily_shop():
     with Session() as session:
         random_items = (
             session.query(Items)
-            .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
+            .where(Items.item_rarity.in_(("Common", "Rare")))
             .order_by(func.random())
-            .limit(9)
+            .limit(6)
             .all()
         )
 

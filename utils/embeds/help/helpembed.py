@@ -69,7 +69,7 @@ class HelpView(discord.ui.View):
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
                                                                   "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
                                                                   "`/delete_listing` - Delete one of your active listings.", inline=False)
-            embed.add_field(name="🔥 Smelting", value="`!smelt` - Turn your ores into bars", inline=False)
+            embed.add_field(name="🔥 Smelting", value="`/smelt` - Turn your ores into bars", inline=False)
             embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
             embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
