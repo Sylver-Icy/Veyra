@@ -23,16 +23,14 @@ class JobsClass:
 
     def gain_energy(self, energy_gain = 1):
         """
-        Increase the user's energy by a specified amount, up to the maximum allowed energy.
+        Increase the user's energy by a specified amount, ignoring the maximum allowed energy.
 
         :param energy_gain: Amount of energy to gain. Default is 1.
         """
         with Session() as session:
             user = session.get(User, self.user_id)
             if user:
-                max_energy = 10 + (10 * user.level)
-                if user.energy < max_energy:
-                    user.energy = min(user.energy + energy_gain, max_energy)
+                    user.energy = user.energy + energy_gain
                     session.commit()
 
     def consume_energy(self, energy_cost: int):
@@ -65,7 +63,7 @@ class JobsClass:
                 return user.energy
             return 0
 
-    
+
 
     def knight(self, energy_cost = 80):
         """
@@ -195,7 +193,7 @@ class JobsClass:
         return response
 
 
-    def thief(self, target: discord.Member, energy_cost=69):
+    def thief(self, target: discord.Member, energy_cost=60):
         """Attempt to steal gold from another user."""
 
         target_id = target.id
@@ -240,7 +238,7 @@ def regen_energy_for_all():
     with Session() as session:
         users = session.query(User).all()
         for user in users:
-            max_energy = 10 + (10 * user.level)
+            max_energy = 35 + (15 * user.level)
             if user.energy < max_energy:
                 user.energy = min(user.energy + 1, max_energy)
         session.commit()

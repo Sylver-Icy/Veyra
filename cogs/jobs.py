@@ -31,12 +31,6 @@ class Jobs(commands.Cog):
 
         await ctx.send(result)
 
-    @commands.command()
-    @commands.cooldown(1, 7, commands.BucketType.user)
-    async def checkenergy(self, ctx):
-        worker = JobsClass(ctx.author.id)
-        energy =  worker.check_energy()
-        await ctx.send(f"You current have {energy} energy...")
 
 
 def setup(bot):

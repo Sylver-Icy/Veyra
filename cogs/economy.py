@@ -16,15 +16,7 @@ class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    @commands.cooldown(1,10,commands.BucketType.user)
-    async def checkwallet(self, ctx):
-        """Check the wallet balance of the command user."""
-        gold = check_wallet(ctx.author.id)
-        response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
-        await ctx.send(response)
-
-
+    
     @commands.slash_command()
     @commands.cooldown(1,120,commands.BucketType.user)
     async def leaderboard(self,ctx):

@@ -28,15 +28,13 @@ class HelpView(discord.ui.View):
                 description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
                 color=discord.Color.blurple()
             )
-            embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much gold you've got stashed away!", inline=False)
-            embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
+            embed.add_field(name="🔥 Stats", value="`!check` - View your different stats", inline=False)
             embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
             embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
                                                  "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
                                                  "\n`!play` - We can play a number guessing game :3" \
                                                  "\n`!flipcoin` - Let gacha decide your fate", inline=False)
-            embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
-            "\n`!info` - Confused? I can tell you about any item — just name it!" \
+            embed.add_field(name="🗃️ Inventory", value="`!info` - Confused? I can tell you about any item — just name it!"
             "\n`!use` - Use any usable item from your inventory.", inline=False)
             embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
             embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
@@ -112,15 +110,13 @@ def get_help_embed(user: discord.User):
 
         color=discord.Color.blurple()
     )
-    embed.add_field(name="💰 Economy", value="`!checkwallet` - Check how much gold you've got stashed away!", inline=False)
-    embed.add_field(name="🔥 Exp", value="`!checkexp` - View your level and total experience points.", inline=False)
+    embed.add_field(name="🔥 Stats", value="`!check` - View your different stats", inline=False)
     embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
     embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
                                          "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
                                          "\n`!play` - We can play a number guessing game :3"
                                          "\n`!flipcoin` - Let gacha decide your fate", inline=False)
-    embed.add_field(name="🗃️ Inventory", value="`!checkinventory` - See which items you own and how many." \
-    "\n`!info` - Confused? I can tell you about any item — just name it!" \
+    embed.add_field(name="🗃️ Inventory", value="`!info` - Confused? I can tell you about any item — just name it!" \
     "\n`!use` - Use any usable item from your inventory.", inline=False)
     embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
     embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
@@ -431,3 +427,118 @@ def race_guide_embed():
     )
 
     return embed
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# JOB HELP PAGINATED VIEW
+# Shows 1 job per page and auto-scales when new pages are added.
+# ─────────────────────────────────────────────────────────────────────────────
+
+JOB_PAGES = [
+    {
+        "title": "🛡️ Knight",
+        "body": (
+            "**Role:** Knights stand guard over Natlade, protecting travelers and maintaining peace.\n"
+            "**Energy Cost:** 85\n"
+            "**Reward:** 30–50 Gold"
+        )
+    },
+    {
+        "title": "⛏️ Digger",
+        "body": (
+            "**Role:** Diggers explore the outskirts, unearthing ancient boxes and forgotten treasures.\n"
+            "**Energy Cost:** 70\n"
+            "**Reward:** Lootboxes + occasional gold\n\n"
+            "**Drop Rates:**\n"
+            "• Gold: 29%\n"
+            "• Wooden Box: 40%\n"
+            "• Stone Box: 25%\n"
+            "• Iron Box: 5%\n"
+            "• Platinum Box: 1%"
+        )
+    },
+    {
+        "title": "⛏️ Miner",
+        "body": (
+            "**Role:** Miners descend into Natlade’s caves, gathering ores vital to the kingdom.\n"
+            "**Energy Cost:** 90\n"
+            "**Reward:** Gold + ores\n\n"
+            "**Drop Rates:**\n"
+            "• Gold: 10%\n"
+            "• Coal: 30%\n"
+            "• Copper Ore: 30%\n"
+            "• Iron Ore: 20%\n"
+            "• Silver Ore: 10%"
+        )
+    },
+    {
+        "title": "🗝️ Thief",
+        "body": (
+            "**Role:** Thieves sneak through Natlade, lifting pockets when luck allows.\n"
+            "**Energy Cost:** 60\n"
+            "**Success Chance:** 50%\n"
+            "**Reward on Success:** Steal 10% of target's gold\n"
+            "**Failure Penalty:** 30 Gold fine"
+        )
+    }
+]
+
+def job_page_embed(page_index: int):
+    """
+    Creates an embed for a single job page using JOB_PAGES data.
+    """
+    page = JOB_PAGES[page_index]
+    embed = discord.Embed(
+        title=page["title"],
+        description=page["body"],
+        color=discord.Color.orange()
+    )
+    embed.set_footer(text=f"Page {page_index + 1}/{len(JOB_PAGES)} • Use the buttons to navigate.")
+    return embed
+
+
+class JobHelpView(discord.ui.View):
+    """
+    Paginated button view to navigate between job pages.
+    """
+    def __init__(self, user: discord.User):
+        super().__init__(timeout=300)
+        self.user = user
+        self.page = 0
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message(
+                "❌ Only the user who opened this can navigate pages.",
+                ephemeral=True
+            )
+            return False
+        return True
+
+    @discord.ui.button(label="Previous", style=discord.ButtonStyle.gray, custom_id="job_prev")
+    async def previous_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.page = (self.page - 1) % len(JOB_PAGES)
+        await interaction.response.edit_message(embed=job_page_embed(self.page), view=self)
+
+    @discord.ui.button(label="Next", style=discord.ButtonStyle.gray, custom_id="job_next")
+    async def next_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.page = (self.page + 1) % len(JOB_PAGES)
+        await interaction.response.edit_message(embed=job_page_embed(self.page), view=self)
+
+    async def on_timeout(self):
+        for child in self.children:
+            if isinstance(child, discord.ui.Button):
+                child.disabled = True
+        try:
+            await self.message.edit(view=self)
+        except:
+            pass
+
+
+def get_job_help(user: discord.User):
+    """
+    Returns the first job page embed and its paginated view.
+    """
+    view = JobHelpView(user)
+    embed = job_page_embed(0)
+    return embed, view

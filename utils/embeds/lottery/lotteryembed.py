@@ -11,7 +11,7 @@ class LotteryButton(View):
     def __init__(self, ticket_price: int):
         super().__init__(timeout=None)
         self.ticket_price = int(ticket_price)
-        self.children[0].label = f"🎟️ Buy Ticket {self.ticket_price} {GOLD_EMOJI}"
+        self.children[0].label = f"🎟️ Buy Ticket {self.ticket_price}"
 
     @discord.ui.button(label="🎟️ Buy Ticket", style=discord.ButtonStyle.green)
     async def buy_ticket(self, button: Button, interaction: discord.Interaction):

@@ -25,7 +25,7 @@ class Crafting(commands.Cog):
         coal_cost = 0
 
         if 1 <= level <= 2:
-            allowed_bars = ["copper bar"]
+            allowed_bars = ["copper bar"] if level == 1 else ["copper bar", "iron bar"]
             coal_cost = 5 if level == 1 else 4
         elif 3 <= level <= 4:
             allowed_bars = ["copper bar", "iron bar"]

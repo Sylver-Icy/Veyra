@@ -127,25 +127,6 @@ class Inventory(commands.Cog):
             except Exception as e:
                 await ctx.respond(str(e))
 
-    @commands.command()
-    @commands.cooldown(1,15,commands.BucketType.user)
-    async def checkinventory(self, ctx):
-        """
-        Check your own inventory (prefix command).
-
-        Parameters:
-        - ctx: The context of the command invocation.
-        """
-        status, embed_pages = get_inventory(ctx.author.id, ctx.author.name)
-
-        if status == "start_event":
-            # User has no items; send a friendly message
-            await ctx.send("Awww you poor thing it seems you don't own anything. Here, take this flower from me :3")
-        else:
-            # Paginate and send inventory embeds
-            paginator = pages.Paginator(pages=embed_pages)
-            await paginator.send(ctx)
-
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)

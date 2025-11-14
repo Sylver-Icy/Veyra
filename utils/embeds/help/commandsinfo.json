@@ -1,23 +1,4 @@
 {
-  "checkwallet": {
-    "title": "💰 Check Wallet",
-    "description": "Check your current gold balance. Perfect for showing off your wealth or assessing your savings.",
-    "usage": "!checkwallet",
-    "category": "Economy",
-    "cooldown": "10s per user",
-    "examples": ["!checkwallet"],
-    "notes": "Responses are procedurally generated to add variety."
-  },
-
-  "checkexp": {
-    "title": "🔥 Check Experience",
-    "description": "Displays your current level and total experience points, allowing you to track your progress and growth.",
-    "usage": "!checkexp",
-    "category": "Experience",
-    "cooldown": "15s per user",
-    "examples": ["!checkexp"],
-    "notes": "Experience is currently earned through chatting, with a 30-second cooldown between messages that grant EXP. Additional methods to gain experience will be introduced in the future."
-  },
 
   "bet": {
     "title": "🎲 Bet",
@@ -59,15 +40,6 @@
     "notes": "Quests update daily based on Veyra’s system. You may skip up to three quests per day if desired."
   },
 
-  "checkinventory": {
-    "title": "🗃️ Check Inventory",
-    "description": "View all items currently in your possession, including common, rare, and forgotten items.",
-    "usage": "!checkinventory",
-    "category": "Inventory",
-    "cooldown": "15s per user",
-    "examples": ["!checkinventory"],
-    "notes": "Tip: You can use `/transfer_item` to send items to other players."
-  },
 
   "open": {
     "title": "🎁 Open Lootbox",
@@ -299,14 +271,14 @@
   "examples": ["!unlock smelter"],
   "notes": "Buildings must be unlocked before upgrades or crafting commands can be used."
 },
-"checkenergy":{
-  "title": "Check Energy",
-  "description": "Check you current energy levels.",
-  "usage": "!checkenergy",
-  "category": "Job",
-  "cooldown": "7s per user",
-  "examples": ["!checkenergy"],
-  "notes": "Its same as checkwallet and checkinventory."
+"check":{
+  "title": "Check Your Stats",
+  "description": "Check your current/live stats.",
+  "usage": "!check <stat name>",
+  "category": "Profile",
+  "cooldown": "5s per user",
+  "examples": ["!check enery", "!check wallet", "!check inv", "!check exp"],
+  "notes": "Supports some extent of typos - wall, inv, ener, exp etc should work."
 },
 "work": {
   "title": "🛠️ Work Job",
@@ -315,6 +287,6 @@
   "category": "Job",
   "cooldown": "No cooldown (limited only by your energy)",
   "examples": ["!work knight", "!work digger", "!work miner", "!work thief @target"],
-  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Knights earn flat gold, Diggers find lootboxes, Miners gather ores, and Thieves risk stealing from other players."
+  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!commandhelp explain jobs` for details about each job title."
 }
 }

@@ -5,8 +5,9 @@ from services.users_services import is_user, add_user
 from services.inventory_services import give_item
 from services.friendship_services import check_friendship
 from services.response_services import create_response
+from services.jobs_services import JobsClass
 
-from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed
+from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed, get_job_help
 
 class Profile(commands.Cog):
 
@@ -53,6 +54,8 @@ class Profile(commands.Cog):
                     add_user(user_id, user_name)
                     give_item(user_id, 183, 2)
                     self.users_pending.remove(user_id)
+                    user = JobsClass(user_id)
+                    user.gain_energy(150) #give 150 energy on registration
 
                 else:
                     self.users_pending.remove(user_id)
@@ -78,6 +81,11 @@ class Profile(commands.Cog):
         if command_name.lower() in ("explain battle", "explainbattle"):
             embed = battle_guide_embed()
             await ctx.send(embed=embed)
+            return
+
+        if command_name.lower() in ("explain jobs", "explainjobs"):
+            embed, view = get_job_help(ctx.author)
+            await ctx.send(embed=embed, view=view)
             return
 
         embed = get_command_info_embed(command_name)

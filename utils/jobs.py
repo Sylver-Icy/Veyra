@@ -31,7 +31,7 @@ def schedule_jobs(bot):
     scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="sat,sun", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 50])
     scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="mon-fri", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 10])
     scheduler.add_job(send_result, trigger=midnight_trigger, args=[bot])
-    scheduler.add_job(regen_energy_for_all, trigger=IntervalTrigger(minutes=10, start_date=None))
+    scheduler.add_job(regen_energy_for_all, trigger=IntervalTrigger(minutes=6, start_date=None))
 
 
 async def run_at_startup(bot):
