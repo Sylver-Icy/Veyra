@@ -1,7 +1,11 @@
 from database.sessionmaker import Session
 from models.users_model import Friendship
+from services.users_services import is_user
 
 def add_friendship(user_id: int, exp: int):
+    if not is_user(user_id):
+        return #no frndship if user is not registered
+
     with Session() as session:
         user = session.get(Friendship, user_id)
 

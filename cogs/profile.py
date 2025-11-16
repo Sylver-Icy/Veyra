@@ -26,12 +26,12 @@ class Profile(commands.Cog):
         user_id = ctx.author.id
         user_name = ctx.author.name
 
-        if is_user(user_id): #Checks if the an already registered user is using the command
+        if is_user(user_id): #Checks if  an already registered user is using the command
             title, progress = check_friendship(user_id)
             if title in ("Stranger", "Acquaintance", "Casual"):
                 response = create_response("friendship_check", 1, user=user_name, title=title, progress=progress)
 
-            elif title in ("Friend, Close Friend"):
+            elif title in ("Friend", "Close Friend"):
                 response = create_response("friendship_check", 2, user=user_name, title=title, progress=progress)
 
             else:
@@ -64,6 +64,7 @@ class Profile(commands.Cog):
                     await ctx.send("Go fuck yourself 😇")
 
             except asyncio.TimeoutError: #If user didn't reply in 30 sec let them know command ended
+                self.users_pending.remove(user_id)
                 await ctx.send(f"Too slow ig you don't wanna be frnds {user_name}")
 
     @commands.slash_command()
