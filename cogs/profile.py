@@ -7,6 +7,8 @@ from services.friendship_services import check_friendship
 from services.response_services import create_response
 from services.jobs_services import JobsClass
 
+
+from utils.models.intromodel import create_intro_modal
 from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed, get_job_help
 
 class Profile(commands.Cog):
@@ -50,7 +52,7 @@ class Profile(commands.Cog):
                 msg = await self.bot.wait_for("message", timeout=30, check=check) #30 sec wait time for user to respond
 
                 if msg.content.lower() == "yes":
-                    await ctx.send("Yay! Here keep these bags of gold as a gift for our new friendship ^^")
+                    await ctx.send("Yay! Here keep these bags of gold as a gift for our new friendship ^^\n OH!! and also why don't you use `/introduction` and introduce yourself to everyone")
                     add_user(user_id, user_name)
                     give_item(user_id, 183, 2)
                     self.users_pending.remove(user_id)
@@ -90,6 +92,12 @@ class Profile(commands.Cog):
 
         embed = get_command_info_embed(command_name)
         await ctx.send(embed=embed)
+
+    @commands.slash_command()
+    async def introduction(self, ctx):
+        modal = create_intro_modal()
+        await ctx.send_modal(modal)
+
 
 
 def setup(bot):

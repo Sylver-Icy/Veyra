@@ -10,7 +10,7 @@ class Jobs(commands.Cog):
     async def work(self, ctx, job: str, target: discord.Member = None):
         """Perform a job (knight, digger, miner, thief)."""
         valid_jobs = ("knight", "digger", "miner", "thief")
-
+        job = job.lower()
         if job not in valid_jobs:
             await ctx.send(f"Available jobs: {', '.join(valid_jobs)}")
             return

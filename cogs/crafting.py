@@ -10,19 +10,28 @@ class Crafting(commands.Cog):
 
     @commands.slash_command()
     async def smelt(self, ctx, bar_name: str, amount: int):
-        if bar_name.lower() not in ("copper bar", "iron bar", "silver bar"):
-            await ctx.respond("Ermm.. There is no such metal?")
-            return
+        aliases = {
+    "copper": "copper bar",
+    "iron": "iron bar",
+    "silver": "silver bar",
+    "copper bar": "copper bar",
+    "iron bar": "iron bar",
+    "silver bar": "silver bar"
+}
+
+
+        raw = bar_name.lower().strip()
+        bar_name = aliases.get(raw)
+
+        if bar_name is None:
+            return await ctx.respond("Ermm.. There is no such metal?")
 
         smelter_lvl = building_lvl(ctx.author.id, "smelter")
-
-        if  smelter_lvl == 0:
-            await ctx.respond("You tryna smelt with your bare hands? Buy a furnace first, genius.\n`!unlock smelter`")
-            return
 
         level = smelter_lvl
         allowed_bars = []
         coal_cost = 0
+
 
         if 1 <= level <= 2:
             allowed_bars = ["copper bar"] if level == 1 else ["copper bar", "iron bar"]
@@ -37,9 +46,8 @@ class Crafting(commands.Cog):
             allowed_bars = ["copper bar", "iron bar", "silver bar"]
             coal_cost = 1
 
-        if bar_name.lower() not in allowed_bars:
-            await ctx.respond("Your smelter can’t handle that metal yet!")
-            return
+        if bar_name not in allowed_bars:
+            return await ctx.respond("Your smelter can’t handle that metal yet!")
 
         result = smelt(ctx.author.id, bar_name, amount, coal_cost)
         await ctx.respond(result)

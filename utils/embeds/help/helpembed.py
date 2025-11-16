@@ -461,14 +461,14 @@ JOB_PAGES = [
         "title": "⛏️ Miner",
         "body": (
             "**Role:** Miners descend into Natlade’s caves, gathering ores vital to the kingdom.\n"
-            "**Energy Cost:** 90\n"
+            "**Energy Cost:** 50\n"
             "**Reward:** Gold + ores\n\n"
             "**Drop Rates:**\n"
             "• Gold: 10%\n"
-            "• Coal: 30%\n"
-            "• Copper Ore: 30%\n"
-            "• Iron Ore: 20%\n"
-            "• Silver Ore: 10%"
+            "• Coal: 20%\n"
+            "• Copper Ore: 34%\n"
+            "• Iron Ore: 24%\n"
+            "• Silver Ore: 12%"
         )
     },
     {

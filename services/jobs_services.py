@@ -137,7 +137,7 @@ class JobsClass:
 
 
 
-    def miner(self, energy_cost = 90):
+    def miner(self, energy_cost = 50):
         """
         Perform the 'miner' job, consuming energy and awarding a random ore or gold reward.
 
@@ -152,10 +152,10 @@ class JobsClass:
 
         reward_distribution = {
             "gold": 10,
-            "coal": 30,
-            "copperore": 30,
-            "ironore": 20,
-            "silverore": 10
+            "coal": 20,
+            "copperore": 34,
+            "ironore": 24,
+            "silverore": 12
         }
 
         reward = random.choices(
