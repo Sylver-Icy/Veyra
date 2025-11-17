@@ -3,7 +3,7 @@ import discord
 from discord.ui import Modal, InputText
 
 
-def create_intro_modal():
+def create_intro_modal(author: discord.Member):
     """Return a Pycord Modal for introduction."""
 
 
@@ -166,7 +166,7 @@ def create_intro_modal():
 
             embed.set_footer(text=random_footer)
 
-            await channel.send(embed=embed)
+            await channel.send(content=author.mention, embed=embed)
             await interaction.response.send_message(
                 "Your introduction has been posted in #introductions", ephemeral=True
             )

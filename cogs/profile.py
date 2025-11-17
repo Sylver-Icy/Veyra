@@ -86,7 +86,7 @@ class Profile(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if command_name.lower() in ("explain jobs", "explainjobs"):
+        if command_name.lower() in ("explain jobs", "explainjobs", "explainjob", "explain job"):
             embed, view = get_job_help(ctx.author)
             await ctx.send(embed=embed, view=view)
             return
@@ -96,7 +96,7 @@ class Profile(commands.Cog):
 
     @commands.slash_command()
     async def introduction(self, ctx):
-        modal = create_intro_modal()
+        modal = create_intro_modal(ctx.author)
         await ctx.send_modal(modal)
 
 
