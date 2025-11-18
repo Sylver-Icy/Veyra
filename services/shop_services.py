@@ -1,21 +1,19 @@
 import logging
 import random
 from sqlalchemy.sql import func
+from datetime import date
 
 from database.sessionmaker import Session
 from models.inventory_model import Items
+from models.marketplace_model import ShopDaily
+
 from utils.embeds.shopembed import get_shop_view_and_embed
 from utils.emotes import GOLD_EMOJI
+
 from services.inventory_services import give_item, take_item, fetch_inventory
 from services.economy_services import remove_gold, add_gold, check_wallet
 
 logger = logging.getLogger(__name__)
-
-# List to store items available in the shop for the current day
-daily_shop_items = []
-
-# List to store items the bot will buy back today
-daily_buyback_shop_items = []
 
 ITEM_RATE = {
     "Common": (5, 10),
@@ -25,11 +23,37 @@ ITEM_RATE = {
     "Paragon": (600, 900)
 }
 
-def update_daily_shop():
-    """
-    Updates the daily shop with 6 random items from the database.
-    """
+
+
+def db_get_shop_items(shop_type: str):
     with Session() as session:
+        items = (
+            session.query(ShopDaily)
+            .where(ShopDaily.shop_type == shop_type)
+            .where(ShopDaily.date == date.today())
+            .all()
+        )
+
+        return [
+            {
+                "name": s.item.item_name,
+                "id": s.item_id,
+                "price": s.price,
+                "description": s.item.item_description,
+                "rarity": s.item.item_rarity,
+                "is_bonus": s.is_bonus
+            }
+            for s in items
+        ]
+
+def update_daily_shop():
+    with Session() as session:
+        # delete today first (so reroll works)
+        session.query(ShopDaily).where(
+            ShopDaily.date == date.today(),
+            ShopDaily.shop_type == "sell"
+        ).delete()
+
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare")))
@@ -38,53 +62,49 @@ def update_daily_shop():
             .all()
         )
 
-        daily_shop_items.clear()
-        daily_shop_items.extend([
-            {
-                "name": item.item_name,
-                "id": item.item_id,
-                "price": calculate_buy_price(item.item_rarity,False),
-                "description": item.item_description,
-                "rarity": item.item_rarity
-            }
-            for item in random_items
-        ])
-    print([(item["id"]) for item in daily_shop_items])
-    logger.info("Daily shop updated")
+        for item in random_items:
+            session.add(ShopDaily(
+                shop_type="sell",
+                item_id=item.item_id,
+                price=calculate_buy_price(item.item_rarity, False)
+            ))
 
+        session.commit()
 
 def update_daily_buyback_shop():
-    """
-    Updates the daily buyback shop with 4 random items of certain rarities.
-    Ensures no overlap with today's shop.
-    The 4th item gets a bonus price multiplier.
-    """
     with Session() as session:
-        # Collect all item IDs currently in daily shop
-        excluded_ids = [item["id"] for item in daily_shop_items]
+        # delete today first
+        session.query(ShopDaily).where(
+            ShopDaily.date == date.today(),
+            ShopDaily.shop_type == "buyback"
+        ).delete()
 
-        # Fetch random items excluding those in daily shop
+        sell_ids_subq = (
+            session.query(ShopDaily.item_id)
+            .where(
+                ShopDaily.date == date.today(),
+                ShopDaily.shop_type == "sell"
+            )
+        )
+
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
-            .where(Items.item_id.notin_(excluded_ids))
+            .where(Items.item_id.notin_(sell_ids_subq))
             .order_by(func.random())
-            .limit(6)
+            .limit(4)
             .all()
         )
 
-        daily_buyback_shop_items.clear()
-        daily_buyback_shop_items.extend([
-            {
-                "name": item.item_name,
-                "id": item.item_id,
-                "description": item.item_description,
-                "price": calculate_buy_price(item.item_rarity, bonus=(i == 5))  # Bonus for 6th item
-            }
-            for i, item in enumerate(random_items)
-        ])
-    print([(item["id"]) for item in daily_buyback_shop_items])
-    logger.info("Daily buyback shop updated")
+        for idx, item in enumerate(random_items):
+            session.add(ShopDaily(
+                shop_type="buyback",
+                item_id=item.item_id,
+                price=calculate_buy_price(item.item_rarity, bonus=(idx == 3)),
+                is_bonus=(idx == 3)
+            ))
+
+        session.commit()
 
 
 def calculate_buy_price(rarity: str, bonus: bool) -> int:
@@ -104,6 +124,7 @@ def calculate_buy_price(rarity: str, bonus: bool) -> int:
         price = random.randint(low, high)
         bonus_multiplier = random.uniform(1.3, 2.2)
         return int(price * bonus_multiplier)
+    
     else:
         return random.randint(low, high)
 
@@ -115,7 +136,9 @@ def daily_shop():
     Returns:
     - Tuple[discord.Embed, discord.ui.View]: The visual representation of the shop.
     """
-    return get_shop_view_and_embed(daily_shop_items, daily_buyback_shop_items)
+    sell_items = db_get_shop_items("sell")
+    buyback_items = db_get_shop_items("buyback")
+    return get_shop_view_and_embed(sell_items, buyback_items)
 
 
 def buy_item(user_id: int, item_id: int, item_quantity: int) -> str:
@@ -133,12 +156,14 @@ def buy_item(user_id: int, item_id: int, item_quantity: int) -> str:
     if item_quantity <= 0:
         return "Its not funny ._."
 
+    shop_items = db_get_shop_items("sell")
+
     # Check if the item exists in the current daily shop
-    if item_id not in [item["id"] for item in daily_shop_items]:
+    if item_id not in [item["id"] for item in shop_items]:
         return "That item is not currently in shop. Use `/shop` to see available items."
 
     # Get the price of the item
-    item_price = next(item["price"] for item in daily_shop_items if item["id"] == item_id)
+    item_price = next(item["price"] for item in shop_items if item["id"] == item_id)
 
     # Check if the user has enough gold
     user_gold = check_wallet(user_id)
@@ -171,8 +196,10 @@ def sell_item(user_id: int, item_id: int, item_quantity: int) -> str:
     if item_quantity <= 0:
         return "You need to sell at least 1 bruh."
 
+    buyback_items = db_get_shop_items("buyback")
+
     # Check if the item is wanted by the buyback shop
-    if item_id not in [item["id"] for item in daily_buyback_shop_items]:
+    if item_id not in [item["id"] for item in buyback_items]:
         return "I don't need that right now. Use `/shop` to see items I need today."
 
     # Check user's inventory for the item
@@ -188,7 +215,7 @@ def sell_item(user_id: int, item_id: int, item_quantity: int) -> str:
         return f"You have only {item_quantity_owned}... How were you planning to sell me {item_quantity}?"
 
     # Get item price
-    item_price = next((item["price"] for item in daily_buyback_shop_items if item["id"] == item_id), 0)
+    item_price = next((item["price"] for item in buyback_items if item["id"] == item_id), 0)
     total_gold = item_price * item_quantity
 
     # Process sale

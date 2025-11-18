@@ -57,9 +57,9 @@ class DeliveryView(discord.ui.View):
             button.disabled = True
             await interaction.response.edit_message(content="You have already used your 3 skips Today", view=self)
             return
-def delievery_embed(user_name: str, items: list, reward: int, user_id: int):
+def delievery_embed(user_name: str, items: list, reward: int, user_id: int, streak: int):
     embed = discord.Embed(
-        title=f"Hii! {user_name}",
+        title=f"Hii! {user_name},        🔥STREAK  **{streak}**",
         description="People in town need some items, do you have them? You will be rewarded!",
         color=discord.Colour.dark_blue()
     )

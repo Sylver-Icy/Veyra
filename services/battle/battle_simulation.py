@@ -3,6 +3,7 @@ import asyncio
 import discord
 from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
+from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite
 
 from services.battle.battle_view import BattleRoundView
 from services.economy_services import add_gold
@@ -24,8 +25,8 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
     - Ends immediately on death; announces winner and reward.
     """
     # Initialize fighters from usernames
-    p1 = Battle(challenger.name)
-    p2 = Battle(target.name)
+    p1 = Battle(challenger.name, Nightfall())
+    p2 = Battle(target.name, ErdtreeBlessing())
     bm = BattleManager(p1, p2)
 
     round_num = 1
@@ -58,7 +59,7 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             # Execute + resolve the round via  ngine
             bm.execute_turn(p1_move, p2_move)
             result_text = bm.resolve_round()
-           
+
 
             # Apply timeout penalties AFTER resolution
             penalty_notes = []
@@ -70,18 +71,13 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 p2.hp = max(0, p2.hp - TIMEOUT_PENALTY)
                 penalty_notes.append(f"{target.name} suffered an extra **-{TIMEOUT_PENALTY} HP** for hesitation.")
 
-            # Trigger poison and nightfall effects each round
-            p1.proc_effect()
-            p2.proc_effect()
+            # Trigger all  effects each round
 
-            if p1.status_effect == 'poisoned':
-                penalty_notes.append(f"☠️ {challenger.name} took **4 poison damage**.")
-            if p1.status_effect == 'nightfall':
-                penalty_notes.append(f"🌑 {challenger.name}'s power fades under Nightfall's curse.")
-            if p2.status_effect == 'poisoned':
-                penalty_notes.append(f"☠️ {target.name} took **4 poison damage**.")
-            if p2.status_effect == 'nightfall':
-                penalty_notes.append(f"🌑 {target.name}'s power fades under Nightfall's curse.")
+            p1_penalty_notes = p1.proc_effect()
+            p2_penalty_notes = p2.proc_effect()
+            penalty_notes = (p1_penalty_notes or []) + (p2_penalty_notes or [])
+
+
 
             # Replace the old round message with the result message
             result_embed = build_result_embed(

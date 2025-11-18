@@ -1,6 +1,8 @@
 import logging
 import random
 
+from services.battle.spell_class import Fireball, FrostBite, ErdtreeBlessing, Nightfall, Heavyshot, Spell
+
 logger = logging.getLogger(__name__)
 
 
@@ -13,15 +15,18 @@ class Battle:
 
     current_round = 0  # counter to keep track of rounds
 
-    def __init__(self, name):
+    def __init__(self, name, spell: Spell):
         self.attack = 10
         self.defense = 10
         self.speed = 10
         self.hp = 50
-        self.mana = 12
+        self.mana = 20
+        self.frost = 0
         self.current_stance = 'idle'
-        self.status_effect = 'none'
+        self.status_effect = {}  # dict { "poison": 3, "nightfall": 2 }
         self.name = name
+        self.spell = spell
+
 
     def deal_dmg(self, target: 'Battle'):
         """
@@ -174,71 +179,46 @@ class Battle:
                 }
 
     def cast(self, target: 'Battle'):
-        """
-        Cast a spell chosen randomly from a predefined list if enough mana is available.
-        Spells include fireball, poison, nightfall, and heavyshot, each with unique effects.
-
-        Args:
-            target (Battle): The target of the spell.
-
-        Returns:
-            Union[str, None]: The name of the spell cast, or None if not enough mana.
-        """
-        if self.mana < 15:
-            return
-
-        spell = random.choice(['fireball', 'poison', 'nightfall', 'heavyshot'])
-        self.mana -= 15
-
-        if spell == 'fireball':
-            # Deals fixed 24 damage
-            target.hp -= 24
-            return 'fireball'
-
-        elif spell == 'poison':
-            # Applies poison status effect
-            target.status_effect = 'poisoned'
-            return 'poisoned'
-
-        elif spell == 'nightfall':
-            # Applies nightfall status effect
-            target.status_effect = 'nightfall'
-            return 'nightfall'
-
-        else:
-            # Sets target's HP equal to caster's HP
-            target.hp = self.hp
-            return 'heavyshot'
+        return self.spell.cast(self, target)
 
     def proc_effect(self):
-        """
-        Process the current status effect on this participant, applying its effects.
+        turn_log = []
+        expired = []
 
-        Returns:
-            Union[int, tuple, None]: Updated HP if poisoned,
-            or tuple of (stat affected, new value) if nightfall effect applied,
-            or None if no effect.
-        """
-        effect = self.status_effect
+        for effect, duration in list(self.status_effect.items()):
 
-        if effect == 'poisoned':
-            # Poison effect reduces HP by 4 each turn
-            self.hp -= 4
-            return self.hp
+            if effect == "largeheal":
+                self.hp += 4
+                turn_log.append(f"{self.name} healed 4 hp")
 
-        elif effect == 'nightfall':
-            # Nightfall randomly reduces one stat by 2, but only if it's above 0
-            possible_stats = [stat for stat in ['attack', 'speed', 'mana', 'hp'] if getattr(self, stat) > 0]
+            elif effect == "nightfall":
+                stats = ["attack", "speed", "mana", "hp"]
+                valid = [s for s in stats if getattr(self, s) > 0]
+                if valid:
+                    chosen = random.choice(valid)
+                    new_val = max(0, getattr(self, chosen) - 2)
+                    setattr(self, chosen, new_val)
+                    turn_log.append(f"{self.name}'s {chosen} drops by 2")
 
-            if not possible_stats:
-                # all stats are already at zero, no effect
-                return None
+            self.status_effect[effect] -= 1
+            if self.status_effect[effect] <= 0:
+                expired.append(effect)
 
-            stat_affected = random.choice(possible_stats)
-            current_value = getattr(self, stat_affected)
-            new_value = max(0, current_value - 2)
-            setattr(self, stat_affected, new_value)
-            return (stat_affected, new_value)
+        for e in expired:
+            del self.status_effect[e]
+            turn_log.append(f"{self.name} is no longer affected by {e}")
+
+        #frost logic
+        if self.frost >= 10:
+            dmg = int(self.hp * 0.4)  # 40% of current HP
+            self.hp -= dmg
+            self.frost = 0
+            turn_log.append(f"Frostbite triggers on {self.name}, dealing {dmg} damage!")
+
+        elif self.frost > 0:
+            self.frost -= 1
+
+        return turn_log
 
 
     def set_stance(self, stance: str):
@@ -274,6 +254,6 @@ class Battle:
             speed_difference = attacker_speed - defender_speed
             fail_chance = 15 + speed_difference
             return fail_chance
-        else:
-            # Defender cannot fail if faster than attacker
-            return 0
+
+        # Defender cannot fail if faster than attacker
+        return 0

@@ -36,6 +36,7 @@ class Quests(Base):
     reward = Column(Integer, default=0)
     limit = Column(Integer, default=0)
     skips = Column(Integer, default =0)
+    streak = Column(Integer, default=0)
 
 class Daily(Base):
     __tablename__ = 'daily'

@@ -17,9 +17,8 @@ class BattleManager:
     def execute_turn(self, p1_move, p2_move):
         self.p1.set_stance(p1_move)
         self.p2.set_stance(p2_move)
-        self.p1.proc_effect()
-        self.p2.proc_effect()
 
+        
     def resolve_round(self):
         player1 = self.p1
         player2 = self.p2
@@ -198,22 +197,49 @@ class BattleManager:
         if player1.current_stance == 'recover' and player2.current_stance == 'recover':
             return f"Both {player1.name} and {player2.name} tried to recover but failed"
 
+        #Both players use recover
+        if player1.current_stance == 'cast' and player2.current_stance == 'cast':
+            if player1.speed == player2.speed:
+                player1.mana -= 5
+                player2.mana -= 5
+                return "same speed both intrupped each others spell. unsucsseful cast drains 5 mana for each"
+
+            if player1.speed > player2.speed:
+                ok, msg = player1.cast(player2)
+                if not ok:
+                    player1.hp -= 15
+                    return f"{player1.name} tried casting without enough mana took drained his own life in carelessness -15 HP"
+
+                player2.mana -= 5
+                return f"Due to higher speed {player1.name} was able to interupt {player2.name} and cast...\n {player2.name} also lost 5 mana for failed attempt to cast \n {msg}"
+
+            if player2.speed > player1.speed:
+                ok, msg = player2.cast(player1)
+                if not ok:
+                    player2.hp -= 15
+                    return f"{player2.name} tried casting without enough mana took drained his own life in carelessness -15 HP"
+                player1.mana -= 5
+                return f"Due to higher speed {player2.name} was able to interupt {player1.name} and cast...\n {player1.name} also lost 5 mana for failed attempt to cast \n {msg}"
+
+
+
         # Player1 casts a spell
         if player1.current_stance == 'cast':
-            if player1.mana < 15:
+            ok, msg = player1.cast(player2)
+            if not ok:
                 player1.hp -= 15
-                return f"{player1.name} tried casting without enough mana took drained life in carelessness -15 HP"
+                return f"{player1.name} tried casting without enough mana took drained his own life in carelessness -15 HP"
 
-            spell = player1.cast(player2)
-            return f"{player1.name} casted a {spell} on {player2.name}"
+            return msg
 
         # Player2 casts a spell
         if player2.current_stance == 'cast':
-            if player2.mana < 15:
+            ok, msg = player2.cast(player1)
+            if not ok:
                 player2.hp -= 15
                 return f"{player2.name} tried casting without enough mana took drained his own life in carelessness -15 HP"
 
-            spell = player2.cast(player1)
-            return f"{player2.name} casted a {spell} on {player1.name}"
+            return msg
+
 
         return "No valid moves resolved this round."

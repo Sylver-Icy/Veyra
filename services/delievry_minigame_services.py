@@ -4,10 +4,14 @@ import random
 
 from models.inventory_model import Items
 from models.users_model import Quests
+
 from database.sessionmaker import Session
+
 from utils.embeds.delieveryembed import delievery_embed
 from utils.itemname_to_id import get_item_id_safe
+
 from services.inventory_services import fetch_inventory, take_item
+from services.exp_services import current_exp
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +20,12 @@ def requested_items(user_name: str, user_id: int):
     Checks if the user has an assigned quest.
     If already assigned, returns the existing quest embed.
     Otherwise, creates a new quest and returns its embed.
-    TODO: make it scale with user level
     """
+    # fetch streak
+    with Session() as session:
+        quest = session.execute(select(Quests).where(Quests.user_id == user_id)).scalar_one_or_none()
+        streak = quest.streak if quest else 0
+
     quest = fetch_quest(user_id)
     if quest and quest.delivery_items:
         delivery_items_name_list = quest.delivery_items
@@ -25,7 +33,7 @@ def requested_items(user_name: str, user_id: int):
     else:
         delivery_items_name_list, reward = create_quest(user_id)
 
-    embed = delievery_embed(user_name, delivery_items_name_list, reward, user_id)
+    embed = delievery_embed(user_name, delivery_items_name_list, reward, user_id, streak)
     return embed
 
 
@@ -36,16 +44,26 @@ def create_quest(user_id: int):
     - Calculates reward based on items
     - Adds or updates quest in DB
     """
+    _, user_lvl = current_exp(user_id)
     with Session() as session:
-        # Pick 1-2 random common items
+        # Determine rarity pool based on level
+        if user_lvl < 5:
+            rarity_pool = ["Common"]
+        elif user_lvl < 10:
+            rarity_pool = ["Common", "Rare"]
+        elif user_lvl < 15:
+            rarity_pool = ["Common", "Rare", "Epic"]
+        else:
+            rarity_pool = ["Common", "Rare", "Epic", "Legendary"]
+
         delivery_items = session.execute(
             select(Items)
-            .where(Items.item_rarity == "Common")
+            .where(Items.item_rarity.in_(rarity_pool))
             .order_by(func.random())
             .limit(random.randint(1, 2))
         ).scalars().all()
 
-        reward = calculate_reward(delivery_items)
+        reward = calculate_reward(delivery_items, user_id)
         delivery_items_name_list = [item.item_name for item in delivery_items]
 
         # Check if user already has a quest
@@ -93,6 +111,7 @@ def delete_quest(user_id: int):
         quest.delivery_items = None
         quest.reward = 0
         quest.skips += 1
+        quest.streak = 0
         session.commit()
         logger.info("Quest skipped", extra={"user": user_id})
         return True
@@ -109,7 +128,7 @@ def fetch_quest(user_id: int):
         ).scalar_one_or_none()
 
 
-def calculate_reward(items: list):
+def calculate_reward(items: list, user_id: int):
     """
     Calculates the reward for a delivery quest based on item rarities.
     """
@@ -126,8 +145,23 @@ def calculate_reward(items: list):
         low, high = RARITY_REWARDS[item.item_rarity]
         total += random.randint(low, high)
 
-    bonus = random.uniform(1.1, 1.7)  # Only round at the end for smoother scaling
-    return int(total * bonus)
+    # fetch streak
+    with Session() as session:
+        quest = session.execute(select(Quests).where(Quests.user_id == user_id)).scalar_one_or_none()
+        streak = quest.streak if quest else 0
+
+    # streak multiplier tiers
+    if streak < 2:
+        streak_mult = 1.0
+    elif streak < 6:
+        streak_mult = 1.2
+    elif streak < 10:
+        streak_mult = 1.5
+    else:
+        streak_mult = 2.0
+
+    bonus = random.uniform(1.2, 1.8)  # Only round at the end for smoother scaling
+    return int(total * bonus * streak_mult)
 
 
 def items_check(user_id: int, items: list):
@@ -152,6 +186,11 @@ def items_check(user_id: int, items: list):
         "user": user_id,
         "flex": f"Items delievered-> {items}"
     })
+    #update streak
+    with Session() as session:
+        quest = session.get(Quests, user_id)
+        quest.streak +=1
+        session.commit()
     return True
 
 

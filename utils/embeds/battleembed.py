@@ -20,7 +20,7 @@ class BattleRequestView(View):
             for child in self.children:
                 child.disabled = True
             await interaction.response.edit_message(
-            content="❌ Challenee aborted coz of insuffiecient balance.",
+            content="❌ Challenge aborted coz of insuffiecient balance.",
             view=self
         )
         self.stop()
