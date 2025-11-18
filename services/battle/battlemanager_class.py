@@ -18,7 +18,7 @@ class BattleManager:
         self.p1.set_stance(p1_move)
         self.p2.set_stance(p2_move)
 
-        
+
     def resolve_round(self):
         player1 = self.p1
         player2 = self.p2
@@ -74,6 +74,9 @@ class BattleManager:
                     f"taking only {reduced_dmg} and gaining {buff} defense."
                 )
 
+            if block_result['status'] == 'fullsuccess':
+                return (f"{player2.name} used his hammer to block the incoming attack taking no dmg at all while gaining {block_result['defense_buff']} defense")
+
             player2.hp -= dmg
             return (
                 f"{player2.name} tried to block {player1.name}'s attack they were too slow, "
@@ -96,6 +99,9 @@ class BattleManager:
                 player1.hp -= dmg
                 return (f"{player1.name} tried to defend against {player2.name}'s attack but failed. "
                         f"Attack hit and dealt {dmg} dmg")
+
+            if block_result['status'] == 'fullsuccess':
+                return (f"{player1.name} used his hammer to block the incoming attack taking no dmg at all while gaining {block_result['defense_buff']} defense")
 
             return (f"{player2.name} tried to attack {player1.name} but {player1.name} defended most of the dmg and "
                     f"increased defense by {block_result['defense_buff']} points. DMG recived {int(dmg*0.3)}")
@@ -138,6 +144,12 @@ class BattleManager:
         # Player1 recovers, Player2 blocks
         if player1.current_stance == 'recover' and player2.current_stance == 'block':
             regen_result = player1.regen(player2)
+            if regen_result['status'] == 'blocked':
+                block_result = player2.block(player1, 0)
+
+                return f"Nuh uh {player1.name} no healing allowed this match.{player2.name} lost {block_result['defense_debuff']} defense"
+
+            regen_result = player1.regen(player2)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
 
             recovered_amount = regen_result[recovered_stat]
@@ -149,6 +161,11 @@ class BattleManager:
 
         # Player1 recovers, Player2 counters
         if player1.current_stance == 'recover' and player2.current_stance == 'counter':
+            regen_result = player1.regen(player2)
+            if regen_result['status'] == 'blocked':
+                counter_result = player2.counter(player1, 0)
+                return f"Nuh uh {player1.name} no healing allowed this match.\n{player2.name} lost hp defense and speed by {counter_result['hp_drain']}, {counter_result['defense_drain']}, {counter_result['speed_drain']}"
+
             regen_result = player1.regen(player2)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
             recovered_amount = regen_result[recovered_stat]
@@ -164,6 +181,12 @@ class BattleManager:
 
         # Player1 blocks, Player2 recover
         if player1.current_stance == 'block' and player2.current_stance == 'recover':
+            regen_result = player2.regen(player1)
+            if regen_result['status'] == 'blocked':
+                block_result = player1.block(player2, 0)
+
+                return f"Nuh uh {player2.name} no healing allowed this match.{player1.name} lost {block_result['defense_debuff']} defense"
+
             regen_result = player2.regen(player1)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
 
@@ -182,6 +205,11 @@ class BattleManager:
         # Player1 counters, Player2 recovers
         if player1.current_stance == 'counter' and player2.current_stance == 'recover':
             regen_result = player2.regen(player1)
+            if regen_result['status'] == 'blocked':
+                counter_result = player1.counter(player2, 0)
+                return f"Nuh uh {player2.name} no healing allowed this match. {player1.name} lost hp defense and speed by {counter_result['hp_drain']}, {counter_result['defense_drain']}, {counter_result['speed_drain']}"
+
+
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
             recovered_amount = regen_result[recovered_stat]
 
@@ -197,7 +225,7 @@ class BattleManager:
         if player1.current_stance == 'recover' and player2.current_stance == 'recover':
             return f"Both {player1.name} and {player2.name} tried to recover but failed"
 
-        #Both players use recover
+        #Both players use cast
         if player1.current_stance == 'cast' and player2.current_stance == 'cast':
             if player1.speed == player2.speed:
                 player1.mana -= 5

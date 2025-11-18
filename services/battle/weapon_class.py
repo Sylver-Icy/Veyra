@@ -1,0 +1,66 @@
+class Weapon():
+    def __init__(self,name, attack_bonus=0, hp_bonus=0, defense_bonus=0, speed_bonus=0, mana_bonus=0):
+        self.name = name
+        self.attack_bonus = attack_bonus
+        self.defense_bonus = defense_bonus
+        self.hp_bonus = hp_bonus
+        self.speed_bonus = speed_bonus
+        self.mana_bonus = mana_bonus
+
+    # hooks ↓
+    def on_attack_success(self, attacker, defender, damage): pass
+    def on_attack_fail(self, attacker, defender): pass
+    def on_receive_attack(self, defender, attacker, damage): pass
+    def on_spell_cast(self, caster, spell, target, result): pass
+    def on_regen(self, player): pass
+    def on_block(self, defender): pass
+    def on_turn_start(self, player): pass
+    def on_turn_end(self, player): pass
+
+
+class TrainingBlade(Weapon):
+    def __init__(self, name = "Training Blade", attack_bonus=5):
+        super().__init__(name, attack_bonus)
+
+    def on_attack_success(self, attacker, defender, damage):
+        attacker.attack += 1
+        return f"Training Blade passive: {attacker.name}'s attack increased by 1"
+
+class MoonSlasher(Weapon):
+    def __init__(self, name = "The Moon Slasher", attack_bonus=2, hp_bonus=5, defense_bonus=10, speed_bonus=1):
+        super().__init__(name, attack_bonus, hp_bonus, defense_bonus, speed_bonus)
+
+    def on_attack_success(self, attacker, defender, damage):
+        defender.frost += 3
+        return f"The Moon Slasher passive: {defender.name} started feeling chills.. Frost building up!"
+
+class EternalTome(Weapon):
+    def __init__(self, name = "Eternal Tome", attack_bonus=3, mana_bonus=5):
+        super().__init__(name, attack_bonus, mana_bonus)
+
+    def on_spell_cast(self, caster, spell, target, result):
+        if not result:
+            return
+
+        # Increase duration of all active status effects on target by 2
+        if hasattr(target, "status_effect") and isinstance(target.status_effect, dict) and target.status_effect:
+            for eff in target.status_effect:
+                target.status_effect[eff] += 2
+            return f"Eternal Tome passive: All effect durations on {target.name} increased by 2"
+        return None
+
+class ElephantHammer(Weapon):
+    def __init__(self, name = "Elephant Hammer", attack_bonus=3, hp_bonus=10, defense_bonus=20, speed_bonus=-1):
+        super().__init__(name, attack_bonus, hp_bonus, defense_bonus, speed_bonus)
+
+    def on_block(self, defender):
+        return "fullblock"
+
+class DarkBlade(Weapon):
+    def __init__(self, name = "Dark Blade", attack_bonus=7):
+        super().__init__(name, attack_bonus)
+
+    def on_attack_success(self, attacker, defender, damage):
+        defender.can_heal = False
+        attacker.can_heal = False
+        return "DarkBlade effect: Neither party can heal for rest of the game"

@@ -4,6 +4,7 @@ import discord
 from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
 from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite
+from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome
 
 from services.battle.battle_view import BattleRoundView
 from services.economy_services import add_gold
@@ -25,8 +26,8 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
     - Ends immediately on death; announces winner and reward.
     """
     # Initialize fighters from usernames
-    p1 = Battle(challenger.name, Nightfall())
-    p2 = Battle(target.name, ErdtreeBlessing())
+    p1 = Battle(challenger.name, Nightfall(), DarkBlade())
+    p2 = Battle(target.name, FrostBite(), MoonSlasher())
     bm = BattleManager(p1, p2)
 
     round_num = 1
@@ -76,6 +77,7 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             p1_penalty_notes = p1.proc_effect()
             p2_penalty_notes = p2.proc_effect()
             penalty_notes = (p1_penalty_notes or []) + (p2_penalty_notes or [])
+            penalty_notes = [x for x in penalty_notes if isinstance(x, str) and x.strip()]
 
 
 

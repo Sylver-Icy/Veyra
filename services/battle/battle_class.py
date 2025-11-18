@@ -1,7 +1,8 @@
 import logging
 import random
 
-from services.battle.spell_class import Fireball, FrostBite, ErdtreeBlessing, Nightfall, Heavyshot, Spell
+from services.battle.spell_class import Spell
+from services.battle.weapon_class import Weapon
 
 logger = logging.getLogger(__name__)
 
@@ -15,18 +16,20 @@ class Battle:
 
     current_round = 0  # counter to keep track of rounds
 
-    def __init__(self, name, spell: Spell):
-        self.attack = 10
-        self.defense = 10
-        self.speed = 10
-        self.hp = 50
-        self.mana = 20
+    def __init__(self, name, spell: Spell, weapon: Weapon):
+        self.attack = 5 + weapon.attack_bonus
+        self.defense = 0 + weapon.defense_bonus
+        self.speed = 10 + weapon.speed_bonus
+        self.hp = 40 + weapon.hp_bonus
+        self.mana = 10 + weapon.mana_bonus
         self.frost = 0
         self.current_stance = 'idle'
         self.status_effect = {}  # dict { "poison": 3, "nightfall": 2 }
         self.name = name
         self.spell = spell
-
+        self.weapon = weapon
+        self.can_heal = True
+        self.log = []
 
     def deal_dmg(self, target: 'Battle'):
         """
@@ -46,13 +49,14 @@ class Battle:
         # Calculate damage reduction based on target's defense percentage
         defense = target.defense
         effective_dmg = damage - (damage * defense) // 100
+        effective_dmg = max(0, effective_dmg)
 
-        # Inflict damage only if target is not blocking or countering
         if target.current_stance not in ('block', 'counter'):
             target.hp -= effective_dmg
-            self.attack += 1  # increase attack strength after successful hit
+            result = self.weapon.on_attack_success(self, target, effective_dmg)
+            self.log.append(result)
 
-        return max(0, effective_dmg)
+        return effective_dmg
 
     def block(self, target: 'Battle', dmg: int):
         """
@@ -70,6 +74,17 @@ class Battle:
             or tuple of (hp drain, defense shred) if block fails due to wrong prediction.
         """
         if target.current_stance == 'attack':
+            if self.weapon.on_block(self) == "fullblock": #if the weapon returns  full block
+
+                random_defense_buff = random.randint(12, 19)
+                self.defense += random_defense_buff
+                self.hp -= 0 #no hp loss
+                return {
+                    'status': 'fullsuccess',
+                    'defense_buff': random_defense_buff
+                }
+
+
             # Calculate chance to fail block based on speed difference
             fail_chance = self.calculate_fail_chance(target.speed, self.speed)
             roll = random.randint(1, 100)
@@ -154,6 +169,12 @@ class Battle:
         Returns:
             Union[int, str]: Amount of HP or mana regenerated, or 'intrupted' if failed.
         """
+        if not self.can_heal:
+            self.log.append(f"Healing is banned for entire game {self.name}")
+            return {
+                'status': "blocked"
+            }
+
         if target.current_stance in ('block', 'counter'):
             # Choose randomly to regenerate HP or mana
             regen_stat = random.choice(['hp', 'mana'])
@@ -179,17 +200,22 @@ class Battle:
                 }
 
     def cast(self, target: 'Battle'):
-        return self.spell.cast(self, target)
+        ok, msg = self.spell.cast(self, target)
+        self.weapon.on_spell_cast(self, self.spell, target, ok)
+        return ok, msg
+
 
     def proc_effect(self):
-        turn_log = []
         expired = []
 
         for effect, duration in list(self.status_effect.items()):
 
             if effect == "largeheal":
-                self.hp += 4
-                turn_log.append(f"{self.name} healed 4 hp")
+                if not self.can_heal:
+                    self.log.append("Healing failed because of Dark blade effect")
+                else:
+                    self.hp += 4
+                    self.log.append(f"{self.name} healed 4 hp")
 
             elif effect == "nightfall":
                 stats = ["attack", "speed", "mana", "hp"]
@@ -198,7 +224,7 @@ class Battle:
                     chosen = random.choice(valid)
                     new_val = max(0, getattr(self, chosen) - 2)
                     setattr(self, chosen, new_val)
-                    turn_log.append(f"{self.name}'s {chosen} drops by 2")
+                    self.log.append(f"{self.name}'s {chosen} drops by 2")
 
             self.status_effect[effect] -= 1
             if self.status_effect[effect] <= 0:
@@ -206,19 +232,21 @@ class Battle:
 
         for e in expired:
             del self.status_effect[e]
-            turn_log.append(f"{self.name} is no longer affected by {e}")
+            self.log.append(f"{self.name} is no longer affected by {e}")
 
         #frost logic
         if self.frost >= 10:
             dmg = int(self.hp * 0.4)  # 40% of current HP
             self.hp -= dmg
             self.frost = 0
-            turn_log.append(f"Frostbite triggers on {self.name}, dealing {dmg} damage!")
+            self.log.append(f"Frostbite triggers on {self.name}, dealing {dmg} damage!")
 
         elif self.frost > 0:
             self.frost -= 1
 
-        return turn_log
+        logs = self.log.copy()
+        self.log.clear()
+        return logs
 
 
     def set_stance(self, stance: str):
