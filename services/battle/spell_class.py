@@ -69,7 +69,7 @@ class ErdtreeBlessing(Spell):
         if not ok:
             return ok, msg
 
-        duration = 5
+        duration = 4
         caster.status_effect["largeheal"] = duration
 
         return True, f"{caster.name} used The Blessing of Erdtree."

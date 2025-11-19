@@ -45,8 +45,8 @@ class EternalTome(Weapon):
         # Increase duration of all active status effects on target by 2
         if hasattr(target, "status_effect") and isinstance(target.status_effect, dict) and target.status_effect:
             for eff in target.status_effect:
-                target.status_effect[eff] += 2
-            return f"Eternal Tome passive: All effect durations on {target.name} increased by 2"
+                target.status_effect[eff] += 3
+            return f"Eternal Tome passive: All effect durations on {target.name} increased by 3"
         return None
 
 class ElephantHammer(Weapon):

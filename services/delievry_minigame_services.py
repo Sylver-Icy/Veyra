@@ -93,7 +93,7 @@ def create_quest(user_id: int):
     return delivery_items_name_list, reward
 
 
-def delete_quest(user_id: int):
+def delete_quest(user_id: int, streak = False):
     """
     Deletes a quest for the user if skips < 3.
     Increments skip count and resets delivery items/reward.
@@ -111,7 +111,8 @@ def delete_quest(user_id: int):
         quest.delivery_items = None
         quest.reward = 0
         quest.skips += 1
-        quest.streak = 0
+        if not streak: #if quest is being deleted via skip then reset streak
+            quest.streak = 0
         session.commit()
         logger.info("Quest skipped", extra={"user": user_id})
         return True

@@ -450,11 +450,11 @@ JOB_PAGES = [
             "**Energy Cost:** 70\n"
             "**Reward:** Lootboxes + occasional gold\n\n"
             "**Drop Rates:**\n"
-            "• Gold: 29%\n"
-            "• Wooden Box: 40%\n"
+            "• Gold: 27%\n"
+            "• Wooden Box: 35%\n"
             "• Stone Box: 25%\n"
-            "• Iron Box: 5%\n"
-            "• Platinum Box: 1%"
+            "• Iron Box: 10%\n"
+            "• Platinum Box: 3%"
         )
     },
     {
