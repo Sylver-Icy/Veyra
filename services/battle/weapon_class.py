@@ -27,8 +27,8 @@ class TrainingBlade(Weapon):
         return f"Training Blade passive: {attacker.name}'s attack increased by 1"
 
 class MoonSlasher(Weapon):
-    def __init__(self, name = "The Moon Slasher", attack_bonus=2, hp_bonus=5, defense_bonus=10, speed_bonus=1):
-        super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus)
+    def __init__(self, name = "The Moon Slasher", attack_bonus=2, hp_bonus=5, defense_bonus=8, speed_bonus=3, mana_bonus=1):
+        super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus, mana_bonus=mana_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
         defender.frost += 3
@@ -50,14 +50,14 @@ class EternalTome(Weapon):
         return None
 
 class ElephantHammer(Weapon):
-    def __init__(self, name = "Elephant Hammer", attack_bonus=3, hp_bonus=10, defense_bonus=20, speed_bonus=-1):
+    def __init__(self, name = "Elephant Hammer", attack_bonus=3, hp_bonus=10, defense_bonus=15, speed_bonus=-1):
         super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus)
 
     def on_block(self, defender):
         return "fullblock"
 
 class DarkBlade(Weapon):
-    def __init__(self, name = "Dark Blade", attack_bonus=7):
+    def __init__(self, name = "Dark Blade", attack_bonus=8):
         super().__init__(name, attack_bonus=attack_bonus)
 
     def on_attack_success(self, attacker, defender, damage):

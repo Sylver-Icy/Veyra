@@ -84,7 +84,7 @@ class FrostBite(Spell):
         if not ok:
             return ok, msg
 
-        target.frost += 4
+        target.frost += 5
         target.speed -= 1
 
         return True, f"{caster.name} blew a chilly wind of ice {target.name} speed lowered coz of shivering cold and frost is building up"
