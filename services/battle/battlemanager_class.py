@@ -114,9 +114,9 @@ class BattleManager:
 
         # Player1 blocks, Player2 counters
         if player1.current_stance == 'block' and player2.current_stance == 'counter':
-            player1.hp -= 5
+            player1.hp -= 2
             player2.speed -= 4
-            return f"{player1.name} blocked while {player2.name} tried to counter. No damage dealt. Stats debuffed -5hp for p1 and -4 speed for player 2"
+            return f"{player1.name} blocked while {player2.name} tried to counter. No damage dealt. Stats debuffed -2hp for p1 and -4 speed for player 2"
 
         # Player1 counters, Player2 attacks
         if player1.current_stance == 'counter' and player2.current_stance == 'attack':
@@ -127,8 +127,8 @@ class BattleManager:
         # Player1 counters, Player2 blocks
         if player1.current_stance == 'counter' and player2.current_stance == 'block':
             player1.speed -= 4
-            player2.hp -=5
-            return f"{player1.name} tried to counter but {player2.name} blocked. No damage dealt. Stats lowered for both party. Loosing 4 speed and 5 hp respectively"
+            player2.hp -=2
+            return f"{player1.name} tried to counter but {player2.name} blocked. No damage dealt. Stats lowered for both party. Loosing 4 speed and 2 hp respectively"
 
         # Both players counter
         if player1.current_stance == 'counter' and player2.current_stance == 'counter':
@@ -139,6 +139,7 @@ class BattleManager:
         # Player1 recovers, Player2 attacks
         if player1.current_stance == 'recover' and player2.current_stance == 'attack':
             dmg = player2.deal_dmg(player1)
+            player1.regen(player2)
             return f"{player1.name} tried to recover but was interrupted by {player2.name}'s attack dealing {dmg} damage."
 
         # Player1 recovers, Player2 blocks
@@ -149,7 +150,6 @@ class BattleManager:
 
                 return f"Nuh uh {player1.name} no healing allowed this match.{player2.name} lost {block_result['defense_debuff']} defense"
 
-            regen_result = player1.regen(player2)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
 
             recovered_amount = regen_result[recovered_stat]
@@ -166,7 +166,6 @@ class BattleManager:
                 counter_result = player2.counter(player1, 0)
                 return f"Nuh uh {player1.name} no healing allowed this match.\n{player2.name} lost hp defense and speed by {counter_result['hp_drain']}, {counter_result['defense_drain']}, {counter_result['speed_drain']}"
 
-            regen_result = player1.regen(player2)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
             recovered_amount = regen_result[recovered_stat]
 
@@ -187,7 +186,6 @@ class BattleManager:
 
                 return f"Nuh uh {player2.name} no healing allowed this match.{player1.name} lost {block_result['defense_debuff']} defense"
 
-            regen_result = player2.regen(player1)
             recovered_stat = "hp_recovered" if "hp_recovered" in regen_result else "mana_recovered"
 
             recovered_amount = regen_result[recovered_stat]
@@ -199,6 +197,7 @@ class BattleManager:
 
         # Player1 attacks, Player2 recovers
         if player1.current_stance == 'attack' and player2.current_stance == 'recover':
+            player2.regen(player1)
             dmg = player1.deal_dmg(player2)
             return f"{player2.name} tried to recover but was interrupted by {player1.name}'s attack dealing {dmg} damage."
 

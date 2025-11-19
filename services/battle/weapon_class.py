@@ -20,7 +20,7 @@ class Weapon():
 
 class TrainingBlade(Weapon):
     def __init__(self, name = "Training Blade", attack_bonus=5):
-        super().__init__(name, attack_bonus)
+        super().__init__(name, attack_bonus=attack_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
         attacker.attack += 1
@@ -28,7 +28,7 @@ class TrainingBlade(Weapon):
 
 class MoonSlasher(Weapon):
     def __init__(self, name = "The Moon Slasher", attack_bonus=2, hp_bonus=5, defense_bonus=10, speed_bonus=1):
-        super().__init__(name, attack_bonus, hp_bonus, defense_bonus, speed_bonus)
+        super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
         defender.frost += 3
@@ -36,7 +36,7 @@ class MoonSlasher(Weapon):
 
 class EternalTome(Weapon):
     def __init__(self, name = "Eternal Tome", attack_bonus=3, mana_bonus=5):
-        super().__init__(name, attack_bonus, mana_bonus)
+        super().__init__(name, attack_bonus=attack_bonus, mana_bonus=mana_bonus)
 
     def on_spell_cast(self, caster, spell, target, result):
         if not result:
@@ -51,14 +51,14 @@ class EternalTome(Weapon):
 
 class ElephantHammer(Weapon):
     def __init__(self, name = "Elephant Hammer", attack_bonus=3, hp_bonus=10, defense_bonus=20, speed_bonus=-1):
-        super().__init__(name, attack_bonus, hp_bonus, defense_bonus, speed_bonus)
+        super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus)
 
     def on_block(self, defender):
         return "fullblock"
 
 class DarkBlade(Weapon):
     def __init__(self, name = "Dark Blade", attack_bonus=7):
-        super().__init__(name, attack_bonus)
+        super().__init__(name, attack_bonus=attack_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
         defender.can_heal = False

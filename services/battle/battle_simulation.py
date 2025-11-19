@@ -1,13 +1,15 @@
 # services/discord_battle/battle_simulation.py
 import asyncio
 import discord
+
 from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
 from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite
 from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome
-
+from services.battle.loadout_services import fetch_loadout
 from services.battle.battle_view import BattleRoundView
 from services.economy_services import add_gold
+
 from utils.embeds.battleembed import (
     build_round_embed,
     build_result_embed,
@@ -17,6 +19,21 @@ from utils.embeds.battleembed import (
 TIMEOUT_SECONDS = 50
 TIMEOUT_PENALTY = 25
 RESULT_DISPLAY_TIME = 12  # seconds before next round starts
+weapon_map = {
+    "moonslasher": MoonSlasher,
+    "trainingblade": TrainingBlade,
+    "darkblade": DarkBlade,
+    "elephanthammer": ElephantHammer,
+    "eternaltome": EternalTome
+}
+
+spell_map = {
+    "fireball": Fireball,
+    "heavyshot": Heavyshot,
+    "erdtreeblessing": ErdtreeBlessing,
+    "nightfall": Nightfall,
+    "frostbite": FrostBite
+}
 async def start_battle_simulation(ctx, challenger: discord.User, target: discord.User, bet: int):
     """
     Orchestrates a full 1v1 battle flow in-channel.
@@ -26,8 +43,11 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
     - Ends immediately on death; announces winner and reward.
     """
     # Initialize fighters from usernames
-    p1 = Battle(challenger.name, Nightfall(), DarkBlade())
-    p2 = Battle(target.name, FrostBite(), MoonSlasher())
+    weapon, spell = fetch_loadout(challenger.id)
+    p1 = Battle(challenger.name, spell_map[spell](), weapon_map[weapon]())
+
+    weapon, spell = fetch_loadout(target.id)
+    p2 = Battle(target.name, spell_map[spell](), weapon_map[weapon]())
     bm = BattleManager(p1, p2)
 
     round_num = 1

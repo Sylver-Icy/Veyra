@@ -1,9 +1,13 @@
 import discord
 from discord.ext import commands
+
 from utils.embeds.battleembed import send_battle_challenge
+
 from services.battle.battle_simulation import start_battle_simulation
 from services.economy_services import check_wallet, remove_gold, add_gold
 from services.users_services import is_user
+from services.battle.loadout_services import update_loadout
+
 class Battle(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
@@ -39,6 +43,11 @@ class Battle(commands.Cog):
             await ctx.send("No response. Challenge expired. Refunding pot gimme a moment.")
             add_gold(ctx.author.id, bet)
 
+
+    @commands.slash_command()
+    async def loadout(self, ctx, weapon: str, spell: str):
+        result = update_loadout(ctx.author.id, weapon, spell)
+        await ctx.respond(result)
 
 
 def setup(bot):

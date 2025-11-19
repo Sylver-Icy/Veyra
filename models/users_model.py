@@ -82,3 +82,16 @@ class UpgradeDefinitions(Base):
     cost = Column(Integer, nullable=False)
     effect_description = Column(Text)
     upgrades = relationship("Upgrades", back_populates="definition")
+
+class BattleLoadout(Base):
+    __tablename__ = 'battle_loadout'
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        primary_key=True
+    )
+
+    weapon = Column(String(50))
+    spell = Column(String(50))
+    win_streak = Column(Integer, default=0)

@@ -31,7 +31,7 @@ class Guess:
         if stage == 1:
             return (initial_int, initial_int + 1)
         elif stage == 2:
-            return (initial_int, initial_int + 4)
+            return (initial_int, initial_int + 3)
         elif stage == 3:
             return (initial_int, initial_int + 9)
         else:

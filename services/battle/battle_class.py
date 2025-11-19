@@ -30,6 +30,7 @@ class Battle:
         self.weapon = weapon
         self.can_heal = True
         self.log = []
+        self.regen_state = 'hp'
 
     def deal_dmg(self, target: 'Battle'):
         """
@@ -169,19 +170,24 @@ class Battle:
         Returns:
             Union[int, str]: Amount of HP or mana regenerated, or 'intrupted' if failed.
         """
-        if not self.can_heal:
-            self.log.append(f"Healing is banned for entire game {self.name}")
-            return {
-                'status': "blocked"
-            }
+
 
         if target.current_stance in ('block', 'counter'):
             # Choose randomly to regenerate HP or mana
-            regen_stat = random.choice(['hp', 'mana'])
+            regen_stat = self.regen_state
 
             if regen_stat == 'hp':
+                if not self.can_heal:
+                    self.log.append(f"Healing is banned for entire game {self.name}")
+                    self.regen_state = 'mana'
+                    return {
+                        'status': "blocked"
+                    }
+
                 hp_to_regen = random.randint(7, 10)
                 self.hp += hp_to_regen
+                self.regen_state = 'mana'
+
                 return {
                     'status': 'success',
                     'hp_recovered': hp_to_regen
@@ -190,11 +196,13 @@ class Battle:
             if regen_stat == 'mana':
                 mana_to_regen = random.randint(3, 5)
                 self.mana += mana_to_regen
+                self.regen_state = 'hp'
                 return {
                     'status': 'success',
                     'mana_recovered': mana_to_regen
                 }
         else:
+            self.regen_state = 'mana' if self.regen_state == 'hp' else 'hp'
             return {
                 'status': "intrupted"
                 }

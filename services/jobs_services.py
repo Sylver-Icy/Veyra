@@ -60,7 +60,10 @@ class JobsClass:
         with Session() as session:
             user = session.get(User, self.user_id)
             if user:
-                return user.energy
+                lvl = user.level
+                energy = user.energy
+                max_energy = 35 + (15*lvl)
+                return f"{energy}/{max_energy}"
             return 0
 
 
@@ -98,11 +101,11 @@ class JobsClass:
             return response
 
         reward_distribution = {
-            "gold": 29,
-            "woodenbox": 40,
+            "gold": 27,
+            "woodenbox": 35,
             "stonebox": 25,
-            "ironbox": 5,
-            "platinumbox": 1
+            "ironbox": 10,
+            "platinumbox": 3
         }
 
         reward = random.choices(
@@ -165,11 +168,17 @@ class JobsClass:
     )[0]
 
         if reward == "gold":
-            add_gold(self.user_id, 15)
-            response = create_response("miner", 2, gold=15)
+            add_gold(self.user_id, 25)
+            response = create_response("miner", 2, gold=25)
             return response
 
-        ore_amount = random.randint(1, 3)
+        bonus = random.random() < 0.93  # True 93% of time
+
+        if bonus:
+            ore_amount = random.randint(3, 6)
+        else:
+            ore_amount = random.randint(12, 20)
+
         if reward == "coal":
             give_item(self.user_id, 187, ore_amount)
             response = create_response("miner", 1, amount=ore_amount, ores="Coal")
