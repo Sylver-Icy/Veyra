@@ -59,7 +59,7 @@ def update_daily_shop():
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
             .order_by(func.random())
-            .limit(9)
+            .limit(6)
             .all()
         )
 
@@ -93,7 +93,7 @@ def update_daily_buyback_shop():
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
             .where(Items.item_id.notin_(sell_ids_subq))
             .order_by(func.random())
-            .limit(6)
+            .limit(5)
             .all()
         )
 
@@ -101,8 +101,8 @@ def update_daily_buyback_shop():
             session.add(ShopDaily(
                 shop_type="buyback",
                 item_id=item.item_id,
-                price=calculate_buy_price(item.item_rarity, bonus=(idx == 3)),
-                is_bonus=(idx == 3)
+                price=calculate_buy_price(item.item_rarity, bonus=(idx == 4)),
+                is_bonus=(idx == 4)
             ))
 
         session.commit()
