@@ -51,6 +51,12 @@ bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True, h
 # ─── GLOBAL CHECKS ────────────────────────────────────────────────
 
 @bot.check
+async def block_dms(ctx):
+    if ctx.guild is None:
+        await ctx.respond("DMs disabled.", ephemeral=True)
+        return False
+    return True
+
 async def is_registered(ctx):
     """
     Global check to ensure a user is registered before using most commands.

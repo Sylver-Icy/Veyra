@@ -58,6 +58,10 @@ class ErrorHandler(commands.Cog):
     async def on_application_command_error(self, ctx, error):
         original = getattr(error, "original", error)
 
+        # Ignore global check failures completely (like DM-block)
+        if isinstance(error, commands.CheckFailure) or isinstance(original, commands.CheckFailure):
+            return
+
         if isinstance(original, commands.CommandOnCooldown):
             retry_after = original.retry_after
             if ctx.command and ctx.command.name == "start_race":
@@ -82,9 +86,6 @@ class ErrorHandler(commands.Cog):
         elif isinstance(original, commands.BotMissingPermissions):
             await ctx.respond("⚠️ I don't have permission to do that.", ephemeral=True)
             logger.warning("Bot missing permissions for slash command %s in %s", ctx.command, ctx.guild.name)
-
-        elif isinstance(original, commands.CheckFailure):
-            logger.warning("%s failed a custom check on slash command %s", ctx.author.name, ctx.command)
 
         elif isinstance(original, commands.CommandNotFound):
             # Slash commands are always known, but just in case, ignore silently

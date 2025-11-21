@@ -8,6 +8,7 @@ from models.inventory_model import Items
 from models.marketplace_model import ShopDaily
 
 from utils.embeds.shopembed import get_shop_view_and_embed
+from utils.time_utils import today
 from utils.emotes import GOLD_EMOJI
 
 from services.inventory_services import give_item, take_item, fetch_inventory
@@ -30,7 +31,7 @@ def db_get_shop_items(shop_type: str):
         items = (
             session.query(ShopDaily)
             .where(ShopDaily.shop_type == shop_type)
-            .where(ShopDaily.date == date.today())
+            .where(ShopDaily.date == today())
             .all()
         )
 
@@ -50,15 +51,15 @@ def update_daily_shop():
     with Session() as session:
         # delete today first (so reroll works)
         session.query(ShopDaily).where(
-            ShopDaily.date == date.today(),
+            ShopDaily.date == today(),
             ShopDaily.shop_type == "sell"
         ).delete()
 
         random_items = (
             session.query(Items)
-            .where(Items.item_rarity.in_(("Common", "Rare")))
+            .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
             .order_by(func.random())
-            .limit(6)
+            .limit(9)
             .all()
         )
 
@@ -75,14 +76,14 @@ def update_daily_buyback_shop():
     with Session() as session:
         # delete today first
         session.query(ShopDaily).where(
-            ShopDaily.date == date.today(),
+            ShopDaily.date == today(),
             ShopDaily.shop_type == "buyback"
         ).delete()
 
         sell_ids_subq = (
             session.query(ShopDaily.item_id)
             .where(
-                ShopDaily.date == date.today(),
+                ShopDaily.date == today(),
                 ShopDaily.shop_type == "sell"
             )
         )
@@ -92,7 +93,7 @@ def update_daily_buyback_shop():
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
             .where(Items.item_id.notin_(sell_ids_subq))
             .order_by(func.random())
-            .limit(4)
+            .limit(6)
             .all()
         )
 
@@ -124,7 +125,7 @@ def calculate_buy_price(rarity: str, bonus: bool) -> int:
         price = random.randint(low, high)
         bonus_multiplier = random.uniform(1.3, 2.2)
         return int(price * bonus_multiplier)
-    
+
     else:
         return random.randint(low, high)
 
