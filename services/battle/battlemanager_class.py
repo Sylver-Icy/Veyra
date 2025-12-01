@@ -132,9 +132,17 @@ class BattleManager:
 
         # Both players counter
         if player1.current_stance == 'counter' and player2.current_stance == 'counter':
-            player1.defense -= 15
-            player2.defense -= 15
-            return f"Both {player1.name} and {player2.name} tried to counter. No damage dealt. - 15 defense for both"
+            if player1.defense >=10:
+                player1.defense -= 10
+            else:
+                player1.hp -= 5
+
+            if player2.defense >=10:
+                player2.defense -= 10
+            else:
+                player2.hp -= 5
+
+            return f"Both {player1.name} and {player2.name} tried to counter. No damage dealt. - 10 defense for both"
 
         # Player1 recovers, Player2 attacks
         if player1.current_stance == 'recover' and player2.current_stance == 'attack':

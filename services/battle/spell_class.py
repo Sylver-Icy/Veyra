@@ -25,7 +25,7 @@ class Fireball(Spell):
 
         if not ok:
             return ok, msg
-        dmg = 19
+        dmg = 16
         target.hp -= dmg
         return True, f"{caster.name} hurls a Fireball at {target.name} dealing 19 dmg"
 
@@ -84,7 +84,7 @@ class FrostBite(Spell):
         if not ok:
             return ok, msg
 
-        target.frost += 5
+        target.frost += 6
         target.speed -= 1
 
         return True, f"{caster.name} blew a chilly wind of ice {target.name} speed lowered coz of shivering cold and frost is building up"

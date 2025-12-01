@@ -244,7 +244,7 @@ class Battle:
 
         #frost logic
         if self.frost >= 10:
-            dmg = int(self.hp * 0.4)  # 40% of current HP
+            dmg = int(self.hp * 0.5)  # 50% of current HP
             self.hp -= dmg
             self.frost = 0
             self.log.append(f"Frostbite triggers on {self.name}, dealing {dmg} damage!")

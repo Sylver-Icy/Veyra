@@ -2,6 +2,7 @@ import logging
 import random
 from sqlalchemy.sql import func
 from datetime import date
+from datetime import timedelta
 
 from database.sessionmaker import Session
 from models.inventory_model import Items
@@ -24,7 +25,7 @@ ITEM_RATE = {
     "Paragon": (600, 900)
 }
 
-
+EXCLUDED_ITEMS = ["Hint Key", "Potion of EXP", "Jar of EXP"]
 
 def db_get_shop_items(shop_type: str):
     with Session() as session:
@@ -49,15 +50,16 @@ def db_get_shop_items(shop_type: str):
 
 def update_daily_shop():
     with Session() as session:
-        # delete today first (so reroll works)
+        # delete yesterday first
         session.query(ShopDaily).where(
-            ShopDaily.date == today(),
+            ShopDaily.date == (today() - timedelta(days=1)),
             ShopDaily.shop_type == "sell"
         ).delete()
 
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
+            .where(Items.item_name.notin_(EXCLUDED_ITEMS))
             .order_by(func.random())
             .limit(6)
             .all()
@@ -74,9 +76,9 @@ def update_daily_shop():
 
 def update_daily_buyback_shop():
     with Session() as session:
-        # delete today first
+        # delete yesterday first
         session.query(ShopDaily).where(
-            ShopDaily.date == today(),
+            ShopDaily.date == (today() - timedelta(days=1)),
             ShopDaily.shop_type == "buyback"
         ).delete()
 

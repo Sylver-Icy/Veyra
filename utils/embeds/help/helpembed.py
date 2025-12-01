@@ -440,7 +440,7 @@ JOB_PAGES = [
         "body": (
             "**Role:** Knights stand guard over Natlade, protecting travelers and maintaining peace.\n"
             "**Energy Cost:** 85\n"
-            "**Reward:** 30–50 Gold"
+            "**Reward:** 40–90 Gold"
         )
     },
     {
@@ -465,9 +465,9 @@ JOB_PAGES = [
             "**Reward:** Gold + ores\n\n"
             "**Drop Rates:**\n"
             "• Gold: 10%\n"
-            "• Coal: 20%\n"
-            "• Copper Ore: 34%\n"
-            "• Iron Ore: 24%\n"
+            "• Coal: 27%\n"
+            "• Copper Ore: 30%\n"
+            "• Iron Ore: 21%\n"
             "• Silver Ore: 12%"
         )
     },

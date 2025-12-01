@@ -78,7 +78,7 @@ class JobsClass:
         eligible = self.consume_energy(energy_cost)
 
         if eligible:
-            earning = random.randint(30, 50)
+            earning = random.randint(40, 90)
             add_gold(self.user_id, earning)
             response = create_response("knight", 1, gold=earning)
             return response
@@ -155,9 +155,9 @@ class JobsClass:
 
         reward_distribution = {
             "gold": 10,
-            "coal": 20,
-            "copperore": 34,
-            "ironore": 24,
+            "coal": 27,
+            "copperore": 30,
+            "ironore": 21,
             "silverore": 12
         }
 

@@ -8,6 +8,7 @@ handles inline command invocation and EXP system integration.
 """
 
 import asyncio
+import random
 
 import os
 import sys
@@ -124,9 +125,10 @@ async def on_message(message):
 
             modified = ModifiedMessage(message, fixed_message)
             ctx = await bot.get_context(modified)
-            response = create_response("typo", 1, typo = raw_cmd, correct = closest)
-            await ctx.send(response)
-            await asyncio.sleep(3)
+            if random.random() < 0.24:
+                response = create_response("typo", 1, typo = raw_cmd, correct = closest)
+                await ctx.send(response)
+
             await bot.invoke(ctx)
             return
     # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
