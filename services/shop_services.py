@@ -56,6 +56,14 @@ def update_daily_shop():
             ShopDaily.shop_type == "sell"
         ).delete()
 
+        # skip if today's shop already exists
+        existing = session.query(ShopDaily).where(
+            ShopDaily.date == today(),
+            ShopDaily.shop_type == "sell"
+        ).count()
+        if existing > 0:
+            return
+
         random_items = (
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
@@ -81,6 +89,14 @@ def update_daily_buyback_shop():
             ShopDaily.date == (today() - timedelta(days=1)),
             ShopDaily.shop_type == "buyback"
         ).delete()
+
+        # skip if today's shop already exists
+        existing = session.query(ShopDaily).where(
+            ShopDaily.date == today(),
+            ShopDaily.shop_type == "buyback"
+        ).count()
+        if existing > 0:
+            return
 
         sell_ids_subq = (
             session.query(ShopDaily.item_id)
