@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # Services
 from services.users_services import is_user
-from services.talk_to_veyra.chat_services import fetch_channel_msgs, fetch_user_msgs, get_veyra_reply, reset_rate_limits
+from services.talk_to_veyra.chat_services import handle_user_message, fetch_channel_msgs
 from services.onboadingservices import greet
 from services.friendship_services import check_friendship
 from services.response_services import create_response
@@ -81,8 +81,6 @@ async def on_ready():
     try:
         await run_at_startup(bot)
         schedule_jobs(bot)
-        bot.loop.create_task(reset_rate_limits())
-
         if not scheduler.running:
             scheduler.start()
         logger.info(f"✅ Veyra is online as {bot.user}")
@@ -131,12 +129,22 @@ async def on_message(message):
 
             await bot.invoke(ctx)
             return
-    # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
-    #     title, _ = check_friendship(message.author.id)
-    #     user_msgs = await fetch_user_msgs(message.channel, message.author.id)
-    #     channel_msgs = await fetch_channel_msgs(message.channel, message.author.id)
-    #     reply = await get_veyra_reply(message.author.name, title, message.content, user_msgs, channel_msgs)
-    #     await message.reply(reply)
+    if message.channel.id == 1434228570380566559 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+        async with message.channel.typing():
+            await asyncio.sleep(random.uniform(0.5, 2))
+            title, _ = check_friendship(message.author.id)
+            msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
+
+            # Generate reply
+            reply = await handle_user_message(
+                message.content,
+                title,
+                message.author.id,
+                message.author.display_name,
+                msg_history
+            )
+
+        await message.reply(reply)
 
 
     # Inline command support: check if message contains a command invocation inline

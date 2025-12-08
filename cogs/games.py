@@ -127,7 +127,6 @@ class Games(commands.Cog):
             await ctx.respond(f"Error generating hint: {str(e)}")
 
     @commands.slash_command(name = "quest")
-    @commands.cooldown(1,15,commands.BucketType.user)
     async def quest(self,ctx):
         embed, view = requested_items(ctx.author.display_name, ctx.author.id)
         await ctx.respond(embed=embed, view=view)
