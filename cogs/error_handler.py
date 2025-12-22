@@ -95,6 +95,9 @@ class ErrorHandler(commands.Cog):
             await ctx.respond(str(original), ephemeral=True)
             logger.warning("Veyra error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))
 
+        elif isinstance(error, commands.CheckFailure):
+            return
+
         else:
             await ctx.respond("💥 An unexpected error occurred.", ephemeral=True)
             logger.exception("Unhandled error in slash command: %s", error)

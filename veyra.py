@@ -16,8 +16,12 @@ import logging
 from utils.logger import setup_logging
 # SQLAlchemy model registration
 import models  # Ensures all models are registered
+
 import discord
 from discord.ext import commands
+from discord.ext.commands import Context
+from discord import ApplicationContext
+
 from dotenv import load_dotenv
 
 # Setup early
@@ -59,6 +63,7 @@ async def block_dms(ctx):
         return False
     return True
 
+@bot.check
 async def is_registered(ctx):
     """
     Global check to ensure a user is registered before using most commands.
@@ -75,23 +80,31 @@ async def is_registered(ctx):
 
 @bot.check
 async def tutorial_check(ctx):
-    # ignore non-commands
     if ctx.command is None:
         return True
 
-    # allow onboarding / help always
-    if ctx.command.name in ("helloveyra", "help"):
-        return True
+    # 🚨 normalize args for prefix vs slash
+    if isinstance(ctx, Context):
+        # prefix commands: [self, ctx, *user_args]
+        content = ctx.message.content
+        parts = content.split()
+        args = parts[1:]  # everything after command
+    elif isinstance(ctx, ApplicationContext):
+        # slash commands: options dict -> values
+        args = list(ctx.options.values()) if ctx.options else []
+    else:
+        args = []
 
-    # ask tutorial system
     blocked = await tutorial_guard(
         ctx,
         ctx.command.name,
-        ctx.args
+        args
     )
 
-    # bot.check expects True to allow execution
-    return not blocked
+    if blocked:
+        raise commands.CheckFailure("Blocked by tutorial")
+
+    return True
 
 
 # ─── EVENTS ───────────────────────────────────────────────────────
