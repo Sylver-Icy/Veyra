@@ -8,11 +8,15 @@ from database.sessionmaker import Session
 from models.users_model import User
 
 from services.inventory_services import give_item
+from services.economy_services import check_wallet
 from services.guessthenumber_services import Guess
 from services.shop_services import daily_shop
 from services.jobs_services import JobsClass
+from services.response_services import create_response
 
 from utils.global_sessions_registry import sessions
+from utils.emotes import GOLD_EMOJI
+
 
 
 async def safe_send(ctx, content=None, **kwargs):
@@ -49,29 +53,38 @@ async def tutorial_completed(user_id: int):
         return TutorialState(user.tutorial_state) == TutorialState.COMPLETED
 
 async def handle_not_started(ctx, command, arg):
-    await safe_send(ctx, "Let's teach you how to survive in Natlade dw I'll take it slow\n first do `check wallet` we gonna check how much stonks you got :D")
+    await safe_send(ctx, "Welcome to Natlade.\nI’ll guide you step by step — don’t rush.\n\nFirst task: check how much gold you have.\nType `!check wallet`")
     await advance(ctx.author.id, TutorialState.CHECK_WALLET)
     return True
 
 async def handle_check_wallet(ctx, command, arg):
     if command != "check":
-        await safe_send(ctx, "How are you gonna get rich if you don't realise you are poor?? hmm? come on just type `!check wallet`")
+        await safe_send(ctx, "Slow down.\nFirst, check your wallet.\nType `!check wallet`")
         return True  # block command
+    if command == "check" and arg[0]!= "wallet":
+        await safe_send(ctx, "We are checking wallet only for now\n Use `check wallet`")
+        return True
+
+    gold = check_wallet(ctx.author.id)
+    response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
+    await safe_send(ctx, response)
 
     await advance(ctx.author.id, TutorialState.PLAY)
-    await asyncio.sleep(1)
-    await safe_send(ctx, "HAHA! Brokie!!!\nAww dw here take these bags of gold :3\nRn you checked your wallet the `check` command can accept other arguments as well to check your other stats\nAlr time to make more cash now do `!play`")
+    await asyncio.sleep(1.4)
+
+    await safe_send(ctx, "HAHA! Brokie!!!\n\nRelax, I got you.\nHere have these bags of gold.\n\nThe `check` command works for other stats too — you’ll discover those later.\n\nNext step: let’s make money.\nType `!play`")
     if not await tutorial_completed(ctx.author.id):
         give_item(ctx.author.id, 183, 2)
 
-    return False
+    return True
 
 async def handle_play(ctx, command, arg):
     if command != "play":
         await safe_send(ctx, "Nuh uh! Good kids litsen to adults, now stop jumping around and do `!play`")
         return True
-    await safe_send(ctx, "okay so i'll give you a number range and you will have to pick a number if you guess correctly we move to next stage else gg... and ofc bigger the stage bigger is reward")
+    await safe_send(ctx, "I’ll think of a number within a range.\nYou guess the number.\n\nGuess correctly → you advance and earn more rewards.\nGuess wrong → unlucky.\n\nLet’s begin.")
     # start the game (same logic as the command)
+    await asyncio.sleep(3.5)
     guess = Guess()
     await guess.play_game(
         ctx,
@@ -79,21 +92,21 @@ async def handle_play(ctx, command, arg):
         sessions["guess"]       # same session registry used by the cog
     )
 
-    await asyncio.sleep(1)
-    await safe_send(ctx, "ehe stacking rewards;) remeber the bag of gold I gave you? use it with `use` <- this lets you use any usable item item\n just do `!use bag of gold`\ntime to go shopping!! you next task -> `/shop` its a slash command so dont type in chat like monkey")
+    await asyncio.sleep(2)
+    await safe_send(ctx, "Nice.\n\nRemember the Bag of Gold I gave you?\nYou can use items with the `!use` command.\nExample: `!use bag of gold`\n\nNow let’s spend your gold.\nNext task: open the shop using `/shop`")
     await advance(ctx.author.id, TutorialState.OPEN_SHOP)
     return True
 
 
 async def handle_open_shop(ctx, command, arg):
     if command not in ("use", "shop", "open"):
-        await safe_send(ctx, "Calm down lil wind!! Let's spend the gold you have before you loose it in gambling ->`/shop`<- :D")
+        await safe_send(ctx, "Before gambling your gold away, let’s visit the shop.\nUse `/shop`")
         return True
 
     if command == "shop":
         embed,view = daily_shop()
         await safe_send(ctx, embed=embed, view=view)
-        await safe_send(ctx, "Just buy whatever you want, There is also a buyback button you can sell stuff back to me as well\n You are so close to be a rich tycoon of Natlade, Next I'll show you one last way to make GOLD type `!work knight`")
+        await safe_send(ctx, "Buy anything you want. Intructions are at the bottom of shop embed\nYou can also sell items back using the Buyback button.\n\nOne final lesson left.\nNext task: earn gold by working.\nType `!work knight`")
         await advance(ctx.author.id, TutorialState.WORK)
         return True
 
@@ -101,7 +114,7 @@ async def handle_open_shop(ctx, command, arg):
 
 async def handle_work(ctx, command, arg):
     if command not in ("use", "work", "open"):
-        await safe_send(ctx, "This is last step then you explore entire thing on your own and free to get lost :) DO `!work knight` ALREADY")
+        await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `!work knight`")
         return True
 
     if command == "work":
@@ -127,7 +140,7 @@ async def handle_work(ctx, command, arg):
         await safe_send(ctx, result)
         await advance(ctx.author.id, TutorialState.COMPLETED)
         await asyncio.sleep(1)
-        await safe_send(ctx, "You are on your own now :D \n Use `/help` to list all the commands and if you get confused with any command lets say `buy`\n just ask me to explain it by `!commandhelp buy`\nGOOD LUCK!! Be the richest in server!!!")
+        await safe_send(ctx, "You’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nGet rich — or get lost.")
         return True
 
     return False
