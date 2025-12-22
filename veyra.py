@@ -31,6 +31,7 @@ from services.talk_to_veyra.chat_services import handle_user_message, fetch_chan
 from services.onboadingservices import greet
 from services.friendship_services import check_friendship
 from services.response_services import create_response
+from services.tutorial_services import tutorial_guard
 
 from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
@@ -71,6 +72,26 @@ async def is_registered(ctx):
         return False
 
     return True
+
+@bot.check
+async def tutorial_check(ctx):
+    # ignore non-commands
+    if ctx.command is None:
+        return True
+
+    # allow onboarding / help always
+    if ctx.command.name in ("helloveyra", "help"):
+        return True
+
+    # ask tutorial system
+    blocked = await tutorial_guard(
+        ctx,
+        ctx.command.name,
+        ctx.args
+    )
+
+    # bot.check expects True to allow execution
+    return not blocked
 
 
 # ─── EVENTS ───────────────────────────────────────────────────────
