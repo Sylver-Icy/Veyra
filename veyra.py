@@ -163,7 +163,7 @@ async def on_message(message):
 
             await bot.invoke(ctx)
             return
-    if message.channel.id == 1434228570380566559 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+    if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
         async with message.channel.typing():
             await asyncio.sleep(random.uniform(0.5, 2))
             title, _ = check_friendship(message.author.id)
