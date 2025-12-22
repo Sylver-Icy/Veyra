@@ -140,7 +140,7 @@ async def handle_work(ctx, command, arg):
         await safe_send(ctx, result)
         await advance(ctx.author.id, TutorialState.COMPLETED)
         await asyncio.sleep(1)
-        await safe_send(ctx, "You’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nGet rich — or get lost.")
+        await safe_send(ctx, "Working drains energy, you regain it over time check your current energy status with `!check energy`\nAnd with that you’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nGet rich — or get lost.")
         return True
 
     return False
