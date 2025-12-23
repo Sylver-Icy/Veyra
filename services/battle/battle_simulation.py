@@ -7,7 +7,8 @@ from services.battle.battlemanager_class import BattleManager
 from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite
 from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome
 from services.battle.loadout_services import fetch_loadout
-from services.battle.battle_view import BattleRoundView
+from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
+from services.battle.veyra_ai import VeyraAI
 from services.economy_services import add_gold
 
 from utils.embeds.battleembed import (
@@ -148,6 +149,116 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
 
     finally:
         # Best-effort cleanup of any dangling views/messages
+        try:
+            if cur_message:
+                await cur_message.edit(view=None)
+        except Exception:
+            pass
+
+
+async def start_campaign_battle(ctx, player: discord.User):
+    VEYRA_ID = 1
+
+    weapon, spell = fetch_loadout(player.id)
+    p1 = Battle(player.name, spell_map[spell](), weapon_map[weapon]())
+
+    p2 = Battle(
+        "Veyra",
+        Fireball(),
+        DarkBlade()
+    )
+
+    bm = BattleManager(p1, p2)
+
+    ai = VeyraAI()
+
+    round_num = 1
+    round_embed = build_round_embed(round_num, p1, p2, player.name, "Veyra")
+
+    view = PvEBattleRoundView(
+        player_id=player.id,
+        veyra_id=VEYRA_ID,
+        ai_controller=ai,
+        timeout=TIMEOUT_SECONDS
+)
+
+    cur_message = await ctx.channel.send(embed=round_embed, view=view)
+
+    try:
+        while True:
+            try:
+                await asyncio.wait_for(view.wait(), timeout=TIMEOUT_SECONDS)
+            except asyncio.TimeoutError:
+                pass
+
+            p1_move = view.moves.get(player.id)
+            p2_move = view.moves.get(VEYRA_ID)
+
+            p1_timed_out = p1_move is None
+            p2_timed_out = p2_move is None
+
+            if p1_move is None:
+                p1_move = "attack"
+            if p2_move is None:
+                p2_move = "attack"
+
+            bm.execute_turn(p1_move, p2_move)
+            result_text = bm.resolve_round()
+
+            penalty_notes = []
+
+            if p1_timed_out:
+                p1.hp = max(0, p1.hp - TIMEOUT_PENALTY)
+                penalty_notes.append(f"{player.name} suffered an extra **-{TIMEOUT_PENALTY} HP** for hesitation.")
+
+            p1_penalty_notes = p1.proc_effect()
+            p2_penalty_notes = p2.proc_effect()
+            penalty_notes = (p1_penalty_notes or []) + (p2_penalty_notes or [])
+            penalty_notes = [x for x in penalty_notes if isinstance(x, str) and x.strip()]
+
+            result_embed = build_result_embed(
+                round_num,
+                player.name,
+                "Veyra",
+                p1_move,
+                p2_move,
+                result_text + (("\n" + "\n".join(penalty_notes)) if penalty_notes else ""),
+                p1_timed_out,
+                p2_timed_out
+            )
+
+            result_msg = await ctx.channel.send(embed=result_embed)
+
+            with contextlib_silent():
+                await cur_message.delete()
+
+            await asyncio.sleep(RESULT_DISPLAY_TIME)
+
+            if p1.hp <= 0:
+                final_embed = build_final_embed("Veyra", player.name, None)
+                await ctx.channel.send(embed=final_embed)
+                return
+            elif p2.hp <= 0:
+                final_embed = build_final_embed(player.name, "Veyra", None)
+                await ctx.channel.send(embed=final_embed)
+                return
+
+            round_num += 1
+            next_round_embed = build_round_embed(round_num, p1, p2, player.name, "Veyra")
+
+            view = PvEBattleRoundView(
+            player_id=player.id,
+            veyra_id=VEYRA_ID,
+            ai_controller=ai,
+            timeout=TIMEOUT_SECONDS
+)
+
+            cur_message = await ctx.channel.send(embed=next_round_embed, view=view)
+
+            with contextlib_silent():
+                await result_msg.delete()
+
+    finally:
         try:
             if cur_message:
                 await cur_message.edit(view=None)

@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from utils.embeds.battleembed import send_battle_challenge
 
-from services.battle.battle_simulation import start_battle_simulation
+from services.battle.battle_simulation import start_battle_simulation, start_campaign_battle
 from services.economy_services import check_wallet, remove_gold, add_gold
 from services.users_services import is_user
 from services.battle.loadout_services import update_loadout
@@ -49,6 +49,10 @@ class Battle(commands.Cog):
         result = update_loadout(ctx.author.id, weapon, spell)
         await ctx.respond(result)
 
+    @commands.slash_command(description="Fight Veyra in campaign mode.")
+    async def campaign(self, ctx):
+        await ctx.respond("⚔️ Campaign battle starting...")
+        await start_campaign_battle(ctx, ctx.author)
 
 def setup(bot):
     bot.add_cog(Battle(bot))
