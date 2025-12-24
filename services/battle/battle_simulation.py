@@ -11,7 +11,7 @@ from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
 from services.economy_services import add_gold
 
-from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards
+from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards, stage_reward_details
 
 from utils.embeds.battleembed import (
     build_round_embed,
@@ -204,7 +204,7 @@ async def start_campaign_battle(ctx, player: discord.User):
             p2_move = view.moves.get(VEYRA_ID)
 
             p1_timed_out = p1_move is None
-            p2_timed_out = p2_move is None
+
 
             if p1_move is None:
                 p1_move = "attack"
@@ -233,7 +233,7 @@ async def start_campaign_battle(ctx, player: discord.User):
                 p2_move,
                 result_text + (("\n" + "\n".join(penalty_notes)) if penalty_notes else ""),
                 p1_timed_out,
-                p2_timed_out
+                False
             )
 
             result_msg = await ctx.channel.send(embed=result_embed)
@@ -250,8 +250,10 @@ async def start_campaign_battle(ctx, player: discord.User):
             elif p2.hp <= 0:
                 final_embed = build_final_embed(player.name, "Veyra", 0)
                 await ctx.channel.send(embed=final_embed)
-                advance_campaign_stage(player.id)
+                reward_string = stage_reward_details(player.id)
+                await ctx.followup.send(f"🏆 {player.name} advanced to the next campaign stage!\n{reward_string}")
                 give_stage_rewards(player.id)
+                advance_campaign_stage(player.id)
                 return
 
             round_num += 1

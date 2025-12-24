@@ -7,6 +7,7 @@ from services.battle.battle_simulation import start_battle_simulation, start_cam
 from services.economy_services import check_wallet, remove_gold, add_gold
 from services.users_services import is_user
 from services.battle.loadout_services import update_loadout
+from services.battle.campaign.campaign_services import fetch_veyra_loadout, get_campaign_stage
 
 class Battle(commands.Cog):
     def __init__(self,bot):
@@ -51,8 +52,11 @@ class Battle(commands.Cog):
 
     @commands.slash_command(description="Fight Veyra in campaign mode.")
     async def campaign(self, ctx):
-        await ctx.respond("⚔️ Campaign battle starting...")
+        loadout = fetch_veyra_loadout(ctx.author.id)
+        stage = get_campaign_stage(ctx.author.id)
+        await ctx.respond(f"⚔️ Campaign battle starting... Stage {stage}\nVeyra's Weapon: {loadout['weapon']}\nVeyra's Spell: {loadout['spell']}")
         await start_campaign_battle(ctx, ctx.author)
+
 
 def setup(bot):
     bot.add_cog(Battle(bot))
