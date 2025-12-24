@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInt
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
+
 Base = declarative_base()
 
 class User(Base):
@@ -15,6 +16,7 @@ class User(Base):
     starter_given = Column(Boolean, nullable=False, default=False)
     energy = Column(Integer, default=0)
     tutorial_state = Column(Integer, default=0)
+    campaign_stage = Column(Integer, default=0)
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')

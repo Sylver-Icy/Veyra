@@ -64,3 +64,15 @@ class DarkBlade(Weapon):
         defender.can_heal = False
         attacker.can_heal = False
         return "DarkBlade effect: Neither party can heal for rest of the game"
+
+class VeyrasGrimoire(Weapon):
+    def __init__(self, name = "VeyrasGrimoire", attack_bonus=2, mana_bonus=2):
+        super().__init__(name, attack_bonus=attack_bonus, mana_bonus=mana_bonus)
+
+    def on_spell_cast(self, caster, spell, target, result):
+        if not result:
+            return None
+
+        caster.hp -= 5
+        caster.mana += 5
+        return "Veyra's Grimoire passive: +5 mana, -5 HP"

@@ -72,7 +72,7 @@ class ErdtreeBlessing(Spell):
         duration = 4
         caster.status_effect["largeheal"] = duration
 
-        return True, f"{caster.name} used The Blessing of Erdtree."
+        return True, f"{caster.name} casted The Blessing of Erdtree"
 
 class FrostBite(Spell):
     def __init__(self):
@@ -89,4 +89,17 @@ class FrostBite(Spell):
 
         return True, f"{caster.name} blew a chilly wind of ice {target.name} speed lowered coz of shivering cold and frost is building up"
 
+class VeilOfDarkness(Spell):
+    def __init__(self):
+        super().__init__("VeilOfDarkness", 10)
 
+    def cast(self, caster, target):
+        ok, msg = super().cast(caster, target)
+
+        if not ok:
+            return ok, msg
+
+        duration = 4
+        target.status_effect["veilOfdarkness"] = duration
+
+        return True, f"{caster.name} Created a very dense veil Of darkness"

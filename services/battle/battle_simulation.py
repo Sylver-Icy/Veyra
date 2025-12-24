@@ -11,6 +11,8 @@ from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
 from services.economy_services import add_gold
 
+from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards
+
 from utils.embeds.battleembed import (
     build_round_embed,
     build_result_embed,
@@ -162,11 +164,14 @@ async def start_campaign_battle(ctx, player: discord.User):
     weapon, spell = fetch_loadout(player.id)
     p1 = Battle(player.name, spell_map[spell](), weapon_map[weapon]())
 
-    p2 = Battle(
-        "Veyra",
-        Fireball(),
-        DarkBlade()
-    )
+    veyra_loadout = fetch_veyra_loadout(player.id)
+    weapon_cls = weapon_map[veyra_loadout["weapon"]]
+    spell_cls = spell_map[veyra_loadout["spell"]]
+
+    p2 = Battle("Veyra", spell_cls(), weapon_cls())
+
+    p2.hp += veyra_loadout.get("bonus_hp", 0)
+    p2.mana += veyra_loadout.get("bonus_mana", 0)
 
     bm = BattleManager(p1, p2)
 
@@ -241,6 +246,8 @@ async def start_campaign_battle(ctx, player: discord.User):
             elif p2.hp <= 0:
                 final_embed = build_final_embed(player.name, "Veyra", None)
                 await ctx.channel.send(embed=final_embed)
+                advance_campaign_stage(player.id)
+                give_stage_rewards(player.id)
                 return
 
             round_num += 1

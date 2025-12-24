@@ -56,6 +56,8 @@ class Battle:
             target.hp -= effective_dmg
             result = self.weapon.on_attack_success(self, target, effective_dmg)
             self.log.append(result)
+            if "veilOfdarkness" in target.status_effect:
+                effective_dmg = int(effective_dmg * 0.4)
 
         return effective_dmg
 
