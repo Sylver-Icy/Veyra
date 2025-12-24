@@ -103,6 +103,5 @@ def give_stage_rewards(user_id: int) -> None:
 
 def fetch_veyra_loadout(user_id: int) -> dict:
     stage = get_campaign_stage(user_id)
-    loadout = REWARD_CHART.get(stage)
-
+    loadout = CAMPAIGN_LEVELS.get(stage)
     return loadout

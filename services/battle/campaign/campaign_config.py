@@ -1,67 +1,67 @@
 CAMPAIGN_LEVELS = {
     1: {
-        "weapon": "TrainingBlade",
-        "spell": "Fireball",
+        "weapon": "trainingblade",
+        "spell": "fireball",
+        "bonus_hp": -25,
+        "bonus_mana": -5
+    },
+    2: {
+        "weapon": "moonslasher",
+        "spell": "frostbite",
+        "bonus_hp": -10,
+        "bonus_mana": -2
+    },
+    3: {
+        "weapon": "trainingblade",
+        "spell": "erdtreeblessing",
         "bonus_hp": 0,
         "bonus_mana": 0
     },
-    2: {
-        "weapon": "MoonSlasher",
-        "spell": "Frostbite",
-        "bonus_hp": 0,
-        "bonus_mana": 2
-    },
-    3: {
-        "weapon": "TrainingBlade",
-        "spell": "ErdTreeBlessing",
-        "bonus_hp": 0,
-        "bonus_mana": 5
-    },
     4: {
         # Frost introduction (soft)
-        "weapon": "MoonSlasher",
-        "spell": "Frostbite",
+        "weapon": "moonslasher",
+        "spell": "frostbite",
         "bonus_hp": 5,
         "bonus_mana": 0
     },
     5: {
         # Sustain vs pressure
-        "weapon": "ElephantHammer",
-        "spell": "ErdTreeBlessing",
+        "weapon": "elephanthammer",
+        "spell": "erdtreeblessing",
         "bonus_hp": 15,
         "bonus_mana": 0
     },
     6: {
         # Spell control & debuff extension
-        "weapon": "EternalTome",
-        "spell": "Nightfall",
+        "weapon": "eternaltome",
+        "spell": "nightfall",
         "bonus_hp": 10,
         "bonus_mana": 5
     },
     7: {
         # Risk–reward chaos
-        "weapon": "TrainingBlade",
-        "spell": "Heavyshot",
+        "weapon": "trainingblade",
+        "spell": "heavyshot",
         "bonus_hp": 20,
         "bonus_mana": 5
     },
     8: {
         # Healing denial check
-        "weapon": "DarkBlade",
-        "spell": "Fireball",
+        "weapon": "darkblade",
+        "spell": "fireball",
         "bonus_hp": 25,
         "bonus_mana": 0
     },
     9: {
         # Final exam: frost + denial + pressure
-        "weapon": "MoonSlasher",
-        "spell": "Frostbite",
+        "weapon": "moonslasher",
+        "spell": "frostbite",
         "bonus_hp": 15,
         "bonus_mana": 10
     },
     10: {
-        "weapon": "VeyrasGrimoire",
-        "spell": "VeilOfDarkness",
+        "weapon": "veyrasgrimoire",
+        "spell": "veilofdarkness",
         "bonus_hp": 0,
         "bonus_mana": 20
     }

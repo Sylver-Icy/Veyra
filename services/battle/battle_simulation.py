@@ -4,8 +4,8 @@ import discord
 
 from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
-from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite
-from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome
+from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite, VeilOfDarkness
+from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome, VeyrasGrimoire
 from services.battle.loadout_services import fetch_loadout
 from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
@@ -27,7 +27,8 @@ weapon_map = {
     "trainingblade": TrainingBlade,
     "darkblade": DarkBlade,
     "elephanthammer": ElephantHammer,
-    "eternaltome": EternalTome
+    "eternaltome": EternalTome,
+    "veyrasgrimoire": VeyrasGrimoire
 }
 
 spell_map = {
@@ -35,7 +36,8 @@ spell_map = {
     "heavyshot": Heavyshot,
     "erdtreeblessing": ErdtreeBlessing,
     "nightfall": Nightfall,
-    "frostbite": FrostBite
+    "frostbite": FrostBite,
+    "veilofdarkness": VeilOfDarkness
 }
 async def start_battle_simulation(ctx, challenger: discord.User, target: discord.User, bet: int):
     """
@@ -160,19 +162,21 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
 
 async def start_campaign_battle(ctx, player: discord.User):
     VEYRA_ID = 1
-
     weapon, spell = fetch_loadout(player.id)
     p1 = Battle(player.name, spell_map[spell](), weapon_map[weapon]())
 
     veyra_loadout = fetch_veyra_loadout(player.id)
+    print(veyra_loadout)
     weapon_cls = weapon_map[veyra_loadout["weapon"]]
     spell_cls = spell_map[veyra_loadout["spell"]]
+
+    print(weapon_cls, spell_cls)
 
     p2 = Battle("Veyra", spell_cls(), weapon_cls())
 
     p2.hp += veyra_loadout.get("bonus_hp", 0)
     p2.mana += veyra_loadout.get("bonus_mana", 0)
-
+    print(p2.hp, p2.mana)
     bm = BattleManager(p1, p2)
 
     ai = VeyraAI()
@@ -240,11 +244,11 @@ async def start_campaign_battle(ctx, player: discord.User):
             await asyncio.sleep(RESULT_DISPLAY_TIME)
 
             if p1.hp <= 0:
-                final_embed = build_final_embed("Veyra", player.name, None)
+                final_embed = build_final_embed("Veyra", player.name, 0)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
-                final_embed = build_final_embed(player.name, "Veyra", None)
+                final_embed = build_final_embed(player.name, "Veyra", 0)
                 await ctx.channel.send(embed=final_embed)
                 advance_campaign_stage(player.id)
                 give_stage_rewards(player.id)

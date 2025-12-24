@@ -53,11 +53,12 @@ class Battle:
         effective_dmg = max(0, effective_dmg)
 
         if target.current_stance not in ('block', 'counter'):
+            if "veilofdarkness" in target.status_effect:
+                effective_dmg = int(effective_dmg * 0.4)
+
             target.hp -= effective_dmg
             result = self.weapon.on_attack_success(self, target, effective_dmg)
             self.log.append(result)
-            if "veilOfdarkness" in target.status_effect:
-                effective_dmg = int(effective_dmg * 0.4)
 
         return effective_dmg
 
