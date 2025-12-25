@@ -354,6 +354,8 @@ Players start at stage 1 and advance one stage per victory. The campaign is comp
 
 **Stage Configurations:**
 
+Each stage modifies Veyra's base combat stats (base HP: 40, base Mana: 10) before weapon bonuses are applied.
+
 | Stage | Veyra's Weapon | Veyra's Spell | HP Modifier | Mana Modifier | Notes |
 |-------|---------------|---------------|-------------|---------------|-------|
 | 1 | Training Blade | Fireball | -25 | -5 | Basic introduction |
@@ -791,7 +793,7 @@ A betting game where 3 animals race to the finish line.
 | **Dark Blade** | +8 | - | - | - | - | Disables healing for both players |
 | **Elephant Hammer** | +3 | +10 | +15 | -1 | - | Full block (no damage taken) |
 | **Eternal Tome** | +3 | - | - | - | +5 | +3 duration to all status effects |
-| **Veyra's Grimoire** | +2 | - | - | - | +2 | On spell cast: +4 mana, -5 HP (Campaign unlock) |
+| **Veyra's Grimoire** | +2 | - | - | - | +2 | When wielder casts spell: wielder gains +4 mana, loses -5 HP (Campaign unlock) |
 
 ### Available Spells
 
