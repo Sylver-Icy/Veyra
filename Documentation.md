@@ -352,6 +352,9 @@ The campaign mode is a progressive PvE challenge where players fight through 10 
 
 Players start at stage 1 and advance one stage per victory. The campaign is completed upon defeating stage 10, which unlocks Veyra's signature weapon and spell.
 
+- **On Victory:** Advance to the next stage and receive stage rewards
+- **On Defeat:** Remain at the current stage; retry as many times as needed
+
 **Stage Configurations:**
 
 Each stage modifies Veyra's base combat stats (base HP: 40, base Mana: 10) before weapon bonuses are applied.
@@ -390,7 +393,7 @@ Upon completing stage 10, players unlock:
 - **Veyra's Grimoire** (weapon) - Available for `/loadout`
 - **Veil of Darkness** (spell) - Available for `/loadout`
 
-Once completed, the campaign cannot be replayed. Players who complete the campaign receive a special message when attempting to start it again.
+Once completed, the campaign cannot be replayed. Players who attempt to start the campaign after completion receive the message: _"You have already completed the campaign. Well done, warrior! Here some tea for ya 🍵 while you wait for new levels"_
 
 ---
 
