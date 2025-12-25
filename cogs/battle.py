@@ -52,8 +52,12 @@ class Battle(commands.Cog):
 
     @commands.slash_command(description="Fight Veyra in campaign mode.")
     async def campaign(self, ctx):
-        loadout = fetch_veyra_loadout(ctx.author.id)
         stage = get_campaign_stage(ctx.author.id)
+        if stage == 11:
+            await ctx.respond("You have already completed the campaign. Well done, warrior!\nHere some tea for ya 🍵 while you wait for new levels")
+            return
+
+        loadout = fetch_veyra_loadout(ctx.author.id)
         await ctx.respond(f"⚔️ Campaign battle starting... Stage {stage}\nVeyra's Weapon: {loadout['weapon']}\nVeyra's Spell: {loadout['spell']}")
         await start_campaign_battle(ctx, ctx.author)
 

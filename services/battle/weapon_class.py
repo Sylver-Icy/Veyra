@@ -74,5 +74,5 @@ class VeyrasGrimoire(Weapon):
             return None
 
         caster.hp -= 5
-        caster.mana += 5
-        return "Veyra's Grimoire passive: +5 mana, -5 HP"
+        caster.mana += 4
+        return "Veyra's Grimoire passive: +4 mana, -5 HP"

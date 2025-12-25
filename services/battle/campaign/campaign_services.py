@@ -60,7 +60,7 @@ def advance_campaign_stage(user_id: int) -> None:
     with Session() as session:
         user = session.get(User, user_id)
         if user:
-            if user.campaign_stage < 10:
+            if user.campaign_stage < 11:
                 user.campaign_stage += 1
             session.commit()
 

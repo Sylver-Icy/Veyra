@@ -62,8 +62,8 @@ CAMPAIGN_LEVELS = {
     10: {
         "weapon": "veyrasgrimoire",
         "spell": "veilofdarkness",
-        "bonus_hp": 0,
-        "bonus_mana": 20
+        "bonus_hp": 10,
+        "bonus_mana": 5
     }
 }
 
