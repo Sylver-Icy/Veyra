@@ -16,7 +16,9 @@ class BattleManager:
 
     def execute_turn(self, p1_move, p2_move):
         self.p1.set_stance(p1_move)
+        self.p1.move_history.append(p1_move)
         self.p2.set_stance(p2_move)
+        self.p2.move_history.append(p2_move)
 
 
     def resolve_round(self):

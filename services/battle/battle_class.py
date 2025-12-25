@@ -1,5 +1,6 @@
 import logging
 import random
+from collections import deque
 
 from services.battle.spell_class import Spell
 from services.battle.weapon_class import Weapon
@@ -31,6 +32,8 @@ class Battle:
         self.can_heal = True
         self.log = []
         self.regen_state = 'hp'
+        # Track recent moves for AI pattern analysis
+        self.move_history = deque(maxlen=5)
 
     def deal_dmg(self, target: 'Battle'):
         """
@@ -100,7 +103,7 @@ class Battle:
                 }
 
             # Successful block: increase defense and reduce HP damage to 30%
-            random_defense_buff = random.randint(16, 29)
+            random_defense_buff = random.randint(12, 20)
             self.defense += random_defense_buff
             self.hp -= int(dmg * 0.3)
             return {
@@ -109,8 +112,10 @@ class Battle:
             }
 
         else:
-            # Incorrect prediction: suffer defense and HP penalties
-            random_defense_debuff = random.randint(5, 10)
+            # Incorrect prediction: suffer defense penalties
+            random_defense_debuff = random.randint(8, 15)
+            self.defense -= random_defense_debuff
+            self.defense = max(0, self.defense)
             return{
                 'status': 'wrong_guess',
                 'defense_debuff': random_defense_debuff
@@ -143,7 +148,7 @@ class Battle:
         if self.speed < random_speed_debuff:
             # Not enough speed to penalize attacker, take HP damage instead
             self.hp -= random_speed_debuff * 3
-            hp_drained += random_defense_debuff * 3
+            hp_drained += random_speed_debuff * 3
         else:
             # Apply speed debuff
             self.speed -= random_speed_debuff

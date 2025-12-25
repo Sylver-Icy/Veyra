@@ -28,7 +28,7 @@ CAMPAIGN_LEVELS = {
         # Sustain vs pressure
         "weapon": "elephanthammer",
         "spell": "erdtreeblessing",
-        "bonus_hp": 15,
+        "bonus_hp": 5,
         "bonus_mana": 0
     },
     6: {
@@ -42,14 +42,14 @@ CAMPAIGN_LEVELS = {
         # Risk–reward chaos
         "weapon": "trainingblade",
         "spell": "heavyshot",
-        "bonus_hp": 20,
+        "bonus_hp": 15,
         "bonus_mana": 5
     },
     8: {
         # Healing denial check
         "weapon": "darkblade",
         "spell": "fireball",
-        "bonus_hp": 25,
+        "bonus_hp": 15,
         "bonus_mana": 0
     },
     9: {

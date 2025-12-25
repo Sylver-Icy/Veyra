@@ -179,7 +179,11 @@ async def start_campaign_battle(ctx, player: discord.User):
     print(p2.hp, p2.mana)
     bm = BattleManager(p1, p2)
 
-    ai = VeyraAI()
+    ai = VeyraAI(
+        difficulty="normal",
+        veyra=p2,
+        player=p1
+    ) # pass in battle participants to VeyraAI
 
     round_num = 1
     round_embed = build_round_embed(round_num, p1, p2, player.name, "Veyra")
