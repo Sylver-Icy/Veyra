@@ -793,7 +793,7 @@ A betting game where 3 animals race to the finish line.
 | **Dark Blade** | +8 | - | - | - | - | Disables healing for both players |
 | **Elephant Hammer** | +3 | +10 | +15 | -1 | - | Full block (no damage taken) |
 | **Eternal Tome** | +3 | - | - | - | +5 | +3 duration to all status effects |
-| **Veyra's Grimoire** | +2 | - | - | - | +2 | When wielder casts spell: wielder gains +4 mana, loses -5 HP (Campaign unlock) |
+| **Veyra's Grimoire** | +2 | - | - | - | +2 | When wielder casts spell: wielder gains +4 mana, loses 5 HP (Campaign unlock) |
 
 ### Available Spells
 
