@@ -4,6 +4,7 @@ from collections import deque
 from services.battle.weapon_class import ElephantHammer, MoonSlasher
 from services.battle.spell_class import FrostBite
 
+spell_effects = ["nightfall","veilofdarkness"]
 class VeyraAI:
     def __init__(self, difficulty="normal", veyra = None, player = None):
         self.difficulty = difficulty
@@ -27,7 +28,13 @@ class VeyraAI:
 
         # --- SPELL PRIORITY ---
         if self.veyra.mana >= self.veyra.spell.mana_cost:
-            self.castle_weight = 100
+            if any(effect in self.player.status_effect for effect in spell_effects):
+                self.attack_weight = 40
+                self.block_weight = 15
+                self.counter_weight = 30
+                self.recover_weight = 15
+            else:
+                self.castle_weight = 100
 
         # --- WEAPON-BASED BEHAVIOR ---
         elif isinstance(self.veyra.weapon, MoonSlasher):

@@ -1,3 +1,5 @@
+ # ---- Battle lock registry (prevents concurrent battles per user) ----
+ACTIVE_BATTLES = {}
 # services/discord_battle/battle_simulation.py
 import asyncio
 import discord
@@ -47,6 +49,14 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
     - 50s timeout => -25 HP penalty to the late player(s).
     - Ends immediately on death; announces winner and reward.
     """
+    # ---- battle lock check (PvP) ----
+    if challenger.id in ACTIVE_BATTLES or target.id in ACTIVE_BATTLES:
+        await ctx.respond("❌ One of the players is already in a battle. Finish it before starting another.")
+        return
+
+    # lock both players
+    ACTIVE_BATTLES[challenger.id] = "pvp"
+    ACTIVE_BATTLES[target.id] = "pvp"
     # Initialize fighters from usernames
     weapon, spell = fetch_loadout(challenger.id)
     p1 = Battle(challenger.name, spell_map[spell](), weapon_map[weapon]())
@@ -152,6 +162,9 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 await result_msg.delete()
 
     finally:
+        # ---- release battle locks (PvP) ----
+        ACTIVE_BATTLES.pop(challenger.id, None)
+        ACTIVE_BATTLES.pop(target.id, None)
         # Best-effort cleanup of any dangling views/messages
         try:
             if cur_message:
@@ -161,6 +174,14 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
 
 
 async def start_campaign_battle(ctx, player: discord.User):
+    # ---- battle lock check (Campaign) ----
+    if player.id in ACTIVE_BATTLES:
+        await ctx.respond("❌ You are already in a battle. Finish it before starting another.")
+        return
+
+    # lock player
+    ACTIVE_BATTLES[player.id] = "campaign"
+
     VEYRA_ID = 1
     weapon, spell = fetch_loadout(player.id)
     p1 = Battle(player.name, spell_map[spell](), weapon_map[weapon]())
@@ -276,6 +297,8 @@ async def start_campaign_battle(ctx, player: discord.User):
                 await result_msg.delete()
 
     finally:
+        # ---- release battle lock (Campaign) ----
+        ACTIVE_BATTLES.pop(player.id, None)
         try:
             if cur_message:
                 await cur_message.edit(view=None)

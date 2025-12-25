@@ -1,4 +1,5 @@
 sessions = {
     "guess": {},
     "wordle": {},
+    "battle": {}
 }
