@@ -315,6 +315,7 @@ Each round, players choose one of five stances:
 | Nightfall | 5 rounds | Random stat reduced by 2 |
 | Large Heal | 4 rounds | Heal 4 HP per round |
 | Frostbite | Accumulates | At 10 stacks: 50% current HP damage |
+| Veil of Darkness | 4 rounds | Reduces incoming damage by 60% |
 
 **Timeout Penalty:**
 - If a player doesn't choose within 50 seconds: -25 HP penalty
@@ -345,8 +346,49 @@ Players can customize their weapon and spell:
 /campaign
 ```
 
-Fight against Veyra AI, which uses:
-Weapon,Spell and status based on level
+The campaign mode is a progressive PvE challenge where players fight through 10 stages against Veyra AI. Each stage features unique loadouts, difficulty scaling, and exclusive rewards.
+
+**Campaign Progression:**
+
+Players start at stage 1 and advance one stage per victory. The campaign is completed upon defeating stage 10, which unlocks Veyra's signature weapon and spell.
+
+**Stage Configurations:**
+
+| Stage | Veyra's Weapon | Veyra's Spell | HP Modifier | Mana Modifier | Notes |
+|-------|---------------|---------------|-------------|---------------|-------|
+| 1 | Training Blade | Fireball | -25 | -5 | Basic introduction |
+| 2 | Moon Slasher | Frostbite | -10 | -2 | Frost mechanics intro |
+| 3 | Training Blade | Erdtree Blessing | 0 | 0 | Balanced fight |
+| 4 | Moon Slasher | Frostbite | +5 | 0 | Enhanced frost pressure |
+| 5 | Elephant Hammer | Erdtree Blessing | +5 | 0 | Sustain vs pressure |
+| 6 | Eternal Tome | Nightfall | +10 | +5 | Spell control & debuff extension |
+| 7 | Training Blade | Heavyshot | +15 | +5 | Risk-reward chaos |
+| 8 | Dark Blade | Fireball | +15 | 0 | Healing denial check |
+| 9 | Moon Slasher | Frostbite | +15 | +10 | Final exam: all mechanics |
+| 10 | Veyra's Grimoire | Veil of Darkness | +10 | +5 | Ultimate challenge |
+
+**Stage Rewards:**
+
+| Stage | Reward |
+|-------|--------|
+| 1 | 40 Gold |
+| 2 | 1× Wooden Box |
+| 3 | 100 Gold |
+| 4 | 250 Gold |
+| 5 | 2× Stone Box |
+| 6 | 4× Bag of Gold |
+| 7 | 5× Potion of EXP |
+| 8 | 2× Iron Box |
+| 9 | 1× Platinum Box |
+| 10 | **Unlocks Veyra's Grimoire & Veil of Darkness** |
+
+**Campaign Completion:**
+
+Upon completing stage 10, players unlock:
+- **Veyra's Grimoire** (weapon) - Available for `/loadout`
+- **Veil of Darkness** (spell) - Available for `/loadout`
+
+Once completed, the campaign cannot be replayed. Players who complete the campaign receive a special message when attempting to start it again.
 
 ---
 
@@ -749,6 +791,7 @@ A betting game where 3 animals race to the finish line.
 | **Dark Blade** | +8 | - | - | - | - | Disables healing for both players |
 | **Elephant Hammer** | +3 | +10 | +15 | -1 | - | Full block (no damage taken) |
 | **Eternal Tome** | +3 | - | - | - | +5 | +3 duration to all status effects |
+| **Veyra's Grimoire** | +2 | - | - | - | +2 | On spell cast: +4 mana, -5 HP (Campaign unlock) |
 
 ### Available Spells
 
@@ -759,6 +802,7 @@ A betting game where 3 animals race to the finish line.
 | **Heavyshot** | 16 | Set opponent's HP equal to your HP |
 | **Erdtree Blessing** | 14 | Apply Large Heal status to self (4 rounds) |
 | **Frostbite** | 6 | +6 Frost to target, -1 Speed |
+| **Veil of Darkness** | 10 | Apply Veil of Darkness status (4 rounds, reduces incoming damage by 60%) (Campaign unlock) |
 
 ### Default Loadout
 
