@@ -2,6 +2,7 @@ import pytest
 from database.sessionmaker import Session
 from models.users_model import User, Wallet
 
+
 def get_or_create_user_with_wallet(session, user_id: int, user_name: str):
     user = session.query(User).filter_by(user_id=user_id).first()
     if user:
