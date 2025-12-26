@@ -149,6 +149,7 @@ The economy is gold-based with multiple sources and sinks to maintain balance.
 - **Battle victories:** Winner takes 90% of total pot
 - **Racing winnings:** Proportional payout from prize pool
 - **Usable items:** Bag of Gold grants 100g
+- **Campaign rewards:** Gold rewards for clearing stages
 
 #### Gold Sinks
 - **Shop purchases:** Buy items from daily shop
@@ -222,14 +223,14 @@ The system uses fuzzy matching (`rapidfuzz`) to suggest corrections for misspell
 
 ### Shop & Marketplace
 
-Veyra features two distinct trading systems: a bot-run **Shop** and a player-driven **Marketplace**.
+Veyra features two distinct trading systems:  a bot-run **Shop** and a player-driven **Marketplace**. 
 
 #### Daily Shop
 
-The shop rotates daily at midnight UTC with:
+The shop rotates daily at midnight UTC with: 
 - **Sell Section:** 6 random items (Common/Rare/Epic) that players can buy
 - **Buyback Section:** 5 items (Common/Rare/Epic/Legendary) that players can sell
-  - The 5th item has a 1.3-2.2x bonus multiplier on its price
+  - The 5th item has a 1. 3-2. 2x bonus multiplier on its price
 
 **Shop Pricing:**
 
@@ -251,7 +252,7 @@ The shop rotates daily at midnight UTC with:
 
 #### Player Marketplace
 
-The marketplace allows players to create listings for other players to buy.
+The marketplace allows players to create listings for other players to buy. 
 
 **How It Works:**
 1. **Creating a listing:** Items are taken from your inventory and held in escrow
@@ -292,8 +293,8 @@ Each round, players choose one of five stances:
 
 | Stance | Description |
 |--------|-------------|
-| **Attack** | Deal damage based on Attack stat. Increases Attack by 1 on hit. |
-| **Block** | Reduce incoming damage by 70%. Gain defense on success. Fails if too slow. |
+| **Attack** | Deal damage based on Attack stat.  Increases Attack by 1 on hit. |
+| **Block** | Reduce incoming damage by 70%. Gain defense on success.  Fails if too slow.  |
 | **Counter** | Reflect 50% of damage if opponent attacks. Penalties if wrong guess. |
 | **Recover** | Regenerate HP or Mana (alternates). Only works if opponent is defensive. |
 | **Cast** | Use your equipped spell (costs Mana). |
@@ -314,10 +315,11 @@ Each round, players choose one of five stances:
 |--------|----------|------------------|
 | Nightfall | 5 rounds | Random stat reduced by 2 |
 | Large Heal | 4 rounds | Heal 4 HP per round |
-| Frostbite | Accumulates | At 10 stacks: 50% current HP damage |
+| Frostbite | Accumulates | At 10 stacks:  50% current HP damage |
+| Veil of Darkness | 4 rounds | Incoming attack damage reduced by 60% |
 
 **Timeout Penalty:**
-- If a player doesn't choose within 50 seconds: -25 HP penalty
+- If a player doesn't choose within 50 seconds:  -25 HP penalty
 - Default action becomes "Attack"
 
 #### PvP Battles
@@ -327,32 +329,81 @@ Each round, players choose one of five stances:
 /battle @opponent <bet_amount>
 ```
 
-1. Challenger's bet is deducted immediately
+1.  Challenger's bet is deducted immediately
 2. Target receives a challenge embed with Accept/Decline buttons
 3. If accepted, target's bet is also deducted
 4. Battle begins with alternating rounds
 5. Winner receives 90% of total pot (10% Veyra fee)
 
 **Loadout System:**
-Players can customize their weapon and spell:
+Players can customize their weapon and spell: 
 ```
 /loadout <weapon> <spell>
 ```
 
 #### PvE Campaign
 
+Campaign Mode is a solo progression system where players fight against Veyra AI across 10 stages of increasing difficulty.  Each stage requires defeating Veyra to advance, with unique rewards granted upon completion.
+
+**Starting a Campaign Battle:**
 ```
 /campaign
 ```
 
-Fight against Veyra AI, which uses:
-Weapon,Spell and status based on level
+**How Campaign Mode Works:**
+- Players fight Veyra using their own loadout (weapon + spell)
+- Veyra's loadout and stats are determined by your current campaign stage
+- Combat uses the same turn-based mechanics as PvP battles
+- Veyra is controlled by an AI that adapts its strategy based on its equipped weapon and your play patterns
+- Defeat Veyra to advance to the next stage and claim rewards
+- You cannot start a new campaign battle while already in an active battle
+
+**Campaign Stages & Veyra's Loadout:**
+
+| Stage | Veyra's Weapon | Veyra's Spell | Bonus HP | Bonus Mana |
+|-------|----------------|---------------|----------|------------|
+| 1 | Training Blade | Fireball | -25 | -5 |
+| 2 | Moon Slasher | Frostbite | -10 | -2 |
+| 3 | Training Blade | Erdtree Blessing | 0 | 0 |
+| 4 | Moon Slasher | Frostbite | +5 | 0 |
+| 5 | Elephant Hammer | Erdtree Blessing | +5 | 0 |
+| 6 | Eternal Tome | Nightfall | +10 | +5 |
+| 7 | Training Blade | Heavyshot | +15 | +5 |
+| 8 | Dark Blade | Fireball | +15 | 0 |
+| 9 | Moon Slasher | Frostbite | +15 | +10 |
+| 10 | Veyra's Grimoire | Veil of Darkness | +10 | +5 |
+
+**Campaign Rewards:**
+
+| Stage | Reward |
+|-------|--------|
+| 1 | 40 Gold |
+| 2 | 1× Wooden Box |
+| 3 | 100 Gold |
+| 4 | 250 Gold |
+| 5 | 2× Stone Box |
+| 6 | 4× Bag of Gold |
+| 7 | 5× Hint Key |
+| 8 | 2× Iron Box |
+| 9 | 1× Platinum Box |
+| 10 | **Unlocks Veyra's Grimoire & Veil of Darkness** |
+
+**Campaign Completion:**
+- Upon completing Stage 10, you unlock access to Veyra's signature weapon and spell for use in PvP battles
+- Once completed, attempting `/campaign` will display a completion message
+- Campaign progress is saved per-user in the database
+
+**Tips for Campaign:**
+- Early stages are easier with weaker Veyra stats (negative bonuses)
+- Stage difficulty ramps up with Veyra gaining HP/Mana bonuses
+- Study Veyra's weapon effects to anticipate her strategy (e.g., Moon Slasher builds Frost)
+- The final stage (10) introduces campaign-exclusive equipment you'll earn upon victory
 
 ---
 
 ### Jobs System
 
-Jobs are energy-based activities that generate resources.
+Jobs are energy-based activities that generate resources. 
 
 #### Energy System
 
@@ -389,11 +440,11 @@ Jobs are energy-based activities that generate resources.
 
 **Commands:**
 ```
-!work knight
+! work knight
 !work digger
 !work miner
 !work thief @target
-!check energy
+! check energy
 ```
 
 ---
@@ -425,13 +476,13 @@ Convert raw ores into bars using the `/smelt` command.
 | 7 | Copper, Iron, Silver | 1 |
 
 **Bar Sell Prices:**
-- Copper Bar: 50g
-- Iron Bar: 150g
+- Copper Bar:  50g
+- Iron Bar:  150g
 - Silver Bar: 450g
 
 #### Building System
 
-Players can unlock and upgrade buildings (currently: Smelter).
+Players can unlock and upgrade buildings (currently:  Smelter).
 
 **Commands:**
 ```
@@ -454,7 +505,7 @@ Lootboxes contain gold and random items based on rarity tiers.
 
 | Box | Gold Range | Rolls | Drop Rates |
 |-----|------------|-------|------------|
-| **Wooden** | 3-12g | 1-2 (85%/15%) | Common: 88%, Rare: 10%, Epic: 2% |
+| **Wooden** | 3-12g | 1-2 (85%/15%) | Common:  88%, Rare: 10%, Epic: 2% |
 | **Stone** | 11-22g | 1-2 (60%/40%) | Common: 67%, Rare: 28%, Epic: 5% |
 | **Iron** | 65-110g | 1-3 (13%/70%/17%) | Common: 48%, Rare: 35%, Epic: 17% |
 | **Platinum** | 200-500g | 3-6 | Common: 15%, Rare: 50%, Epic: 31%, Legendary: 4% |
@@ -502,8 +553,8 @@ The quest system provides delivery missions with gold rewards.
 | Legendary | 181-321g |
 | Paragon | 799-1211g |
 
-Rewards are multiplied by:
-- Random bonus: 1.2-1.8x
+Rewards are multiplied by: 
+- Random bonus:  1.2-1.8x
 - Streak multiplier (see below)
 
 **Streak System:**
@@ -653,7 +704,7 @@ Players build friendship with Veyra through interactions.
 - `/wordle_hint` - Get a hint based on previous guesses
 
 **Input Format:**
-- Enter pattern after each guess: `0` = gray, `1` = yellow, `2` = green
+- Enter pattern after each guess:  `0` = gray, `1` = yellow, `2` = green
 - Example: If "CRANE" returns C=🟩, R=⬜, A=🟨, N=⬜, E=🟩 → input `20102`
 
 #### Coin Flip
@@ -679,13 +730,13 @@ A betting game where 3 animals race to the finish line.
 ```
 !bet <animal> <amount>
 ```
-- Animals: `rabbit`, `turtle`, `fox`
+- Animals:  `rabbit`, `turtle`, `fox`
 - Betting phase: 3 minutes
 - One bet per user per race
 - Gold deducted immediately
 
 **Race Mechanics:**
-- Finish line: 30 tiles
+- Finish line:  30 tiles
 - Movement: Random 1-4 tiles per tick
 - Updates every 4 seconds with embed refresh
 - Hype messages generated based on standings
@@ -734,7 +785,7 @@ A betting game where 3 animals race to the finish line.
 - Bag of Gold (183) - +100 gold
 - Potion of EXP - +500 EXP
 - Jar of EXP - +2000 EXP
-- Hint Key - Use during guessing game
+- Hint Key (180) - Use during guessing game
 
 ---
 
@@ -749,6 +800,9 @@ A betting game where 3 animals race to the finish line.
 | **Dark Blade** | +8 | - | - | - | - | Disables healing for both players |
 | **Elephant Hammer** | +3 | +10 | +15 | -1 | - | Full block (no damage taken) |
 | **Eternal Tome** | +3 | - | - | - | +5 | +3 duration to all status effects |
+| **Veyra's Grimoire** ⭐ | +2 | - | - | - | +2 | On spell cast:  +4 Mana, -5 HP |
+
+⭐ *Campaign-exclusive:  Unlocked by completing Stage 10*
 
 ### Available Spells
 
@@ -759,12 +813,15 @@ A betting game where 3 animals race to the finish line.
 | **Heavyshot** | 16 | Set opponent's HP equal to your HP |
 | **Erdtree Blessing** | 14 | Apply Large Heal status to self (4 rounds) |
 | **Frostbite** | 6 | +6 Frost to target, -1 Speed |
+| **Veil of Darkness** ⭐ | 10 | Apply Veil of Darkness status (4 rounds): reduces incoming attack damage by 60% |
+
+⭐ *Campaign-exclusive: Unlocked by completing Stage 10*
 
 ### Default Loadout
 
 New players start with:
 - Weapon: Training Blade
-- Spell: Nightfall
+- Spell:  Nightfall
 
 ---
 
@@ -821,16 +878,16 @@ New players start with:
 
 ```
 Veyra/
-├── veyra.py              # Main bot entry point
+├── veyra. py              # Main bot entry point
 ├── cogs/                 # Command modules
 │   ├── battle.py         # PvP/PvE commands
 │   ├── crafting.py       # Smelting commands
 │   ├── economy.py        # Gold transfer, leaderboard
 │   ├── error_handler.py  # Global error handling
-│   ├── exp.py            # Stats checking
+│   ├── exp. py            # Stats checking
 │   ├── gambling.py       # Racing and betting
 │   ├── games.py          # Mini-games
-│   ├── inventory.py      # Item management
+│   ├── inventory. py      # Item management
 │   ├── jobs.py           # Work commands
 │   ├── lootbox.py        # Box opening
 │   ├── marketplace.py    # Player trading
@@ -845,7 +902,10 @@ Veyra/
 │   │   ├── spell_class.py        # Spell definitions
 │   │   ├── weapon_class.py       # Weapon definitions
 │   │   ├── loadout_services.py   # Equipment management
-│   │   └── veyra_ai.py           # AI opponent
+│   │   ├── veyra_ai.py           # AI opponent
+│   │   └── campaign/             # Campaign mode
+│   │       ├── campaign_config.py    # Stage definitions & rewards
+│   │       └── campaign_services.py  # Progression logic
 │   ├── economy_services.py       # Gold operations
 │   ├── inventory_services.py     # Item operations
 │   ├── exp_services.py           # Leveling
@@ -853,10 +913,10 @@ Veyra/
 │   ├── jobs_services.py          # Job logic + energy
 │   ├── shop_services.py          # Daily shop
 │   ├── marketplace_services.py   # Player marketplace
-│   ├── lootbox_services.py       # Lootbox rewards
+│   ├── lootbox_services. py       # Lootbox rewards
 │   ├── crafting_services.py      # Smelting
 │   ├── upgrade_services.py       # Buildings
-│   ├── delievry_minigame_services.py # Quests
+│   ├── delievry_minigame_services. py # Quests
 │   ├── guessthenumber_services.py    # Number game
 │   ├── race_services.py          # Animal racing
 │   ├── tutorial_services.py      # Onboarding
@@ -873,7 +933,7 @@ Veyra/
 │   ├── custom_errors.py  # Exception classes
 │   ├── usable_items.py   # Consumable handlers
 │   ├── itemname_to_id.py # Fuzzy item matching
-│   ├── jobs.py           # APScheduler setup
+│   ├── jobs. py           # APScheduler setup
 │   ├── chatexp.py        # Chat EXP logic
 │   └── levelup.py        # Level-up handling
 └── responses/            # Procedural dialogue templates
@@ -882,7 +942,7 @@ Veyra/
 ### Database Schema
 
 **Core Tables:**
-- `users` - User profiles (id, name, exp, level, energy, tutorial_state)
+- `users` - User profiles (id, name, exp, level, energy, tutorial_state, campaign_stage)
 - `wallet` - Gold storage (user_id FK, gold)
 - `inventory` - User items (user_id FK, item_id FK, quantity)
 - `items` - Item definitions (id, name, description, rarity, price, usable)
@@ -938,6 +998,11 @@ The bot uses APScheduler for background tasks:
 2. Add to `weapon_map`/`spell_map` in `battle_simulation.py`
 3. Add to `allowed_weapons`/`allowed_spells` in `loadout_services.py`
 
+**New Campaign Stage:**
+1. Add stage configuration to `CAMPAIGN_LEVELS` in `services/battle/campaign/campaign_config.py`
+2. Add corresponding reward to `REWARD_CHART`
+3. Update `advance_campaign_stage()` cap if extending beyond 10 stages
+
 ---
 
 ## System Interactions
@@ -991,64 +1056,70 @@ Player 1 ◄──────────────────────�
 └───────────────────────────────────────────┘
 ```
 
+### Campaign Progression
+
+```
+┌────────────┐     ┌────────────┐     ┌────────────┐
+│  Stage 1   │────►│  Stage 2   │────►│    ...      │
+│ (Easy AI)  │     │            │     │            │
+└────────────┘     └────────────┘     └────────────┘
+      │                  │                  │
+      ▼                  ▼                  ▼
+   Rewards            Rewards            Rewards
+   (Gold)          (Lootboxes)          (Items)
+                                            │
+                                            ▼
+                                    ┌────────────┐
+                                    │  Stage 10  │
+                                    │ (Final)    │
+                                    └────────────┘
+                                            │
+                                            ▼
+                                 ┌──────────────────┐
+                                 │ Unlock Exclusive │
+                                 │ Weapon & Spell   │
+                                 └──────────────────┘
+```
+
 ---
 
 ## Gameplay Loops
 
 ### Daily Routine
 
-1. **Check in:** `!helloVeyra` to maintain relationship
-2. **Work:** `!work knight/digger/miner` to earn gold/items
-3. **Quests:** `/quest` to complete deliveries for bonus gold
-4. **Shop:** `/shop` to check daily deals
-5. **Games:** `!play` for daily number game
+1. **Check in:** `! helloVeyra` to maintain relationship
+2. **Earn gold:** Use `/quest`, `!work knight`, or open lootboxes
+3. **Shop:** Check `/shop` for good deals
+4. **Play:** `!play` for daily number game rewards
+5. **Battle:** Challenge friends with `/battle` or progress through `/campaign`
 
 ### Progression Path
 
-1. **Early Game (Level 1-5):**
-   - Complete tutorial
-   - Focus on Knight job for consistent gold
-   - Complete Common-tier quests
-   - Buy items from shop
-
-2. **Mid Game (Level 6-14):**
-   - Unlock Smelter building
-   - Start mining for ores
-   - Create marketplace listings
-   - Participate in battles
-
-3. **Late Game (Level 15+):**
-   - Upgrade Smelter to max
-   - Trade Legendary items
-   - Dominate PvP battles
-   - Complete high-streak quests
-
-### Wealth Building
-
 ```
-Gold Sources                Gold Sinks
-────────────                ──────────
-Jobs ────────────────────► Shop Purchases
-Quests ──────────────────► Marketplace Buying
-Lootboxes ───────────────► Battle Bets
-Marketplace Sales ───────► Building Upgrades
-Battle Wins ─────────────► Transfer Fees
-Race Wins ───────────────► Race Bets
+New Player ──► Tutorial ──► Jobs & Quests ──► Shop & Marketplace
+                                │
+                                ▼
+                         Lootboxes & Items
+                                │
+                                ▼
+                      Mining & Crafting ──► Building Upgrades
+                                │
+                                ▼
+                         PvP Battles ──► Campaign Mode
+                                                │
+                                                ▼
+                                    Unlock Exclusive Gear
 ```
+
+### Campaign Journey
+
+1. Start with `/campaign` at Stage 1
+2. Use your loadout to defeat Veyra AI
+3. Claim stage rewards upon victory
+4. Advance to harder stages with stronger Veyra
+5. Complete Stage 10 to unlock Veyra's Grimoire and Veil of Darkness
+6. Use exclusive gear in PvP battles for an edge
 
 ---
 
-## Notes
-
-
-
-### Known Limitations
-
-- DMs are disabled (guild-only bot)
-- Tutorial must be completed before accessing most features
-- One bet per user per race
-- Daily caps on friendship EXP, quest skips, and guessing game
-
----
-
-*For the most accurate and up-to-date information, always refer to the source code.*
+*Last updated: December 2025*
