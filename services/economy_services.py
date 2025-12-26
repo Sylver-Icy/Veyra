@@ -1,73 +1,150 @@
-from models.users_model import Wallet
-from database.sessionmaker import Session
-from utils.custom_errors import UserNotFoundError, NegativeGoldError, NotEnoughGoldError, WrongInputError
 import logging
 
-logger =  logging.getLogger(__name__)
+from database.sessionmaker import Session
+from models.users_model import Wallet
+
+from domain.shared.types import Gold
+from domain.shared.errors import InvalidAmountError, InsufficientFundsError
+from domain.economy.rules import (
+    validate_transfer_amount,
+    calculate_transfer_fee,
+    ensure_can_afford,
+)
+
+from utils.custom_errors import (
+    UserNotFoundError,
+    NegativeGoldError,
+    NotEnoughGoldError,
+    WrongInputError,
+)
+
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Wallet mutation services
+# ---------------------------------------------------------------------------
 
 def add_gold(user_id: int, gold_amount: int):
-    "Gives users required amount of gold"
-    try:
-        gold_amount = int(gold_amount)
-    except (TypeError, ValueError):
-        raise WrongInputError()
+    """
+    Add gold to a user's wallet.
 
-    if gold_amount <= 0:
-        raise NegativeGoldError()
+    Args:
+        user_id (int): Target user ID
+        gold_amount (int): Amount of gold to add
+
+    Returns:
+        tuple[Gold, Gold]: (new_balance, added_amount)
+    """
+    try:
+        gold_amount = validate_transfer_amount(gold_amount)
+    except InvalidAmountError as exc:
+        raise NegativeGoldError from exc
 
     with Session() as session:
         user = session.get(Wallet, user_id)
+
         if not user:
-            logger.warning("User with user id- %s is not registered and was attempted to give %s gold", user_id, gold_amount)
+            logger.warning(
+                "Attempted to add %s gold to non-existent user %s",
+                gold_amount,
+                user_id,
+            )
             raise UserNotFoundError(user_id)
 
         try:
             user.gold += gold_amount
             session.commit()
             return user.gold, gold_amount
-        except Exception as e:
+        except Exception as exc:
             session.rollback()
-            logger.error("Error updating %s gold for user- %s: %s", gold_amount, user_id, str(e))
+            logger.error(
+                "Failed to add %s gold to user %s: %s",
+                gold_amount,
+                user_id,
+                exc,
+            )
 
-def remove_gold(user_id:int, gold_amount:int):
+
+def remove_gold(user_id: int, gold_amount: int):
+    """
+    Remove gold from a user's wallet.
+
+    Args:
+        user_id (int): Target user ID
+        gold_amount (int): Amount of gold to remove
+
+    Returns:
+        tuple[Gold, Gold]: (new_balance, removed_amount)
+    """
     try:
-        gold_amount = int(gold_amount)
-    except (TypeError, ValueError):
-        raise WrongInputError()
-
-    if gold_amount <= 0:
-        raise NegativeGoldError()
+        gold_amount = validate_transfer_amount(gold_amount)
+    except InvalidAmountError as exc:
+        raise NegativeGoldError from exc
 
     with Session() as session:
-        user = session.get(Wallet,user_id)
+        user = session.get(Wallet, user_id)
+
         if not user:
-            logger.warning("Failed to deduct %s gold from User- %s coz they are not in database", gold_amount, user_id)
+            logger.warning(
+                "Attempted to remove %s gold from non-existent user %s",
+                gold_amount,
+                user_id,
+            )
             raise UserNotFoundError(user_id)
 
-        if user.gold - gold_amount < 0:
-            raise NotEnoughGoldError(gold_amount,user.gold)
+        try:
+            ensure_can_afford(user.gold, gold_amount)
+        except InsufficientFundsError as exc:
+            raise NotEnoughGoldError(gold_amount, user.gold) from exc
 
         try:
             user.gold -= gold_amount
             session.commit()
             return user.gold, gold_amount
-        except Exception as e:
+        except Exception as exc:
             session.rollback()
-            logger.error("Error updating -%s gold for User- %s: %s",gold_amount,user_id,e)
+            logger.error(
+                "Failed to remove %s gold from user %s: %s",
+                gold_amount,
+                user_id,
+                exc,
+            )
 
-def check_wallet(user_id):
-    """Returns how much gold someone has"""
+
+# ---------------------------------------------------------------------------
+# Wallet queries
+# ---------------------------------------------------------------------------
+
+def check_wallet(user_id: int) -> Gold:
+    """
+    Get the current gold balance of a user.
+
+    Args:
+        user_id (int): User ID
+
+    Returns:
+        Gold: Current balance
+    """
     with Session() as session:
-        user = session.get(Wallet,user_id)
+        user = session.get(Wallet, user_id)
         return user.gold
 
-def get_richest_users(limit=10):
+
+def get_richest_users(limit: int = 10):
+    """
+    Fetch the richest users by gold balance.
+
+    Args:
+        limit (int): Maximum number of users to return
+
+    Returns:
+        list[Wallet]: Wallets ordered by gold descending
+    """
     with Session() as session:
-        richest_users = (
+        return (
             session.query(Wallet)
             .order_by(Wallet.gold.desc())
             .limit(limit)
             .all()
         )
-        return richest_users
-
