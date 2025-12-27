@@ -223,11 +223,11 @@ The system uses fuzzy matching (`rapidfuzz`) to suggest corrections for misspell
 
 ### Shop & Marketplace
 
-Veyra features two distinct trading systems:  a bot-run **Shop** and a player-driven **Marketplace**. 
+Veyra features two distinct trading systems:  a bot-run **Shop** and a player-driven **Marketplace**.
 
 #### Daily Shop
 
-The shop rotates daily at midnight UTC with: 
+The shop rotates daily at midnight UTC with:
 - **Sell Section:** 6 random items (Common/Rare/Epic) that players can buy
 - **Buyback Section:** 5 items (Common/Rare/Epic/Legendary) that players can sell
   - The 5th item has a 1. 3-2. 2x bonus multiplier on its price
@@ -252,7 +252,7 @@ The shop rotates daily at midnight UTC with:
 
 #### Player Marketplace
 
-The marketplace allows players to create listings for other players to buy. 
+The marketplace allows players to create listings for other players to buy.
 
 **How It Works:**
 1. **Creating a listing:** Items are taken from your inventory and held in escrow
@@ -336,7 +336,7 @@ Each round, players choose one of five stances:
 5. Winner receives 90% of total pot (10% Veyra fee)
 
 **Loadout System:**
-Players can customize their weapon and spell: 
+Players can customize their weapon and spell:
 ```
 /loadout <weapon> <spell>
 ```
@@ -403,7 +403,7 @@ Campaign Mode is a solo progression system where players fight against Veyra AI 
 
 ### Jobs System
 
-Jobs are energy-based activities that generate resources. 
+Jobs are energy-based activities that generate resources.
 
 #### Energy System
 
@@ -553,7 +553,7 @@ The quest system provides delivery missions with gold rewards.
 | Legendary | 181-321g |
 | Paragon | 799-1211g |
 
-Rewards are multiplied by: 
+Rewards are multiplied by:
 - Random bonus:  1.2-1.8x
 - Streak multiplier (see below)
 
