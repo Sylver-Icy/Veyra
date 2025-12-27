@@ -10,7 +10,12 @@ from fastapi import APIRouter
 
 from services.jobs_services import JobsClass
 from services.friendship_services import check_friendship
-from api.schemas import EnergyResponse, FriendshipResponse
+from services.users_services import get_user_profile
+from api.schemas import (
+    EnergyResponse,
+    FriendshipResponse,
+    DashboardProfileResponse,
+)
 
 
 router = APIRouter(
@@ -25,12 +30,11 @@ router = APIRouter(
 )
 def get_energy(user_id: int):
     jobs = JobsClass(user_id)
-    current, maximum = jobs.check_energy()
+    energy = jobs.check_energy()
 
     return EnergyResponse(
         user_id=user_id,
-        current=current,
-        maximum=maximum,
+        energy=energy
     )
 
 
@@ -46,3 +50,12 @@ def get_friendship(user_id: int):
         title=title,
         progress=progress,
     )
+
+
+# Dashboard profile endpoint
+@router.get(
+    "/{user_id}",
+    response_model=DashboardProfileResponse,
+)
+def get_dashboard_profile(user_id: int):
+    return get_user_profile(user_id)

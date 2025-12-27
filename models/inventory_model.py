@@ -16,6 +16,7 @@ class Inventory(Base):
 
     item = relationship('Items', back_populates='inventory')
     user = relationship('User', back_populates='inventory')
+    
 class Items(Base):
     __tablename__ = 'items'
 

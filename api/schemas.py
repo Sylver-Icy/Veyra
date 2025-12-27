@@ -40,14 +40,48 @@ class ProfileResponse(BaseModel):
 
 class EnergyResponse(BaseModel):
     user_id: int
-    current: int
-    maximum: int
+    energy: str
+
 
 
 class FriendshipResponse(BaseModel):
     user_id: int
     title: str
     progress: float
+
+
+# -------------------------
+# Dashboard Profile Schemas
+# -------------------------
+
+class InventoryPreviewItem(BaseModel):
+    name: str
+    count: int
+
+
+class LoadoutSchema(BaseModel):
+    weapon: Optional[str]
+    spell: Optional[str]
+    win_streak: int
+
+
+class QuestSchema(BaseModel):
+    delivery_items: List[str]
+    reward: int
+    limit: int
+    skips: int
+    streak: int
+
+
+class DashboardProfileResponse(BaseModel):
+    user_name: str
+    exp: int
+    level: int
+    gold: int
+    friendship_exp: Optional[int]
+    loadout: Optional[LoadoutSchema]
+    inventory_preview: List[InventoryPreviewItem]
+    quest: Optional[QuestSchema]
 
 
 # -------------------------

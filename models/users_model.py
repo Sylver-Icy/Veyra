@@ -22,6 +22,20 @@ class User(Base):
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
     marketplace = relationship('Marketplace', back_populates = 'user')
     upgrades = relationship("Upgrades", back_populates="user")
+    quests = relationship("Quests", back_populates="user", uselist=False, cascade="all, delete")
+    friendship = relationship(
+        "Friendship",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete"
+    )
+
+    battle_loadout = relationship(
+        "BattleLoadout",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete"
+    )
 
 class Wallet(Base):
     __tablename__ = 'wallet'
@@ -34,12 +48,21 @@ class Wallet(Base):
 class Quests(Base):
     __tablename__ = 'quests'
 
-    user_id = Column(BigInteger, primary_key=True)
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        primary_key=True
+    )
+
     delivery_items = Column(JSONB, default=list)
     reward = Column(Integer, default=0)
     limit = Column(Integer, default=0)
-    skips = Column(Integer, default =0)
+    skips = Column(Integer, default=0)
     streak = Column(Integer, default=0)
+
+    user = relationship("User", back_populates="quests")
+
+
 
 class Daily(Base):
     __tablename__ = 'daily'
@@ -57,9 +80,15 @@ class LotteryEntries(Base):
 class Friendship(Base):
     __tablename__ = 'friendship'
 
-    user_id = Column(BigInteger, primary_key=True)
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        primary_key=True
+    )
     friendship_exp = Column(Integer, default=0)
     daily_exp = Column(Integer, default=0)
+
+    user = relationship("User", back_populates="friendship")
 
 class Upgrades(Base):
     __tablename__ = 'user_upgrades'
@@ -98,3 +127,5 @@ class BattleLoadout(Base):
     weapon = Column(String(50))
     spell = Column(String(50))
     win_streak = Column(Integer, default=0)
+
+    user = relationship("User", back_populates="battle_loadout")
