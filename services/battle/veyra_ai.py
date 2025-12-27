@@ -19,12 +19,11 @@ class VeyraAI:
         self.castle_weight = 0
 
     def choose_move(self):
-        # reset weights every turn
-        self.attack_weight = 0
-        self.block_weight = 0
-        self.counter_weight = 0
-        self.recover_weight = 0
-        self.castle_weight = 0
+         # --- BASELINE (ALWAYS NON-ZERO) ---
+        self.attack_weight = 25
+        self.block_weight = 25
+        self.counter_weight = 25
+        self.recover_weight = 25
 
         # --- SPELL PRIORITY ---
         if self.veyra.mana >= self.veyra.spell.mana_cost:

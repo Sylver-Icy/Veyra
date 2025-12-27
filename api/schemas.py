@@ -1,5 +1,3 @@
-
-
 """
 API Schemas (DTOs)
 
@@ -20,6 +18,7 @@ class InventoryItemSchema(BaseModel):
     name: str
     rarity: str
     quantity: int
+    description: Optional[str] = None
 
 
 class InventoryResponse(BaseModel):
@@ -37,6 +36,18 @@ class ProfileResponse(BaseModel):
     level: int
     gold: int
     energy: int
+
+
+class EnergyResponse(BaseModel):
+    user_id: int
+    current: int
+    maximum: int
+
+
+class FriendshipResponse(BaseModel):
+    user_id: int
+    title: str
+    progress: float
 
 
 # -------------------------
