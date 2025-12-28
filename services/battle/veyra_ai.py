@@ -34,7 +34,7 @@ class VeyraAI:
                 self.counter_weight = 30
                 self.recover_weight = 15
             else:
-                self.cast_weight = 100
+                return "cast"
 
         # --- WEAPON-BASED BEHAVIOR ---
         elif isinstance(self.veyra.weapon, MoonSlasher):
