@@ -16,7 +16,7 @@ class VeyraAI:
         self.block_weight = 0
         self.counter_weight = 0
         self.recover_weight = 0
-        self.castle_weight = 0
+        self.cast_weight = 0
 
     def choose_move(self):
          # --- BASELINE (ALWAYS NON-ZERO) ---
@@ -24,6 +24,7 @@ class VeyraAI:
         self.block_weight = 25
         self.counter_weight = 25
         self.recover_weight = 25
+        self.cast_weight = 0
 
         # --- SPELL PRIORITY ---
         if self.veyra.mana >= self.veyra.spell.mana_cost:
@@ -33,7 +34,7 @@ class VeyraAI:
                 self.counter_weight = 30
                 self.recover_weight = 15
             else:
-                self.castle_weight = 100
+                self.cast_weight = 100
 
         # --- WEAPON-BASED BEHAVIOR ---
         elif isinstance(self.veyra.weapon, MoonSlasher):
@@ -97,6 +98,6 @@ class VeyraAI:
                 self.block_weight,
                 self.counter_weight,
                 self.recover_weight,
-                self.castle_weight
+                self.cast_weight
             ]
         )[0]
