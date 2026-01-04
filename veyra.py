@@ -80,7 +80,7 @@ async def is_registered(ctx):
 
 @bot.check
 async def tutorial_check(ctx):
-    if ctx.command is None:
+    if ctx.command is None or ctx.command.name in ["helloVeyra", "help"]:
         return True
 
     # 🚨 normalize args for prefix vs slash
