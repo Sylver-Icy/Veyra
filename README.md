@@ -2,7 +2,6 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![Status](https://img.shields.io/badge/Status-WIP-yellow)
-![License](https://img.shields.io/badge/License-MIT-green)
 ![Built With Love](https://img.shields.io/badge/Built%20With-Love-purple)
 
 
