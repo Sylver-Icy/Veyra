@@ -11,6 +11,8 @@ from services.jobs_services import JobsClass
 from utils.models.intromodel import create_intro_modal
 from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed, get_job_help
 
+from domain.guild.commands_policies import non_spam_command
+
 class Profile(commands.Cog):
 
     def __init__(self,bot):
@@ -19,6 +21,7 @@ class Profile(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1,15,commands.BucketType.user)
+    @non_spam_command()
     async def helloVeyra(self, ctx):
         """
         Command for people to register themselves in the database.
@@ -69,12 +72,14 @@ class Profile(commands.Cog):
 
     @commands.slash_command()
     @commands.cooldown(1,25,commands.BucketType.user)
+    @non_spam_command()
     async def help(self,ctx):
         embed, view = get_help_embed(ctx.author)
         await ctx.respond(embed=embed, view=view)
 
     @commands.command()
     @commands.cooldown(1,5,commands.BucketType.user)
+    @non_spam_command()
     async def commandhelp(self, ctx, *, command_name):
         if command_name.lower() in ("explainrace", "explain race"):
             embed = race_guide_embed()
@@ -95,6 +100,7 @@ class Profile(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.slash_command()
+    @non_spam_command()
     async def introduction(self, ctx):
         modal = create_intro_modal(ctx.author)
         await ctx.send_modal(modal)

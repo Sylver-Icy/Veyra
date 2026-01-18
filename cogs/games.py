@@ -13,6 +13,8 @@ from services.delievry_minigame_services import requested_items
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
 
+from domain.guild.commands_policies import non_spam_command
+
 class Games(commands.Cog):
 
     def __init__(self,bot):
@@ -26,6 +28,7 @@ class Games(commands.Cog):
         await ctx.send("🏓Pong!")
 
     @commands.command()
+    @non_spam_command()
     async def flipcoin(self, ctx):
         result = random.choice(["head", "tail"])
         response = create_response("flipcoin", 1, result=result)

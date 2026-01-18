@@ -39,6 +39,8 @@ class ErrorHandler(commands.Cog):
             logger.warning("Bot missing permissions for %s in %s", ctx.command, ctx.guild.name)
 
         elif isinstance(original, commands.CheckFailure):
+            # Generic check failure (we don't know why). If a check raised VeyraError,
+            # it would have been caught by the VeyraError branch.
             logger.warning("%s failed a custom check on %s", ctx.author.name, ctx.command)
 
         elif isinstance(original, commands.CommandNotFound):
@@ -58,7 +60,15 @@ class ErrorHandler(commands.Cog):
     async def on_application_command_error(self, ctx, error):
         original = getattr(error, "original", error)
 
-        # Ignore global check failures completely (like DM-block)
+        # NOTE:
+        # Some global checks raise VeyraError (e.g., channel policy restrictions).
+        # Those should be shown to the user. Only ignore generic check failures.
+        if isinstance(original, VeyraError):
+            await ctx.respond(str(original), ephemeral=True)
+            logger.warning("Veyra policy/check error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))
+            return
+
+        # Ignore generic global check failures completely (like DM-block)
         if isinstance(error, commands.CheckFailure) or isinstance(original, commands.CheckFailure):
             return
 

@@ -11,14 +11,17 @@ from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
 from utils.embeds.leaderboard.leaderboardembed import gold_leaderboard_embed
 
+from domain.guild.commands_policies import non_spam_command
+
 logger = logging.getLogger(__name__)
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    
+
     @commands.slash_command()
     @commands.cooldown(1,120,commands.BucketType.user)
+    @non_spam_command()
     async def leaderboard(self,ctx):
         embed = await gold_leaderboard_embed(self.bot)
         await ctx.respond(embed=embed)
@@ -26,13 +29,14 @@ class Economy(commands.Cog):
 
 
     @commands.slash_command()
+    @non_spam_command()
     async def transfer_gold(self, ctx, target_user: discord.Member, amount: int):
         """Transfer gold from your wallet to another user. There is a 5% fee"""
         if not is_user(target_user.id):
             await ctx.respond(f"They are not my friend. They don't even have a wallet where am I supposed to send this money to? Hmm <@{ctx.author.id}> ??")
             return
         if amount <=0:
-            await ctx.respond("Atleast send 1 gold comeon", ephemeral = True)
+            await ctx.respond("Atleast send 1 gold come on", ephemeral = True)
             return
 
         if target_user.id == ctx.author.id:

@@ -1,4 +1,5 @@
-class VeyraError(Exception):
+from discord.ext import commands
+class VeyraError(commands.CommandError):
     """Base class for all the bot errors"""
     def __init__(self, message="An error occured in Veyra"):
         self.message = message
@@ -52,4 +53,21 @@ class NoValidWordsError(VeyraError):
 
     def __init__(self):
         message = "I tried all 5 letter words nothing left prolly wrong inputs from your side or maybe you looking for some alien language word"
+        super().__init__(message)
+
+class PolicyError(VeyraError):
+    """Base error for server/channel policy restrictions"""
+    def __init__(self, message="This action is restricted by server policies"):
+        super().__init__(message)
+
+
+class WrongChannelError(PolicyError):
+    """Raised when a command is used in a disallowed channel"""
+    def __init__(self, message="This command is not allowed in this channel"):
+        super().__init__(message)
+
+
+class ServerRestrictedError(PolicyError):
+    """Raised when a command/feature is disabled in a specific server"""
+    def __init__(self, message="This command is restricted in this server"):
         super().__init__(message)

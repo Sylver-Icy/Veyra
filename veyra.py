@@ -41,6 +41,11 @@ from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
 from utils.jobs import schedule_jobs
 from utils.fuzzy import get_closest_command
+from utils.custom_errors import WrongChannelError, ServerRestrictedError
+
+
+from domain.guild.guild_config import get_config, is_channel_allowed, ChannelPolicy
+
 # from nsfw_classifier.nsfw_classifier import classify  # Optional feature
 
 # Bot setup
@@ -59,7 +64,10 @@ bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True, h
 @bot.check
 async def block_dms(ctx):
     if ctx.guild is None:
-        await ctx.respond("DMs disabled.", ephemeral=True)
+        if hasattr(ctx, "respond"):
+            await ctx.respond("DMs disabled.", ephemeral=True)
+        else:
+            await ctx.send("DMs disabled.")
         return False
     return True
 
@@ -77,6 +85,34 @@ async def is_registered(ctx):
         return False
 
     return True
+
+@bot.check
+async def channel_policy_guard(ctx):
+    # no command = ignore
+    if ctx.command is None or ctx.guild is None:
+        return True
+
+    cfg = get_config(ctx.guild.id)
+
+    # get policy label from command callback function
+    callback = getattr(ctx.command, "callback", None) or ctx.command
+    policy_label = getattr(callback, "__channel_policy__", "spam")
+
+    #convert to ChannelPolicy
+    policy = ChannelPolicy.ANY if policy_label == "non_spam" else ChannelPolicy.SPAM_ONLY
+
+    #validate channel
+    if is_channel_allowed(cfg, ctx.channel.id, policy):
+        return True
+
+    #raise pretty error
+    allowed_ids = cfg.allowed_spam_channel_ids if policy == ChannelPolicy.SPAM_ONLY else (cfg.allowed_non_spam_channel_ids or set()) | (cfg.allowed_spam_channel_ids or set())
+    if allowed_ids:
+        chans = " ".join(f"<#{cid}>" for cid in allowed_ids)
+        raise WrongChannelError(f"❌ Use this command in: {chans}")
+
+    raise WrongChannelError("❌ This command isn’t allowed in this channel.")
+
 
 @bot.check
 async def tutorial_check(ctx):

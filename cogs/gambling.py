@@ -4,8 +4,11 @@ from discord.ext import commands
 import asyncio
 from services.race_services import start_race, add_bets
 from services.economy_services import remove_gold, add_gold
+
 from utils.embeds.animalraceembed import race_start_embed
 from utils.custom_errors import NotEnoughGoldError
+
+from domain.guild.commands_policies import non_spam_command
 
 class Gambling(commands.Cog):
     """Cog for handling gambling commands such as starting races and placing bets."""
@@ -23,6 +26,7 @@ class Gambling(commands.Cog):
 
     @commands.slash_command()
     @commands.cooldown(1,900, commands.BucketType.guild)
+    @non_spam_command()
     async def start_race(self, ctx):
         """
         Slash command to start an animal race.
@@ -68,6 +72,7 @@ class Gambling(commands.Cog):
         return
 
     @commands.command()
+    @non_spam_command()
     async def bet(self, ctx, animal: str, bet: str):
         """
         Command to place a bet on an animal in the ongoing race.
