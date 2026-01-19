@@ -1,0 +1,340 @@
+
+
+{
+  "title": "🧰 Loadout Guide (Weapons + Spells)",
+  "color": "blurple",
+  "footer": "Veyra • Use /loadout to equip • Tip: Good loadout = easier wins",
+  "pages": [
+    {
+      "title": "🧰 What is a Loadout?",
+      "description": "Your **Loadout** is what you bring into battle: a **Weapon** + a **Spell**.\n\nWeapons affect your stats and give passives. Spells are your high-impact abilities that cost Mana.\n\nIf you feel like you’re losing even when you \"\"play well\"\", 90% of the time your loadout is the problem.",
+      "fields": [
+        {
+          "name": "Equip / Change Loadout",
+          "value": "Use: `/loadout <weapon> <spell>`\n\nExamples:\n`/loadout training_blade fireball`\n`/loadout moon_slasher frostbite`\n`/loadout elephant_hammer erdtree_blessing`",
+          "inline": false
+        },
+        {
+          "name": "How loadout affects battles",
+          "value": "• modifies your stats (HP/Attack/Defense/Speed/Mana)\n• unlocks weapon passives\n• determines what your **Cast** stance does\n\nYou can’t win matchups by \"\"skill\"\" alone if your loadout has no win-condition.",
+          "inline": false
+        },
+        {
+          "name": "Core Battle Reminder",
+          "value": "Stances: ⚔️ Attack • 🛡️ Block • 🔁 Counter • 💧 Recover • 🔮 Cast\n\nYour weapon + spell mainly affects **Attack** and **Cast**, and how safe Recover/Defense is for you.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🗡️ Weapons Overview",
+      "description": "Weapons give **stat bonuses** and sometimes special passives. Pick a weapon based on the kind of fight you want: scaling damage, tanking, frost burst, status control, etc.",
+      "fields": [
+        {
+          "name": "Available Weapons",
+          "value": "• Training Blade\n• The Moon Slasher\n• Dark Blade\n• Elephant Hammer\n• Eternal Tome\n• Veyra’s Grimoire ⭐\n\n⭐ Some gear may be campaign/unlock gated.",
+          "inline": false
+        },
+        {
+          "name": "How to choose",
+          "value": "• Want consistent wins? → **Training Blade / Fireball**\n• Want burst win-condition? → **Moon Slasher / Frostbite**\n• Want to stall & outlast? → **Elephant Hammer / Erdtree Blessing**\n• Want chaos + status? → **Eternal Tome / Nightfall**",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🗡️ Training Blade",
+      "description": "**Type:** Scaling DPS weapon\n\nTraining Blade is the cleanest, most reliable weapon for beginners and tryhards. It makes Attack stronger the longer the fight goes.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+5**\n• HP Bonus: +0\n• Defense Bonus: +0\n• Speed Bonus: +0\n• Mana Bonus: +0",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On Attack success:** your Attack increases by **+1** (stacking).\n\nIf you keep landing hits, you eventually become a problem.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Fireball** (simple burst)\n• **Veil of Darkness** (survive while scaling)\n\nPlaystyle: Attack pressure + occasional Block/Counter so you don’t get punished.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌙 The Moon Slasher",
+      "description": "**Type:** Frost builder / win-condition\n\nMoon Slasher is designed around stacking **Frost** and threatening a massive burst once stacks get high.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+2**\n• HP Bonus: **+5**\n• Defense Bonus: **+8**\n• Speed Bonus: **+3**\n• Mana Bonus: **+1**",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On Attack success:** target gains **+3 Frost**.\n\nThis pairs insanely well with Frostbite spell.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Frostbite** (frost burst setup)\n\nPlaystyle: stay alive and build stacks. When Frost gets scary, enemy starts playing defensive = you control tempo.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🕳️ Dark Blade",
+      "description": "**Type:** Anti-heal / aggression\n\nDark Blade is the \"no fun allowed\" weapon. It disables healing for **both** fighters once you land a hit.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+8**\n• HP Bonus: +0\n• Defense Bonus: +0\n• Speed Bonus: +0\n• Mana Bonus: +0",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On Attack success:** healing is disabled for **both players** for the rest of the game.\n\nThis hard-counters sustain builds.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Fireball** (finish fast)\n• **Heavyshot** (HP control)\n\nPlaystyle: land a hit early → deny Recover value → force fight to end quickly.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🐘 Elephant Hammer",
+      "description": "**Type:** Tank / stall\n\nElephant Hammer makes you bulky and enables a special Block behavior.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+3**\n• HP Bonus: **+10**\n• Defense Bonus: **+15**\n• Speed Bonus: **-1**\n• Mana Bonus: +0",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On Block:** triggers **Full Block**(Block negates 100% damage instead of usual 70%).\n\nThis is the best weapon for players who like outlasting opponents.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Erdtree Blessing** (heal + tank = nightmare)\n• **Veil of Darkness** (even harder to damage)\n\nPlaystyle: deny damage, force opponent to overcommit, then punish.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📜 Eternal Tome",
+      "description": "**Type:** Status amplifier\n\nEternal Tome is for effect-based gameplay. Your spells become much more oppressive.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+3**\n• HP Bonus: +0\n• Defense Bonus: +0\n• Speed Bonus: +0\n• Mana Bonus: **+5**",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On successful spell cast:** all active status effects on target get **+3 rounds duration**.\n\nThis turns short effects into long-term suffering.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Nightfall** (extended stat drain)\n• **Veil of Darkness** (longer protection)\n• **Erdtree Blessing** (longer healing)\n\nPlaystyle: apply effect once → maintain tempo while enemy slowly collapses.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧿 Veyra’s Grimoire ⭐",
+      "description": "**Type:** Spell synergy / high risk\n\nVeyra’s Grimoire is for casters who want to keep casting forever… at a cost.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+2**\n• HP Bonus: +0\n• Defense Bonus: +0\n• Speed Bonus: +0\n• Mana Bonus: **+2**",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On successful spell cast:**\n• you gain **+4 Mana**\n• you lose **-5 HP**\n\nMeaning: your spells become sustainable, but you’re burning yourself alive.",
+          "inline": false
+        },
+        {
+          "name": "Best With",
+          "value": "• **Nightfall** (control)\n• **Veil of Darkness** (protect your HP while self-draining)\n\nPlaystyle: cast often, but manage HP carefully.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🔮 Spells Overview",
+      "description": "Spells are used with the **Cast** stance and cost Mana.\nIf you cast without thinking, you’ll run out of mana and become a sitting duck.",
+      "fields": [
+        {
+          "name": "Available Spells",
+          "value": "• Fireball\n• Nightfall\n• Heavyshot\n• Erdtree Blessing\n• Frostbite\n• Veil of Darkness ⭐",
+          "inline": false
+        },
+        {
+          "name": "Casting Rule",
+          "value": "You can only cast if you have enough Mana for that spell.\nIf you don’t, your Cast fails and you loose health.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🔥 Fireball",
+      "description": "**Mana Cost:** 15\n\nFireball is pure damage. No tricks. No status. Just \"you lose HP\".",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "Deals **16 damage** to the enemy.",
+          "inline": false
+        },
+        {
+          "name": "When to use",
+          "value": "• punish defensive turns\n• finish low HP enemies\n• force pressure when you’re ahead",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "Training Blade, Dark Blade",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌑 Nightfall",
+      "description": "**Mana Cost:** 9\n\nNightfall is a control spell. It weakens the enemy over time.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "Applies **Nightfall** for **5 rounds**:\nEach round, a **random stat** is reduced by **2**.",
+          "inline": false
+        },
+        {
+          "name": "How to play it",
+          "value": "Once Nightfall is active, play slower. The opponent will get weaker automatically, so you don’t need to force risky attacks.",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "Eternal Tome, Veyra’s Grimoire",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🎯 Heavyshot",
+      "description": "**Mana Cost:** 16\n\nHeavyshot is a swing spell. It sets the enemy’s HP to your current HP.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "Sets target HP = caster HP.\n\nIf you have low HP, it’s basically a nuke. If you’re high… it’s pointless?",
+          "inline": false
+        },
+        {
+          "name": "Best timing",
+          "value": "If you’re losing HP races, make your opponent loose it as well.",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "Dark Blade (forces no-heal HP race), Elephant Hammer",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌳 Erdtree Blessing",
+      "description": "**Mana Cost:** 14\n\nSustain spell. If your opponent can’t stop you from healing, you become extremely hard to kill.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "Applies **Large Heal** for **4 rounds**:\nEach round, you heal **4 HP**.",
+          "inline": false
+        },
+        {
+          "name": "How to play it",
+          "value": "Cast early in long fights. Once healing starts ticking, you can afford more defensive turns to waste enemy mana.",
+          "inline": false
+        },
+        {
+          "name": "Counters",
+          "value": "Dark Blade (healing disabled), heavy burst pressure",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "❄️ Frostbite",
+      "description": "**Mana Cost:** 6\n\nFrostbite accelerates Frost win-condition: fast stacks with a small Speed penalty.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "• target gains **+6 Frost**\n• target loses **-1 Speed**",
+          "inline": false
+        },
+        {
+          "name": "Why it’s scary",
+          "value": "At **10 Frost**, the target takes **50% of their current HP** as damage.\n\nSo this spell can force panic plays and defensive spam.",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "The Moon Slasher",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌫️ Veil of Darkness ⭐",
+      "description": "**Mana Cost:** 10\n\nDefensive spell that makes physical attacks much weaker.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "Applies **Veil of Darkness** for **4 rounds**:\nIncoming **Attack** damage reduced by **60%**.",
+          "inline": false
+        },
+        {
+          "name": "How to use",
+          "value": "Cast when you expect Attack-heavy gameplay. It forces the enemy to rely on spells or prediction instead of raw DPS.",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "Elephant Hammer, Training Blade, Veyra’s Grimoire",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🏆 Loadout Tips (Noob → Menace)",
+      "description": "A few player-facing fundamentals that will instantly improve your winrate:",
+      "fields": [
+        {
+          "name": "1) Pick a win condition",
+          "value": "Don’t just equip random stuff. Decide how you want to win:\n• scale Attack (Training Blade)\n• stack Frost (Moon Slasher + Frostbite)\n• outheal/outtank (Elephant Hammer + Erdtree)\n• drain stats (Nightfall + Eternal Tome)",
+          "inline": false
+        },
+        {
+          "name": "2) Mana is a resource",
+          "value": "If you spam Cast early, you’ll run out and lose. Save mana for **high-value moments**.",
+          "inline": false
+        },
+        {
+          "name": "3) Don’t counter the wrong thing",
+          "value": "Counter is strongest when the enemy is predictable. If you’re guessing randomly, you’re gambling (and not even earning gold for it).",
+          "inline": false
+        },
+        {
+          "name": "4) Your gear changes your rhythm",
+          "value": "Fast weapons win speed wars. Tank weapons win long wars.\nIf you fight against your weapon’s strength, you’re nerfing yourself.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

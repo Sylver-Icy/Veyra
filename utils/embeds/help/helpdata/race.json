@@ -1,0 +1,86 @@
+{
+  "title": "🏁 Animal Racing Guide",
+  "color": "gold",
+  "footer": "Veyra • Racing Help",
+  "pages": [
+    {
+      "title": "🏁 What is Animal Racing?",
+      "description": "Animal Racing is Veyra’s gambling mini-game where **three animals** race to the finish line and players **bet gold** to win more gold.\n\nCompetitors:\n🐇 **Rabbit** • 🐢 **Turtle** • 🦊 **Fox**\n\nIt’s RNG. There is no skill. The only strategy is pretending you’re not addicted.",
+      "fields": [
+        {
+          "name": "Quick Commands",
+          "value": "• `/start_race` - Start a new race (opens betting phase)\n• `!bet <animal> <amount>` - Place your bet\n\nExamples:\n`!bet fox 200`\n`!bet rabbit 50`",
+          "inline": false
+        },
+        {
+          "name": "Key Rules",
+          "value": "• **1 bet per user per race**\n• Gold is deducted instantly\n• Bets lock when betting phase ends",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🕒 Starting a Race + Betting",
+      "description": "A race begins when someone uses `/start_race`.\n\nThis triggers a **3-minute betting phase** where anyone can place a bet.",
+      "fields": [
+        {
+          "name": "Start Race",
+          "value": "Use: `/start_race`\n\n• Betting phase lasts **3 minutes**\n• After it ends, the race starts automatically",
+          "inline": false
+        },
+        {
+          "name": "Place Bet",
+          "value": "Use: `!bet <rabbit|turtle|fox> <amount>`\n\nExamples:\n`!bet turtle 150`\n`!bet fox 999`",
+          "inline": false
+        },
+        {
+          "name": "Betting Protocol",
+          "value": "• Only these animals: `rabbit`, `turtle`, `fox`\n• Changing/canceling a bet is **not allowed**\n• Insufficient gold = bet fails",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🏎️ Race Mechanics",
+      "description": "Once betting locks, the race begins and updates live via embed.\n\n**Track:** 30 tiles\n**Movement:** each tick, every animal moves **randomly 1–4 tiles**\n**Update speed:** ~every few seconds (embed refresh)",
+      "fields": [
+        {
+          "name": "How Winner is Determined",
+          "value": "• First animal to cross tile 30 wins\n• In rare ties, the first animal registered as crossing is the winner",
+          "inline": false
+        },
+        {
+          "name": "Commentary",
+          "value": "Veyra may send hype messages during the race.\nThey’re **aesthetic only** and do not affect outcomes.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "💰 Payouts + Cooldowns",
+      "description": "When the race ends, winnings are distributed to everyone who bet on the winning animal.",
+      "fields": [
+        {
+          "name": "Payout Formula",
+          "value": "Winners split **90%** of the pool proportionally:\n\n`payout = (your_bet / total_bets_on_winner) × (total_pool × 0.9)`\n\nVeyra keeps **10%** as a system fee (capitalism moment).",
+          "inline": false
+        },
+        {
+          "name": "Edge Cases",
+          "value": "• If nobody bet on the winner → **no payouts**\n• If no bets were placed → race still runs, but no rewards\n• After race → bet data resets automatically",
+          "inline": false
+        },
+        {
+          "name": "Cooldown",
+          "value": "• **15 minutes** cooldown between races per guild",
+          "inline": false
+        },
+        {
+          "name": "Tips",
+          "value": "• All animals are statistically equal.\n• Don’t chase losses.\n• If you’re down bad, go do `!work` instead of speedrunning bankruptcy.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

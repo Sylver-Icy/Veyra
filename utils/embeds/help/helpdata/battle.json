@@ -1,0 +1,196 @@
+{
+  "title": "⚔️ Battle System Guide",
+  "color": "purple",
+  "footer": "Veyra • Battles Help • Tip: Use !details loadout for gear info",
+  "pages": [
+    {
+      "title": "⚔️ Battles Overview",
+      "description": "Veyra battles are a **turn-based mind game**. Every round, both players choose an action (called a **stance**) and the system resolves the outcome based on speed, prediction, and your loadout.\n\nThere are two ways to battle:\n• **PvP**: challenge another player for gold\n• **Campaign (PvE)**: fight Veyra herself for progression using `/campaign`\n\nThis guide teaches everything you need to win.",
+      "fields": [
+        {
+          "name": "Main Commands",
+          "value": "• `/battle @user <bet>` - Challenge a player (PvP)\n• `/campaign` - Solo campaign battles (PvE)\n• `/loadout <weapon> <spell>` - Set your gear\n\nMore info:\n• `!details campaign`\n• `!details loadout`",
+          "inline": false
+        },
+        {
+          "name": "Core Idea",
+          "value": "Battles aren’t about spamming attack. They’re about:\n✅ predicting opponent stance\n✅ managing HP + Mana\n✅ timing Block/Counter\n✅ using your spell at the right moment",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📊 Core Stats (What matters)",
+      "description": "Every fighter has a stat sheet. Your **weapon modifies** these values.\n\nBase stats (before weapon bonuses):\n• **HP**: 40\n• **Attack**: 5\n• **Defense**: 0\n• **Speed**: 10\n• **Mana**: 10\n\nExtra mechanic:\n• **Frost**: starts at 0 and builds up from certain weapons/spells.",
+      "fields": [
+        {
+          "name": "HP",
+          "value": "Your health. **0 HP = defeat.**\nSome effects block healing, so don’t rely on Recover/Heal forever.",
+          "inline": false
+        },
+        {
+          "name": "Speed",
+          "value": "Speed affects:\n• who goes first\n• how reliable Block is\n• some penalties/rewards during stance clashes",
+          "inline": false
+        },
+        {
+          "name": "Mana",
+          "value": "Used for casting spells.\nRun out of mana = you can’t Cast, and some matchups become unwinnable.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧍 Stances (Your 5 actions)",
+      "description": "Every round you choose exactly **one** stance. Each stance is strong into some stances and weak into others.\n\nMastering the stance mindgame is what separates winners from… spectators.",
+      "fields": [
+        {
+          "name": "⚔️ Attack",
+          "value": "Deal damage based on your Attack stat.\n❌ Can get blocked/countered.",
+          "inline": false
+        },
+        {
+          "name": "🛡️ Block",
+          "value": "Reduce incoming damage by **70%**.\n✅ On success, you gain defense.\n❌ Can fail if you’re too slow (Speed matters).\n⚠️ If both players Block, both lose **7 HP**.",
+          "inline": false
+        },
+        {
+          "name": "🔁 Counter",
+          "value": "Predictive stance. If opponent Attacks, reflect **50%** of their damage back.\n✅ Destroys aggressive players.\n❌ If opponent doesn’t Attack, you get punished (speed/defense penalties).",
+          "inline": false
+        },
+        {
+          "name": "💧 Recover",
+          "value": "Regenerate **HP or Mana** (alternates).\n✅ Best used when opponent is defensive.\n❌ Can be interrupted by Attack.",
+          "inline": false
+        },
+        {
+          "name": "🔮 Cast",
+          "value": "Use your equipped spell (costs Mana).\n✅ Spells can swing fights instantly.\n⚠️ Faster caster wins when both cast.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧠 Stance Matchups (How rounds resolve)",
+      "description": "Here’s the simplified matchup logic (most important interactions).\n\n**Attack vs Attack:** both deal damage (faster goes first)\n**Attack vs Recover:** recover gets interrupted\n**Attack vs Block:** block reduces damage\n**Attack vs Counter:** counter reflects damage\n\n**Block vs Block:** both lose 7 HP\n**Counter vs Counter:** both lose 10 defense\n\n**Cast** beats all actions.\n\nIf you want a rule of thumb:\n• Attack beats Recover\n• Block beats Attack\n• Counter beats Attack\n• Cast beats all (if you can pay mana)",
+      "fields": [
+        {
+          "name": "Speed Priority",
+          "value": "When outcomes depend on timing (Attack order / Cast vs Cast / block defensive checks), **higher Speed wins**.",
+          "inline": false
+        },
+        {
+          "name": "Punishment Examples",
+          "value": "Some wrong guesses cause penalties. Examples:\n• Block vs Counter: speed penalties\n• Counter vs Block: speed penalties\n• Recover vs Counter: penalty to the wrong counter\n\nMoral: guessing wrong hurts.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌑 Status Effects (And how to play around them)",
+      "description": "Status effects are timed or stacking mechanics that persist across rounds. They’re usually applied by **spells** or certain **weapons**.",
+      "fields": [
+        {
+          "name": "Nightfall (5 rounds)",
+          "value": "Each round: **a random stat is reduced by 2**.\nThis can ruin Speed-based plans, so don’t get greedy.",
+          "inline": false
+        },
+        {
+          "name": "Large Heal (4 rounds)",
+          "value": "Each round: **heal 4 HP**.\nStrong sustain tool, especially if you can force opponent defensive.",
+          "inline": false
+        },
+        {
+          "name": "Frostbite (stacking)",
+          "value": "Builds Frost stacks. At **10 stacks**, target takes **50% of their current HP** as damage.\nThis is why Frost builds are terrifying.",
+          "inline": false
+        },
+        {
+          "name": "Veil of Darkness (4 rounds)",
+          "value": "Incoming **Attack damage reduced by 60%**.\nThis punishes pure Attack spammers hard.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⏱️ Turn Timer + Penalties",
+      "description": "Nyx battles don’t wait forever. Each player must pick a stance within the timer.",
+      "fields": [
+        {
+          "name": "Round Timer",
+          "value": "You have **50 seconds** to choose your action each round.",
+          "inline": false
+        },
+        {
+          "name": "Timeout Penalty",
+          "value": "If you fail to choose in time:\n• you take **-25 HP**\n• your action defaults to **Attack**\n\nSo yes, you can lose because you went AFK.",
+          "inline": false
+        },
+        {
+          "name": "Winning Tip",
+          "value": "If your opponent is low and slow, pressuring them makes timeouts more likely.\n(They’ll call it \"unfair\". It isn’t.)",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🤺 PvP Battles (How betting works)",
+      "description": "PvP is a 1v1 battle with gold on the line.\n\nFlow:\n1) Challenger uses `/battle @opponent <bet>`\n2) Bet is deducted instantly\n3) Opponent accepts/declines\n4) If accepted, opponent bet is deducted\n5) Battle begins\n6) Winner earns the pot minus fee",
+      "fields": [
+        {
+          "name": "Payout",
+          "value": "Winner gets **90%** of the total pot.\nVeyra takes **10%** fee.",
+          "inline": false
+        },
+        {
+          "name": "Etiquette (optional)",
+          "value": "Bet what you can afford.\nIf you lose, don’t cry in chat like it’s a war crime.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧰 Loadouts (Weapons + Spells)",
+      "description": "Your loadout matters a lot. A good loadout makes your strategy easier; a bad loadout makes it painful.\n\nSet your loadout with:\n`/loadout <weapon> <spell>`\n\nFor the FULL gear breakdown, use:\n`!details loadout`",
+      "fields": [
+        {
+          "name": "Weapons (Overview)",
+          "value": "• **Training Blade** - strong basic scaling (+1 Attack on hit)\n• **Moon Slasher** - Frost builder (+3 Frost on hit)\n• **Dark Blade** - disables healing for both players\n• **Elephant Hammer** - tank tool (full block, high defense)\n• **Eternal Tome** - longer status duration (+3 rounds)\n• **Veyra’s Grimoire** ⭐ - spell-synergy (casting gives +Mana but costs HP)\n\n⭐ Exclusive unlock exists via campaign progression.",
+          "inline": false
+        },
+        {
+          "name": "Spells (Overview)",
+          "value": "• **Fireball** (15 mana) - 16 damage\n• **Nightfall** (9 mana) - applies Nightfall\n• **Heavyshot** (16 mana) - sets opponent HP equal to your HP\n• **Erdtree Blessing** (14 mana) - Large Heal\n• **Frostbite** (6 mana) - +6 Frost, -1 Speed\n• **Veil of Darkness** ⭐ (10 mana) - 60% attack dmg reduction\n\n⭐ Exclusive unlock exists via campaign progression.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🏆 How to Actually Win",
+      "description": "If you want to be dangerous (and not just noisy), follow these principles:",
+      "fields": [
+        {
+          "name": "1) Stop spamming Attack",
+          "value": "Good players punish patterns. Mix in Block/Counter/Cast to stay unpredictable.",
+          "inline": false
+        },
+        {
+          "name": "2) Track their mana",
+          "value": "If they’re low mana, their strongest option (Cast) disappears. That’s when you pressure.",
+          "inline": false
+        },
+        {
+          "name": "3) Use Recover like a chess move",
+          "value": "Recover isn’t a panic button. Use it when you expect defense or when you’ve forced their hand.",
+          "inline": false
+        },
+        {
+          "name": "4) Build toward a win condition",
+          "value": "Examples:\n• Frost stacks → burst at 10\n• Nightfall → stat collapse\n• Heavyshot timing → swing HP state\n\nRandom moves lose to real plans.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

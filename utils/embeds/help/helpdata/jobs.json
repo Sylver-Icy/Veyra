@@ -1,0 +1,150 @@
+
+
+{
+  "title": "🛠️ Jobs Guide (Energy + Work)",
+  "color": "green",
+  "footer": "Veyra • Jobs consume Energy • Tip: Manage Energy like a resource",
+  "pages": [
+    {
+      "title": "🛠️ Jobs Overview",
+      "description": "Jobs are the one of the main way to **earn gold and resources**. Each job costs **Energy**.\n\nIf you’re broke: do jobs.\nIf you’re rich: do jobs anyway (because capitalism).",
+      "fields": [
+        {
+          "name": "Core Commands",
+          "value": "• `!work <job>` - perform a job\n• `!check energy` - check your current energy\n\nExamples:\n`!work miner`\n`!work digger`\n`!work knight`",
+          "inline": false
+        },
+        {
+          "name": "Important",
+          "value": "Jobs **consume Energy** instantly. If you don’t have enough, Veyra will tell you you’re tired and you’ll have to wait for energy regen.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⚡ Energy System (How it works)",
+      "description": "Energy is your daily stamina. Every job costs a chunk of Energy.\n\nThink of Energy as your limited number of \"\"actions\"\". Use it smart.",
+      "fields": [
+        {
+          "name": "Max Energy",
+          "value": "Your max Energy scales with level:\n\n**Max Energy = 35 + (15 × Level)**\n\nSo higher level players can grind longer.",
+          "inline": false
+        },
+        {
+          "name": "Energy Regeneration",
+          "value": "Energy regenerates automatically over time .\n\n✅ You gain **+1 Energy** per regen tick(6 min) until you hit your max.",
+          "inline": false
+        },
+        {
+          "name": "Energy Check",
+          "value": "When you check energy, Veyra shows:\n`current_energy / max_energy`\n\nExample: `42/80`",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🛡️ Knight",
+      "description": "Knight is a straightforward gold job. It’s consistent and simple.",
+      "fields": [
+        {
+          "name": "Energy Cost",
+          "value": "**80 Energy**",
+          "inline": true
+        },
+        {
+          "name": "Rewards",
+          "value": "Earn **40 to 90 gold** (random).",
+          "inline": true
+        },
+        {
+          "name": "When to use",
+          "value": "Use Knight when you just want raw gold without gambling for loot.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⛏️ Digger",
+      "description": "Digger is a loot-focused job. You spend energy to dig and either get gold or loot boxes.",
+      "fields": [
+        {
+          "name": "Energy Cost",
+          "value": "**70 Energy**",
+          "inline": true
+        },
+        {
+          "name": "Possible Rewards",
+          "value": "You get **one** of these rewards:\n\n• **20 gold**\n• **Wooden Box**\n• **Stone Box**\n• **Iron Box**\n• **Platinum Box**",
+          "inline": false
+        },
+        {
+          "name": "Drop Chances",
+          "value": "Approximate chances:\n\n• **Wooden Box**: 35%\n• **Stone Box**: 25%\n• **Iron Box**: 10%\n• **Platinum Box**: 3%\n• **Gold (20)**: 27%",
+          "inline": false
+        },
+        {
+          "name": "Why it’s good",
+          "value": "If you like rolling for loot or want boxes for trading/collecting, Digger is your best friend.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⛏️ Miner",
+      "description": "Miner is your resource grind job. It gives ores used for crafting systems and economy loops.",
+      "fields": [
+        {
+          "name": "Energy Cost",
+          "value": "**50 Energy**",
+          "inline": true
+        },
+        {
+          "name": "Possible Rewards",
+          "value": "You get **one** of these:\n\n• **25 gold** (rare)\n• **Coal**\n• **Copper Ore**\n• **Iron Ore**\n• **Silver Ore**",
+          "inline": false
+        },
+        {
+          "name": "Ore Drop Chances",
+          "value": "Approximate chances:\n\n• Copper Ore: 30%\n• Coal: 27%\n• Iron Ore: 21%\n• Silver Ore: 12%\n• Gold (25): 10%",
+          "inline": false
+        },
+        {
+          "name": "Ore Amount",
+          "value": "Most of the time you get **3–6 ores**.\n\nThere is a rare bonus outcome where you get **12–20 ores** instead.",
+          "inline": false
+        },
+        {
+          "name": "Best use",
+          "value": "Do Miner if you want crafting materials or want to stockpile resources for later systems.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🗡️ Thief",
+      "description": "Thief is PvP economy. You attempt to steal gold from another user. High risk, high annoyance.",
+      "fields": [
+        {
+          "name": "Energy Cost",
+          "value": "**60 Energy**",
+          "inline": true
+        },
+        {
+          "name": "Requirements",
+          "value": "• Target must be a registered resident/player\n• You cannot rob yourself",
+          "inline": false
+        },
+        {
+          "name": "Success / Fail",
+          "value": "Thief is a coin flip:\n\n✅ **Success:**\n• You steal **10% of target’s gold**, capped at **150**\n• Target pays an extra **fine** (1% of their gold, capped at 50)\n\n❌ **Fail:**\n• You lose **30 gold** (ouch)",
+          "inline": false
+        },
+        {
+          "name": "Tips",
+          "value": "• Don’t rob broke players (it just wastes energy)\n• Rob rich players, but expect revenge\n• If you can’t afford the 30 gold fail penalty, don’t gamble.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

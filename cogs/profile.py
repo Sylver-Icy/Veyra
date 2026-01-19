@@ -9,7 +9,7 @@ from services.jobs_services import JobsClass
 
 
 from utils.models.intromodel import create_intro_modal
-from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, race_guide_embed, battle_guide_embed, get_job_help
+from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, get_json_pages_embed
 
 from domain.guild.commands_policies import non_spam_command
 
@@ -81,23 +81,17 @@ class Profile(commands.Cog):
     @commands.cooldown(1,5,commands.BucketType.user)
     @non_spam_command()
     async def commandhelp(self, ctx, *, command_name):
-        if command_name.lower() in ("explainrace", "explain race"):
-            embed = race_guide_embed()
-            await ctx.send(embed=embed)
-            return
-
-        if command_name.lower() in ("explain battle", "explainbattle"):
-            embed = battle_guide_embed()
-            await ctx.send(embed=embed)
-            return
-
-        if command_name.lower() in ("explain jobs", "explainjobs", "explainjob", "explain job"):
-            embed, view = get_job_help(ctx.author)
-            await ctx.send(embed=embed, view=view)
-            return
-
         embed = get_command_info_embed(command_name)
         await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def details(self, ctx, topic):
+        embed, view = get_json_pages_embed(ctx.author, topic.lower())
+        msg = await ctx.send(embed=embed, view=view)
+        if view:
+            view.message = msg
+
 
     @commands.slash_command()
     @non_spam_command()
