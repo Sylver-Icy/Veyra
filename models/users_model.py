@@ -16,7 +16,7 @@ class User(Base):
     starter_given = Column(Boolean, nullable=False, default=False)
     energy = Column(Integer, default=0)
     tutorial_state = Column(Integer, default=0)
-    campaign_stage = Column(Integer, default=0)
+    campaign_stage = Column(Integer, default=1)
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')

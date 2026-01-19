@@ -11,13 +11,19 @@ from services.jobs_services import regen_energy_for_all
 
 from utils.embeds.leaderboard.weeklyleaderboard import send_weekly_leaderboard
 from utils.embeds.lottery.sendlottery import send_lottery, send_result
-scheduler = AsyncIOScheduler()
+
+scheduler = AsyncIOScheduler(
+    job_defaults={
+        "coalesce": True,              # if missed multiple runs -> run once
+        "misfire_grace_time": 86400,   # if missed midnight -> still run within 24h
+        "max_instances": 1,            # avoid overlapping runs
+    }
+)
 
 # Run every day at 00:00 (midnight)
 midnight_trigger = CronTrigger(hour=0, minute=0, timezone=timezone("UTC"))
 # Weekly leaderboard — Sunday 00:00 (UTC)
 weekly_trigger = CronTrigger(day_of_week="sun", hour=0, minute=0, timezone=timezone("UTC"))
-
 
 def schedule_jobs(bot):
     """Registers all recurring background jobs."""

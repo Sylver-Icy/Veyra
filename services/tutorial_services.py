@@ -113,7 +113,7 @@ async def handle_open_shop(ctx, command, arg):
     return False #let them run use and open commands
 
 async def handle_work(ctx, command, arg):
-    if command not in ("use", "work", "open"):
+    if command not in ("use", "work", "open", "buy"):
         await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `!work knight`")
         return True
 
