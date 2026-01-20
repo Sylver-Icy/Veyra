@@ -239,7 +239,7 @@ class Battle:
                     "attack": 1,
                     "speed": 1,
                     "mana": 2,
-                    "hp": 2,
+                    "hp": 3,
                     "defense": 5,
                 }
 

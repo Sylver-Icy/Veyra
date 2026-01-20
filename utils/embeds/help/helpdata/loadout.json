@@ -211,7 +211,7 @@
       "fields": [
         {
           "name": "Effect",
-          "value": "Applies **Nightfall** for **5 rounds**:\nEach round, a **random stat** is reduced by **2**.",
+          "value": "Applies **Nightfall** for **5 rounds**:\nEach round, a **random stat** is chosen and reduced by set amount \n Hp -3, Attack -1, Speed -1, Mana -2, Defense -5",
           "inline": false
         },
         {
