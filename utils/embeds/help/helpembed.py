@@ -47,6 +47,7 @@ class HelpView(discord.ui.View):
     inline=False
 )
             embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
+            embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
             embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
 
@@ -69,6 +70,7 @@ class HelpView(discord.ui.View):
                                                                   "`/delete_listing` - Delete one of your active listings.", inline=False)
             embed.add_field(name="🔥 Smelting", value="`/smelt` - Turn your ores into bars", inline=False)
             embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
+            embed.add_field(name="🧾 Profile", value="`/profile` - View your full Veyra profile.", inline=False)
             embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
 
@@ -129,6 +131,7 @@ def get_help_embed(user: discord.User):
     value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
     inline=False
 )
+    embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
     embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
     embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
     return embed, view

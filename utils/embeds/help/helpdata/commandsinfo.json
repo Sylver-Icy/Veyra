@@ -199,6 +199,24 @@
     "examples": ["!commandhelp buy", "Definitely not !commandhelp commandhelp"],
     "Notes": "Use this command to get comprehensive information about any command."
   },
+  "details": {
+    "title": "📚 Details",
+    "description": "Open a paginated, player-facing guide for a specific game topic (battles, jobs, loadouts, etc.).",
+    "usage": "!details <topic>",
+    "category": "Utility / Guides",
+    "cooldown": "None",
+    "examples": ["!details battle", "!details jobs", "!details loadout"],
+    "notes": "Shows a multi-page embed with in-depth information. Topics are case-insensitive and depend on the helpdata pages available."
+  },
+  "profile": {
+    "title": "🧾 Profile",
+    "description": "View your complete profile, including stats, progress, and other account details.",
+    "usage": "/profile",
+    "category": "Profile / Stats",
+    "cooldown": "250s per user",
+    "examples": ["/profile"],
+    "notes": "Opens an interactive embed with multiple pages. Only you can control your own profile view."
+  },
   "info": {
     "title": "ℹ️ Item Info",
     "description": "Get detailed information about a specific item, including its rarity, value, and details if available.",
