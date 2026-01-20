@@ -25,7 +25,7 @@ ITEM_RATE = {
     "Paragon": (600, 900)
 }
 
-EXCLUDED_ITEMS = ["Hint Key", "Potion of EXP", "Jar of EXP"]
+EXCLUDED_ITEMS = ["Hint Key", "Potion of EXP", "Jar of EXP", "Bread"]
 
 def db_get_shop_items(shop_type: str):
     with Session() as session:
