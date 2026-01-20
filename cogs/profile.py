@@ -1,7 +1,7 @@
 import asyncio
 from discord.ext import commands
 
-from services.users_services import is_user, add_user
+from services.users_services import is_user, add_user, get_user_profile_new
 from services.inventory_services import give_item
 from services.friendship_services import check_friendship
 from services.response_services import create_response
@@ -10,6 +10,7 @@ from services.jobs_services import JobsClass
 
 from utils.models.intromodel import create_intro_modal
 from utils.embeds.help.helpembed import get_help_embed, get_command_info_embed, get_json_pages_embed
+from utils.embeds.profileembed import ProfilePagerView, build_profile_embed_page_1
 
 from domain.guild.commands_policies import non_spam_command
 
@@ -98,6 +99,17 @@ class Profile(commands.Cog):
     async def introduction(self, ctx):
         modal = create_intro_modal(ctx.author)
         await ctx.send_modal(modal)
+
+
+    @commands.slash_command()
+    @commands.cooldown(1,250,commands.BucketType.user)
+    @non_spam_command()
+    async def profile(self,ctx):
+        profile = get_user_profile_new(ctx.author.id)
+
+        view = ProfilePagerView(profile=profile, author_id=ctx.author.id)
+        await ctx.respond(embed=build_profile_embed_page_1(profile), view=view)
+
 
 
 
