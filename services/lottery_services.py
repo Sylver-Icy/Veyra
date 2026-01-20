@@ -63,6 +63,7 @@ def pick_lottery_winner():
             return None
 
         winner_user_id, winning_ticket = random.choice(all_tickets)
+
         return winner_user_id, winning_ticket
 
 

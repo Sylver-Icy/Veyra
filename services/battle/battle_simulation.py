@@ -12,6 +12,7 @@ from services.battle.loadout_services import fetch_loadout
 from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
 from services.economy_services import add_gold
+from services.users_services import inc_battles_won
 
 from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards, stage_reward_details
 
@@ -142,11 +143,13 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             elif p1.hp <= 0:
                 #P2 won give reward
                 add_gold(target.id, int((bet * 2) * 0.9))
+                inc_battles_won(target.id)
                 final_embed = build_final_embed(target.name, challenger.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
                 add_gold(challenger.id, int((bet * 2) * 0.9))
+                inc_battles_won(challenger.id)
                 final_embed = build_final_embed(challenger.name, target.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return

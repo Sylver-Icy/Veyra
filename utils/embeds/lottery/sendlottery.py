@@ -1,3 +1,5 @@
+import discord
+
 from utils.embeds.lottery.lotteryembed import create_lottery_embed, create_result_embed
 from services.lottery_services import reset_lottery
 
@@ -43,5 +45,7 @@ async def send_result(bot, channel_id=1436044897340887191, guild_id=141904018978
         return
 
     embed = create_result_embed()
-    await channel.send(content="Results are out!!!!", embed=embed)
+    allowed = discord.AllowedMentions(users=True)
+    await channel.send(content="Results are out!!!!", embed=embed, allowed_mentions=allowed)
+
     reset_lottery()

@@ -5,9 +5,13 @@ betting system management, and reward distribution.
 
 import asyncio
 import random
-from utils.embeds.animalraceembed import create_race_embed, create_final_embed
-from services.economy_services import add_gold
 import time
+
+from utils.embeds.animalraceembed import create_race_embed, create_final_embed
+
+from services.economy_services import add_gold
+from services.users_services import inc_races_won
+
 
 async def start_race(ctx):
     """
@@ -206,6 +210,7 @@ async def distribute_rewards(ctx, winning_animal):
     for winner, bet_amount in bets[winning_animal].items():
         payout = int(effective_prize_pool * (bet_amount / total_winning_animal_bets))
         add_gold(winner, payout)
+        inc_races_won(winner)
         users_payout[winner] = (int(bet_amount), payout)
 
     # Compose and send results message

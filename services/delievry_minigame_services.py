@@ -12,8 +12,11 @@ from domain.quest.rules import (
 )
 from models.inventory_model import Items
 from models.users_model import Quests
+
 from services.exp_services import current_exp
 from services.inventory_services import fetch_inventory, take_item
+from services.users_services import update_longest_quest_streak
+
 from utils.embeds.delieveryembed import delievery_embed
 from utils.itemname_to_id import get_item_id_safe
 
@@ -224,7 +227,11 @@ def items_check(user_id: int, items: list):
     with Session() as session:
         quest = session.get(Quests, user_id)
         quest.streak += 1
+        new_streak = quest.streak
         session.commit()
+
+    # update stats in a separate transaction
+    update_longest_quest_streak(user_id, new_streak)
 
     return True
 

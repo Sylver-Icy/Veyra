@@ -21,4 +21,4 @@ async def send_weekly_leaderboard(bot, guild_id = 1419040189782818950, channel_i
         return
 
     embed = await weekly_gold_leaderboard(bot)
-    await channel.send(content="@everyone 👑 Weekly Leaderboard Drop!", embed=embed)
+    await channel.send(content="Hi everyone 👑 Weekly Leaderboard Drop!", embed=embed)

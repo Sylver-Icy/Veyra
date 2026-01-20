@@ -3,7 +3,7 @@ from discord.ui import View, Button
 
 from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool
 from services.economy_services import add_gold
-
+from services.users_services import update_biggest_lottery_win
 from utils.emotes import GOLD_EMOJI
 
 
@@ -61,5 +61,6 @@ def create_result_embed():
 
     embed.add_field(name=f"Congratulations on winning {prize} {GOLD_EMOJI}", value="Your winnings have been deposited")
     add_gold(winner_id, prize)
-
+    update_biggest_lottery_win(winner_id, prize)
+    
     return embed

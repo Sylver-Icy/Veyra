@@ -1,5 +1,8 @@
 import discord
+
 from services.economy_services import get_richest_users
+from services.users_services import inc_top_leaderboard
+
 from utils.emotes import GOLD_EMOJI
 
 async def gold_leaderboard_embed(bot):
@@ -39,6 +42,10 @@ async def weekly_gold_leaderboard(bot):
     for i, wallet in enumerate(rich_users, start=1):
         user = await bot.fetch_user(wallet.user_id)
         medal, tagline = medals.get(i, ("💰", "A true gold hoarder."))
+
+        if i == 1:
+            inc_top_leaderboard(wallet.user_id)
+
         embed.add_field(
             name=f"{medal} #{i} — {user.name}",
             value=f"{GOLD_EMOJI} {wallet.gold:,}\n*{tagline}*",
@@ -46,6 +53,7 @@ async def weekly_gold_leaderboard(bot):
         )
         if i < 3:
             embed.add_field(name="\u200b", value="─" * 20, inline=False)
+
 
     embed.set_footer(text="Veyra’s economy leaderboard — updated live!")
 

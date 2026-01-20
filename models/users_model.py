@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -23,6 +23,8 @@ class User(Base):
     marketplace = relationship('Marketplace', back_populates = 'user')
     upgrades = relationship("Upgrades", back_populates="user")
     quests = relationship("Quests", back_populates="user", uselist=False, cascade="all, delete")
+    user_stats = relationship("UserStats", back_populates="user", uselist=False, cascade="all, delete")
+
     friendship = relationship(
         "Friendship",
         back_populates="user",
@@ -36,6 +38,20 @@ class User(Base):
         uselist=False,
         cascade="all, delete"
     )
+
+class UserStats(Base):
+    __tablename__ = 'user_stats'
+
+    user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'), primary_key=True)
+    battles_won = Column(Integer, default=0)
+    races_won = Column(Integer, default=0)
+    longest_quest_streak = Column(Integer, default=0)
+    weekly_rank1_count = Column(Integer, default=0)
+    biggest_lottery_win = Column(Integer, default=0)
+    updated_at = Column(TIMESTAMP, default=func.now())
+
+    user = relationship("User", back_populates="user_stats")
+
 
 class Wallet(Base):
     __tablename__ = 'wallet'

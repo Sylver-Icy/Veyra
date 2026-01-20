@@ -25,7 +25,7 @@ class Battle(commands.Cog):
             await ctx.respond(f"I can't initiate a battle with {target.display_name} they're not frnds with me.")
             return
         if bet <= 0:
-            await ctx.respond("Bruh don't gamble if you can't afford T-T", ephemeral=True)
+            await ctx.respond("Bruh don't gamble if you can't afford", ephemeral=True)
             return
 
         if bet > check_wallet(ctx.author.id):
