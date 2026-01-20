@@ -36,12 +36,20 @@ def use_bag_of_gold(user_id: int):
     add_gold(user_id, 100)
     return "You opened your Bag of Gold and found 100 gold :O \nUse it responsibly :>"
 
+@UsableItemHandler.register("Bread")
+def use_bread(user_id: int):
+    from services.jobs_services import JobsClass  # lazy import
+
+    user = JobsClass(user_id)
+    user.gain_energy(100)
+    return "You ate the loaf of bread to gain some energy \n Energy +100"
+
 @UsableItemHandler.register("Hint Key")
 def use_hint_key(user_id: int):
     guess_sessions = sessions["guess"]
     print("Current guess sessions:", guess_sessions)
     print("Session type for user:", type(guess_sessions.get(user_id)))
-    
+
     if user_id in guess_sessions:
         guess_sessions[user_id].key_used = True
         return "🔑 You activated your Hint Key! Your next wrong guess will give a hint instead of ending the game.\n**Valid only for current stage**."

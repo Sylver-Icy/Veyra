@@ -234,13 +234,22 @@ class Battle:
                     self.log.append(f"{self.name} healed 4 hp")
 
             elif effect == "nightfall":
-                stats = ["attack", "speed", "mana", "hp"]
-                valid = [s for s in stats if getattr(self, s) > 0]
+                # Stat-specific nightfall debuffs
+                drops = {
+                    "attack": 1,
+                    "speed": 1,
+                    "mana": 2,
+                    "hp": 2,
+                    "defense": 5,
+                }
+
+                valid = [s for s in drops.keys() if getattr(self, s) > 0]
                 if valid:
                     chosen = random.choice(valid)
-                    new_val = max(0, getattr(self, chosen) - 2)
+                    drop = drops[chosen]
+                    new_val = max(0, getattr(self, chosen) - drop)
                     setattr(self, chosen, new_val)
-                    self.log.append(f"{self.name}'s {chosen} drops by 2")
+                    self.log.append(f"{self.name}'s {chosen} drops by {drop}")
 
             self.status_effect[effect] -= 1
             if self.status_effect[effect] <= 0:

@@ -145,6 +145,33 @@
           "inline": false
         }
       ]
+    },
+    {
+  "title": "🧭 Explorer",
+  "description": "Explorer lets you roam around and discover a random item. It’s a loot job, not a gold job.",
+  "fields": [
+    {
+      "name": "Energy Cost",
+      "value": "**20 Energy**",
+      "inline": true
+    },
+    {
+      "name": "Rewards",
+      "value": "You find **1 random item**.",
+      "inline": true
+    },
+    {
+      "name": "Rarity Chances",
+      "value": "Explorer gets you a random Common(85%) or a Rare(15%) item.",
+      "inline": false
+    },
+
+    {
+      "name": "When to use",
+      "value": "Use Explorer when you want quick loot for collecting, quest, or low on energy.",
+      "inline": false
     }
+  ]
+}
   ]
 }

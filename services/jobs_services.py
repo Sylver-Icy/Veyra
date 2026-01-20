@@ -1,15 +1,19 @@
 import random
 import discord
 
+from sqlalchemy import select, func
 
 from database.sessionmaker import Session
 
 from models.users_model import User
+from models.inventory_model import Items
 
 from services.economy_services import add_gold, check_wallet, remove_gold
 from services.inventory_services import give_item
 from services.users_services import is_user
 from services.response_services import create_response
+
+
 
 
 class JobsClass:
@@ -241,6 +245,29 @@ class JobsClass:
 
         return response
 
+    def explorer(self, energy_cost=20):
+        "Explore around and find random item"
+        if not self.consume_energy(energy_cost):
+            response = create_response("tired", 1)
+            return response
+
+        rarity = random.choices(["Rare", "Common"], weights=[85, 15], k=1)[0]
+
+        with Session() as session:
+            item = (
+                session.execute(
+                    select(Items)
+                    .where(Items.item_rarity == rarity)
+                    .order_by(func.random())
+                    .limit(1)
+                )
+                .scalars()
+                .first()
+            )
+
+        give_item(self.user_id, item.item_id, 1)
+
+        return f"You explored and found something! ({item.item_name})"
 
 def regen_energy_for_all():
     """Give +1 energy to all users who aren't capped."""

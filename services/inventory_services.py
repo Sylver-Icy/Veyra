@@ -132,22 +132,27 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
 def fetch_inventory(user_id: int) -> List[dict]:
     """Returns a list of items in user's inventory (excluding zero quantity)."""
     with Session() as session:
-        inventory = session.query(Inventory).filter_by(user_id=user_id).all()
-        result = []
+        inventory = (
+    session.query(Inventory, Items)
+    .join(Items, Inventory.item_id == Items.item_id)
+    .filter(Inventory.user_id == user_id)
+    .order_by(Items.item_name.asc())
+    .all()
+)
 
-        for entry in inventory:
-            if entry.item_quantity < 1:
-                continue
-            item = session.get(Items, entry.item_id)
-            result.append({
-                "item_id": entry.item_id,
-                "item_name": item.item_name,
-                "item_quantity": entry.item_quantity,
-                "item_rarity": item.item_rarity,
-                "item_description": item.item_description
-            })
+    result = []
+    for entry, item in inventory:
+        if entry.item_quantity < 1:
+            continue
+        result.append({
+            "item_id": entry.item_id,
+            "item_name": item.item_name,
+            "item_quantity": entry.item_quantity,
+            "item_rarity": item.item_rarity,
+            "item_description": item.item_description
+        })
 
-        return result
+    return result
 
 def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
     """

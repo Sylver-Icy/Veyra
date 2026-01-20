@@ -59,6 +59,9 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
         if not listing:
             return f"There is currently no listing available with ID {listing_id}"
 
+        if listing.user_id == buyer_id:
+            return "Hmm do you give you item and take money from you? but give money back to you while taking your item? 😵‍💫. I AM LOST \n `/delete_listing is you wanna remove this`"
+
         items_in_stock = listing.quantity
         if quantity > items_in_stock:
             return f"Only {items_in_stock} are in stock; you can't buy {quantity}"
