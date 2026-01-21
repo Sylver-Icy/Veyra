@@ -59,10 +59,23 @@ def add_user(user_id: int, user_name: str):
             return False
 
 
-def is_user(user_id: int):
-    """Func to check if a user exists in the database.
-    It queries the database directly.
+def is_user(user_id: int, session=None) -> bool:
+    """Check if a user exists in the database.
+
+    If a session is provided, it will be used (and NOT closed here).
+    Otherwise this function creates its own session.
+
+    Args:
+        user_id: Discord user id.
+        session: Optional active SQLAlchemy session.
+
+    Returns:
+        True if the user exists, False otherwise.
     """
+
+    if session is not None:
+        return session.get(User, user_id) is not None
+
     with Session() as session:
         return session.get(User, user_id) is not None
 

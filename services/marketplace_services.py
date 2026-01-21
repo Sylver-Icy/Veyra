@@ -60,7 +60,7 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
             return f"There is currently no listing available with ID {listing_id}"
 
         if listing.user_id == buyer_id:
-            return "Hmm do you give you item and take money from you? but give money back to you while taking your item? 😵‍💫. I AM LOST \n `/delete_listing is you wanna remove this`"
+            return "Hmm do you give you item and take money from you? but give money back to you while taking your item? 😵‍💫. I AM LOST \n `/delete_listing` if you wanna remove this"
 
         items_in_stock = listing.quantity
         if quantity > items_in_stock:
@@ -92,7 +92,7 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
             "user": buyer_id,
             "flex": f"Item bought-> {item_name} at rate-> {price} amount->{quantity} from {seller_name}"
         })
-        return f"Successfully bought {quantity}×{item_name} from {seller_name} for {quantity * price} {GOLD_EMOJI}"
+        return f"Successfully bought {quantity}×{item_name} from <@{listing.user.user_id}> for {quantity * price} {GOLD_EMOJI}"
 
 def remove_listing(user_id: int, listing_id: int) -> str:
     """

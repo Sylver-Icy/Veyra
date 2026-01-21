@@ -1,20 +1,20 @@
 """This module handles inventory-related services like adding items and assigning them to users."""
 import logging
+import math
+
 import discord
+
 from typing import Tuple, Optional, List
 from database.sessionmaker import Session
 
 from models.inventory_model import Inventory, Items
-from models.users_model import User
+from models.users_model import User, Upgrades
 
 from domain.inventory.rules import available_inventory_slots_for_user, allowed_stack_size
 
-from services.upgrade_services import building_lvl
 from services.users_services import is_user
 
-
-from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError
-from utils.itemname_to_id import item_name_to_id
+from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError, FullInventoryError, PartialInventoryError
 from utils.embeds.inventoryembed import build_inventory, build_item_info_embed
 from utils.usable_items import UsableItemHandler
 
@@ -24,18 +24,30 @@ logger = logging.getLogger('__name__')
 
 def give_item(target_id: int, item_id: int, amount: int):
     """Gives any item to any user"""
-    if not is_user(target_id):
-        raise UserNotFoundError(target_id)
 
     if amount < 1:
         raise InvalidItemAmountError
 
     with Session() as session:
+        if not is_user(target_id, session):
+            raise UserNotFoundError(target_id)
+
+        user = session.get(User, target_id)
+        if not user:
+            raise UserNotFoundError(target_id)
+
+        allowed = max_addable_amount(target_id, item_id, session)
+
+        if allowed == 0:
+            raise FullInventoryError()
+
+        if allowed < amount:
+            item = session.get(Items, item_id)
+            item_name = item.item_name if item else None
+            raise PartialInventoryError(requested=amount, allowed=allowed, item_name=item_name)
+
         entry = session.get(Inventory, (target_id, item_id))
 
-        # check if item exists in db
-        # if not item:
-        #     raise WrongItemError()
         if entry: #If user already have the item
             entry.item_quantity += amount
         else:
@@ -52,13 +64,14 @@ def take_item(target_id: int, item_id: int, amount: int):
     """
     Removes specified amount of item from target
     """
-    if not is_user(target_id):
-        raise UserNotFoundError(target_id)
 
     if amount < 1:
         raise InvalidItemAmountError
 
     with Session() as session:
+        if not is_user(target_id, session):
+            raise UserNotFoundError(target_id)
+
         entry = session.get(Inventory, (target_id,item_id))
 
         if not entry or entry.item_quantity < amount:
@@ -76,14 +89,16 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
     """
     Transfers given amount of given item from sender to reciver
     """
-    if not is_user(sender_id):
-        raise UserNotFoundError(sender_id)
-    if not is_user(receiver_id):
-        raise UserNotFoundError(receiver_id)
+
     if amount < 1:
         raise InvalidItemAmountError
 
     with Session() as session:
+        if not is_user(sender_id, session):
+            raise UserNotFoundError(sender_id)
+        if not is_user(receiver_id, session):
+            raise UserNotFoundError(receiver_id)
+
         entry1 = session.get(Inventory,(sender_id,item_id)) #Sender's row
         entry2 = session.get(Inventory,(receiver_id,item_id)) #reciver's row
 
@@ -99,6 +114,7 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
 
         if entry2: #if reciver already has the item
             entry2.item_quantity += amount
+
         else: #if reciver has no such item
             new_entry = Inventory(
                 user_id=receiver_id,
@@ -112,12 +128,12 @@ def fetch_inventory(user_id: int) -> List[dict]:
     """Returns a list of items in user's inventory (excluding zero quantity)."""
     with Session() as session:
         inventory = (
-    session.query(Inventory, Items)
-    .join(Items, Inventory.item_id == Items.item_id)
-    .filter(Inventory.user_id == user_id)
-    .order_by(Items.item_name.asc())
-    .all()
-)
+            session.query(Inventory, Items)
+            .join(Items, Inventory.item_id == Items.item_id)
+            .filter(Inventory.user_id == user_id)
+            .order_by(Items.item_name.asc())
+            .all()
+            )
 
     result = []
     for entry, item in inventory:
@@ -169,7 +185,6 @@ def get_item_details(item_id: int):
 
 def use_item(user_id: int, item_id: str):
     with Session() as session:
-        print(f"Fetching item with ID: {item_id} ({type(item_id)})")
         item = session.get(Items, item_id)
         if not item:
             return "That item doesn't exist."
@@ -179,8 +194,6 @@ def use_item(user_id: int, item_id: str):
         handler = UsableItemHandler.get_handler(item.item_name)
         if not handler:
             return f"{item.item_name} is marked as usable but has no handler (dev issue)."
-
-
 
         # Remove the item before use
         try:
@@ -192,26 +205,74 @@ def use_item(user_id: int, item_id: str):
             return(f"You don't have any {item.item_name} left. Buy or trade some to use it.")
         return result
 
-def allow_item_in_inventory(user_id: int, item_rarity: str, item_quantity: int, quantity_owned: int, slots_used: int):
-    user_inv_lvl = building_lvl(user_id, "inventory")
-    user_pockets_lvl = building_lvl(user_id, "pockets")
 
-    stack_allowed = allowed_stack_size(user_pockets_lvl, item_rarity)
-    slots_allowed = available_inventory_slots_for_user(user_inv_lvl)
+def calculate_slots_used(user_id: int, session) -> int:
+    """
+    Returns how many inventory slots the user is currently using.
+    Each item consumes ceil(quantity / stack_limit) slots.
+    """
+    # get user upgrades once
+    user_pockets = session.get(Upgrades, (user_id, "pockets"))
 
-    if quantity_owned < stack_allowed:
-        if stack_allowed + item_quantity > stack_allowed:
-            if slots_used >= slots_allowed:
-                return False
+    # fetch inventory joined with items for rarity
+    rows = (
+        session.query(Inventory.item_id, Inventory.item_quantity, Items.item_rarity)
+        .join(Items, Inventory.item_id == Items.item_id)
+        .filter(Inventory.user_id == user_id)
+        .all()
+    )
 
-    elif quantity_owned == 0:
-        if slots_used >= slots_allowed:
-            return False
+    total_slots_used = 0
 
-    else:
-        return True
+    for item_id, qty, rarity in rows:
+        if qty <= 0:
+            continue
+
+        stack_limit = allowed_stack_size(user_pockets.level, rarity)
+        if stack_limit < 1:
+            print(f"Invalid stack_limit={stack_limit} for rarity={rarity}, pockets={user_pockets.level}")
+
+        stacks_needed = math.ceil(qty / stack_limit)
+
+        total_slots_used += stacks_needed
+
+    return total_slots_used
 
 
+def max_addable_amount(user_id: int, item_id: int, session) -> int:
+    """
+    Returns the maximum amount of item_id that can be added right now,
+    given inventory slot + stacking constraints.
+    """
+    user_inv = session.get(Upgrades, (user_id, "inventory"))
+    user_pockets = session.get(Upgrades, (user_id, "pockets"))
+
+    item = session.get(Items, item_id)
+    if not item:
+        return 0
+
+    stack_limit = allowed_stack_size(user_pockets.level, item.item_rarity)
+    if stack_limit < 1:
+        print(f"Invalid stack_limit={stack_limit} for rarity={rarity}, pockets={user_pockets.level}")
+
+    slots_allowed = available_inventory_slots_for_user(user_inv.level)
+
+    slots_used_now = calculate_slots_used(user_id, session)
+    free_slots = max(0, slots_allowed - slots_used_now)
+
+    entry = session.get(Inventory, (user_id, item_id))
+    current_qty = entry.item_quantity if entry else 0
+
+    # If user doesn't already have the item, they need at least 1 slot to add any
+    if current_qty == 0:
+        return free_slots * stack_limit
+
+    # User already has this item -> can fill current partial stack without new slots
+    remainder = current_qty % stack_limit
+    room_in_current_stack = (stack_limit - remainder) if remainder != 0 else 0
+
+    return room_in_current_stack + (free_slots * stack_limit)
 
 
-
+def allow_item_in_inventory(user_id: int, item_id: int, amount: int, session) -> bool:
+    return max_addable_amount(user_id, item_id, session) >= amount

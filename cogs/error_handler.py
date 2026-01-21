@@ -3,7 +3,7 @@ from discord.ext import commands
 import logging
 from utils.embeds.animalraceembed import race_cooldown_embed
 # import utils.custom_errors as err
-from utils.custom_errors import VeyraError
+from utils.custom_errors import VeyraError, FullInventoryError, PartialInventoryError
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +47,14 @@ class ErrorHandler(commands.Cog):
             # Silently ignore unknown commands for prefix commands
             pass
 
+        elif isinstance(original, PartialInventoryError):
+            await ctx.send(str(original))
+            logger.warning("Partial inventory error from %s on %s: %s", ctx.author.name, ctx.command, str(error))
+
+        elif isinstance(original, FullInventoryError):
+            await ctx.send(str(original))
+            logger.warning("Full inventory error from %s on %s: %s", ctx.author.name, ctx.command, str(error))
+
         elif isinstance(original, VeyraError):
             await ctx.send(str(original))
             logger.warning("Veyra error from %s on %s: %s", ctx.author.name, ctx.command, str(error))
@@ -63,6 +71,16 @@ class ErrorHandler(commands.Cog):
         # NOTE:
         # Some global checks raise VeyraError (e.g., channel policy restrictions).
         # Those should be shown to the user. Only ignore generic check failures.
+        if isinstance(original, PartialInventoryError):
+            await ctx.respond(str(original), ephemeral=True)
+            logger.warning("Partial inventory error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))
+            return
+
+        if isinstance(original, FullInventoryError):
+            await ctx.respond(str(original), ephemeral=True)
+            logger.warning("Full inventory error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))
+            return
+
         if isinstance(original, VeyraError):
             await ctx.respond(str(original), ephemeral=True)
             logger.warning("Veyra policy/check error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))

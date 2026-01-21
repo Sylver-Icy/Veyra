@@ -42,6 +42,27 @@ class NotEnoughItemError(VeyraError):
         message = "You don't own enough items"
         super().__init__(message)
 
+class FullInventoryError(VeyraError):
+    """Raise error when user tries to add items but inventory is full"""
+    def __init__(self):
+        message = "Inventory is full. Clear some space before adding more items."
+        super().__init__(message)
+
+class PartialInventoryError(VeyraError):
+    """Raise error when user can add some amount of an item, but not the full requested amount"""
+    def __init__(self, requested: int, allowed: int, item_name: str | None = None):
+        if item_name:
+            message = (
+                f"🎒 Inventory space issue: you tried to add **{requested} {item_name}**, "
+                f"but you only have room for **{allowed}**."
+            )
+        else:
+            message = (
+                f"🎒 Inventory space issue: you tried to add **{requested} items**, "
+                f"but you only have room for **{allowed}**."
+            )
+        super().__init__(message)
+
 class WrongInputError(VeyraError):
     """Raise error if wrong input for wordle solver"""
     def __init__(self):
