@@ -91,6 +91,13 @@ def buy_building(user_id: int, building_name: str):
         user_gold = check_wallet(user_id)
         building_cost = building_stats.cost
 
+        #unlock inventory and pockets for free
+        if building_cost == 0:
+            new_building = Upgrades(user_id=user_id, upgrade_name=building_name, level=1)
+            session.add(new_building)
+            session.commit()
+            return f"{building_name} has been unlocked. ;)"
+
         if user_gold < building_cost:
             return f"You need {building_cost} gold to buy a {building_name}. You currently have only {user_gold}.\nHow about try doing some `/quest` ??"
 

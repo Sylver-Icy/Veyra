@@ -122,7 +122,7 @@ def create_quest(user_id: int):
     return delivery_items_name_list, reward
 
 
-def delete_quest(user_id: int, streak: bool = False):
+def delete_quest(user_id: int, streak: bool = False, skip: bool = True):
     """
     Skips (deletes) the current quest for the user.
 
@@ -130,6 +130,7 @@ def delete_quest(user_id: int, streak: bool = False):
     - User can only skip if skip limit allows
     - Skipping resets items and reward
     - Streak is reset unless explicitly preserved
+    - Skip is increased unless explicitly preserved
 
     Returns:
         bool: True if skipped successfully, False otherwise
@@ -144,7 +145,9 @@ def delete_quest(user_id: int, streak: bool = False):
 
         quest.delivery_items = None
         quest.reward = 0
-        quest.skips += 1
+
+        if skip:
+            quest.skips += 1
 
         if not streak:
             quest.streak = 0

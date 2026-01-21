@@ -41,8 +41,10 @@ async def start_race(ctx):
         # Wait before next movement update
         await asyncio.sleep(4)
 
-        # Random movement for each animal
-        for a in animals:
+        # Random movement for each animal (randomized order per tick to avoid bias)
+        move_order = animals[:]
+        random.shuffle(move_order)
+        for a in move_order:
             positions[a] += random.randint(1, 4)
             if positions[a] >= finish_line:
                 break  # Stop if any animal reaches finish line

@@ -30,8 +30,8 @@ def lootbox_reward(user_id: int,lootbox: str):
     drop_rates = {
         "wooden box": {"common": 88, "rare": 10, "epic": 2},
         "stone box": {"common": 67, "rare": 28, "epic": 5},
-        "iron box": {"common": 48, "rare": 35, "epic": 17},
-        "platinum box": {"common": 15, "rare": 50, "epic": 31, "legendary": 4}
+        "iron box": {"common": 48, "rare": 37, "epic": 15},
+        "platinum box": {"common": 21, "rare": 50, "epic": 25, "legendary": 4}
     }
 
     box_config = drop_rates.get(lootbox)
@@ -190,7 +190,7 @@ def count_amount(lootbox_name: str, rarity_of_item: str):
         "platinum box": {
             "common": (4, 7),
             "rare": (3, 6),
-            "epic": (1, 4),
+            "epic": (1, 3),
             "legendary": (1, 1),
         }
     }

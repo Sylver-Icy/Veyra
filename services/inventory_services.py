@@ -3,45 +3,24 @@ import logging
 import discord
 from typing import Tuple, Optional, List
 from database.sessionmaker import Session
+
 from models.inventory_model import Inventory, Items
 from models.users_model import User
+
+from domain.inventory.rules import available_inventory_slots_for_user, allowed_stack_size
+
+from services.upgrade_services import building_lvl
+from services.users_services import is_user
+
+
 from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError
 from utils.itemname_to_id import item_name_to_id
 from utils.embeds.inventoryembed import build_inventory, build_item_info_embed
 from utils.usable_items import UsableItemHandler
-from services.users_services import is_user
+
 
 logger = logging.getLogger('__name__')
 
-def add_item(
-    item_id: int,
-    item_name: str,
-    item_description: str,
-    item_price: int,
-    item_rarity: str,
-    item_icon: str = None,
-    item_durability: int = None
-):
-    """Adds an item to database"""
-    with Session() as session:
-        item_by_id = session.get(Items, item_id)
-        item_by_name = session.query(Items).filter_by(item_name=item_name).first()
-
-        if item_by_id or item_by_name:
-            return True
-        new_item = Items(
-            item_id = item_id,
-            item_name = item_name.title(),
-            item_description = item_description,
-            item_rarity = item_rarity,
-            item_icon = item_icon,
-            item_durability = item_durability,
-            item_price = item_price
-
-        )
-        session.add(new_item)
-        item_name_to_id[item_name] = item_id
-        session.commit()
 
 def give_item(target_id: int, item_id: int, amount: int):
     """Gives any item to any user"""
@@ -212,3 +191,27 @@ def use_item(user_id: int, item_id: str):
         except NotEnoughItemError:
             return(f"You don't have any {item.item_name} left. Buy or trade some to use it.")
         return result
+
+def allow_item_in_inventory(user_id: int, item_rarity: str, item_quantity: int, quantity_owned: int, slots_used: int):
+    user_inv_lvl = building_lvl(user_id, "inventory")
+    user_pockets_lvl = building_lvl(user_id, "pockets")
+
+    stack_allowed = allowed_stack_size(user_pockets_lvl, item_rarity)
+    slots_allowed = available_inventory_slots_for_user(user_inv_lvl)
+
+    if quantity_owned < stack_allowed:
+        if stack_allowed + item_quantity > stack_allowed:
+            if slots_used >= slots_allowed:
+                return False
+
+    elif quantity_owned == 0:
+        if slots_used >= slots_allowed:
+            return False
+
+    else:
+        return True
+
+
+
+
+
