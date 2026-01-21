@@ -13,6 +13,7 @@ from services.inventory_services import give_item
 from services.users_services import is_user
 from services.response_services import create_response
 
+from utils.custom_errors import FullInventoryError
 
 
 
@@ -265,7 +266,13 @@ class JobsClass:
                 .first()
             )
 
-        give_item(self.user_id, item.item_id, 1)
+        try:
+            give_item(self.user_id, item.item_id, 1)
+
+        except FullInventoryError:
+            return (
+                f"You found {item.item_name} but your satchel was already stuffed to the brim. With no room to carry it, you left the find behind in the wilds."
+            )
 
         return f"You explored and found something! ({item.item_name})"
 

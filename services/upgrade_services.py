@@ -58,7 +58,7 @@ def building_exist(building_name: str):
 def get_next_upgrade_info(user_id: int, building_name: str):
     building_name = building_name.lower()
     if not building_exist(building_name):
-        return "Typo???"
+        return "There is no such building try from \n Smelter, Inventory, Pockets"
 
     with Session() as session:
         current = session.get(Upgrades, (user_id, building_name))
@@ -76,6 +76,19 @@ def get_next_upgrade_info(user_id: int, building_name: str):
             "cost": next_def.cost,
             "description": next_def.effect_description
         }
+
+def get_building_info(name: str, level: int = 1):
+    with Session() as session:
+        building = session.get(UpgradeDefinitions, (name, level))
+
+        if not building:
+            return {"description": "No description available for this building check name again"}
+
+        return {
+            "cost": building.cost,
+            "description": building.effect_description
+        }
+
 
 def buy_building(user_id: int, building_name: str):
     building_name = building_name.lower()

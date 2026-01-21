@@ -22,7 +22,7 @@ from utils.usable_items import UsableItemHandler
 logger = logging.getLogger('__name__')
 
 
-def give_item(target_id: int, item_id: int, amount: int):
+def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False):
     """Gives any item to any user"""
 
     if amount < 1:
@@ -36,15 +36,16 @@ def give_item(target_id: int, item_id: int, amount: int):
         if not user:
             raise UserNotFoundError(target_id)
 
-        allowed = max_addable_amount(target_id, item_id, session)
+        if not overflow:
+            allowed = max_addable_amount(target_id, item_id, session)
 
-        if allowed == 0:
-            raise FullInventoryError()
+            if allowed == 0:
+                raise FullInventoryError()
 
-        if allowed < amount:
-            item = session.get(Items, item_id)
-            item_name = item.item_name if item else None
-            raise PartialInventoryError(requested=amount, allowed=allowed, item_name=item_name)
+            if allowed < amount:
+                item = session.get(Items, item_id)
+                item_name = item.item_name if item else None
+                raise PartialInventoryError(requested=amount, allowed=allowed, item_name=item_name)
 
         entry = session.get(Inventory, (target_id, item_id))
 
@@ -57,6 +58,11 @@ def give_item(target_id: int, item_id: int, amount: int):
                 item_quantity=amount,
             )
             session.add(new_entry)
+        if overflow:
+            logger.warning(
+                "SYSTEM GRANT (overflow=True): user=%s item=%s amount=%s",
+                target_id, item_id, amount
+            )
 
         session.commit()
 
@@ -171,16 +177,18 @@ def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional
         else:
             return (None, build_inventory(user_name, result))
 
-def get_item_details(item_id: int):
+def get_item_details(user_id, item_id: int):
     item_details = {}
     with Session() as session:
         item = session.get(Items, item_id)
+        user_inv = session.get(Inventory, (user_id, item_id))
         if not item:
             return None
         item_details['name'] = item.item_name
         item_details['description'] = item.item_description
         item_details['rarity'] = item.item_rarity
         item_details['icon'] = item.item_icon
+        item_details['amount_owned'] = user_inv.item_quantity
     return build_item_info_embed(item_details)
 
 def use_item(user_id: int, item_id: str):
@@ -252,9 +260,6 @@ def max_addable_amount(user_id: int, item_id: int, session) -> int:
         return 0
 
     stack_limit = allowed_stack_size(user_pockets.level, item.item_rarity)
-    if stack_limit < 1:
-        print(f"Invalid stack_limit={stack_limit} for rarity={rarity}, pockets={user_pockets.level}")
-
     slots_allowed = available_inventory_slots_for_user(user_inv.level)
 
     slots_used_now = calculate_slots_used(user_id, session)

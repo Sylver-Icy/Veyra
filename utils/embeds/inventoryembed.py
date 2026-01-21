@@ -66,4 +66,6 @@ def build_item_info_embed(item: dict):
         embed.set_thumbnail(url=icon_url)
     else:
         embed.set_thumbnail(url="https://cdn.discordapp.com/embed/avatars/0.png")  # fallback
+
+    embed.set_footer(text=f"Currently in your inventory: {item['amount_owned']}")
     return embed

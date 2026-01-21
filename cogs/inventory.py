@@ -151,7 +151,7 @@ class Inventory(commands.Cog):
             return
 
         # Case 3: item found successfully
-        embed = get_item_details(item_id)
+        embed = get_item_details(ctx.author.id, item_id)
         if embed is None:
             await ctx.send("No such item.")
             return

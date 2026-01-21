@@ -84,7 +84,7 @@ def lootbox_reward(user_id: int,lootbox: str):
             "quantity": item_quantity
         })
         #Give the selected items to the user
-        give_item(user_id,reward_item.item_id,item_quantity)
+        give_item(user_id,reward_item.item_id,item_quantity, True)
 
     return reward_output
 
