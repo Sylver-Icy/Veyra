@@ -17,3 +17,7 @@ def get_closest_command(cmd: str):
     if score >= 60:
         return match
     return None
+
+def normalize_game_name(s: str) -> str:
+        """Normalize user input for fuzzy game matching."""
+        return "".join(ch for ch in s.lower().strip() if ch.isalnum())
