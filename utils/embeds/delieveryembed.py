@@ -1,14 +1,15 @@
 import discord
-from discord.ext import commands
 from utils.emotes import GOLD_EMOJI
 from services.economy_services import add_gold
 # 1. Define a custom View that stores the original user's ID
 class DeliveryView(discord.ui.View):
-    def __init__(self, user_id: int, items: list, reward: int):
+    def __init__(self, user_id: int, items: list, reward: int, reroll_cost: int):
         super().__init__(timeout=100)
         self.user_id = user_id
         self.items = items
         self.reward = reward
+        self.reroll_cost = reroll_cost
+        self.reroll_quest.label = f"Reroll ({self.reroll_cost}G)"
 
     @discord.ui.button(label="Deliver Items", style=discord.ButtonStyle.green, custom_id="deliver_items_button", emoji="📦")
     async def deliver_button(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -57,7 +58,23 @@ class DeliveryView(discord.ui.View):
             button.disabled = True
             await interaction.response.edit_message(content="You have already used your 3 skips Today", view=self)
             return
-def delievery_embed(user_name: str, items: list, reward: int, user_id: int, streak: int):
+
+    @discord.ui.button(label="Reroll", style=discord.ButtonStyle.gray, custom_id="reroll_button", emoji="🎲")
+    async def reroll_quest(self, button: discord.ui.Button, interaction: discord.Interaction):
+        """Rerolls the quest without breaking streak."""
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("❌ This button isn't for you!", ephemeral=True)
+            return
+        from services.delievry_minigame_services import reroll_quest
+        response = reroll_quest(self.user_id)
+        button.disabled = True
+        await interaction.response.edit_message(content=response, embed=None, view=None)
+        return
+
+
+
+
+def delievery_embed(user_name: str, items: list, reward: int, user_id: int, streak: int, reroll_cost: int):
     embed = discord.Embed(
         title=f"Hii! {user_name},        🔥STREAK  **{streak}**",
         description="People in town need some items, do you have them? You will be rewarded!",
@@ -77,4 +94,4 @@ def delievery_embed(user_name: str, items: list, reward: int, user_id: int, stre
         inline=False
     )
 
-    return embed, DeliveryView(user_id,items,reward)
+    return embed, DeliveryView(user_id, items, reward, reroll_cost)

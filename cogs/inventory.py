@@ -55,10 +55,6 @@ class Inventory(commands.Cog):
         - item_name: The name of the item to transfer.
         - amount: The quantity of the item to transfer.
         """
-        if not is_user(target.id):
-            await ctx.respond(f"Umm sorry {ctx.author.name}, they're not frnds with me. Can't interact")
-            return
-
         # Convert item name to ID and get suggestions if not found
         item_id, suggestions = get_item_id_safe(item_name)
 
@@ -93,11 +89,16 @@ class Inventory(commands.Cog):
                 response = create_response("transfer_item", 2, user=ctx.author.display_name, item=item_name)
                 await ctx.respond(response)
                 logger.info("%s was given to the bot", item_name, extra={"user": ctx.author.name, "flex": f"amount: {amount}", "cmd": "transfer_item"})
+                return
 
             except Exception as e:
                 # Catch any VeyraError or other exceptions related to transfer
                 await ctx.respond(str(e))
+                return
 
+        if not is_user(target.id):
+            await ctx.respond(f"Umm sorry {ctx.author.name}, they're not frnds with me. Can't interact")
+            return
         # Handle case where user tries to transfer items to themselves
         elif target.id == ctx.author.id:
             response = create_response("transfer_item", 1, user=ctx.author.display_name, item=item_name)
@@ -106,7 +107,11 @@ class Inventory(commands.Cog):
         # Normal transfer to another user
         else:
             try:
-                transfer_item_service(ctx.author.id, target.id, item_id, amount)
+                result = transfer_item_service(ctx.author.id, target.id, item_id, amount)
+                if result == "full_inventory":
+                    await ctx.respond("Reciever has no space to recieve this")
+                    return
+
                 response = create_response(
                     "transfer_item",
                     3,

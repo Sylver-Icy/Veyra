@@ -75,6 +75,7 @@ class Quests(Base):
     limit = Column(Integer, default=0)
     skips = Column(Integer, default=0)
     streak = Column(Integer, default=0)
+    rerolls = Column(Integer, default=0)
 
     user = relationship("User", back_populates="quests")
 

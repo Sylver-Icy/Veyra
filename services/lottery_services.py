@@ -45,6 +45,24 @@ def create_ticket(user_id: int, ticket_price: int):
         return ticket_id
 
 
+def get_lottery_stats():
+    """Return (tickets_sold, prize_pool)."""
+    with Session() as session:
+        entries = session.query(LotteryEntries).all()
+        if not entries:
+            return 0, 0
+
+        tickets_sold = 0
+        prize_pool = 0
+        for entry in entries:
+            count = len(entry.tickets or [])
+            tickets_sold += count
+            prize_pool += count * entry.ticket_price
+
+        return tickets_sold, prize_pool
+
+
+
 
 def get_user_tickets(user_id: int):
     with Session() as session:

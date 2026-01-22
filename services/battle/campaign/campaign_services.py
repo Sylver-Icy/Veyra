@@ -95,7 +95,7 @@ def give_stage_rewards(user_id: int) -> None:
     if key == "Unlock":
         return #user gets to lvl 10 that auto unlocks
 
-    give_item(user_id, key, value)
+    give_item(user_id, key, value, True)
 
 def stage_reward_details(user_id: int):
     stage = get_campaign_stage(user_id)

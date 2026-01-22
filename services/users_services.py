@@ -331,16 +331,3 @@ def get_user_profile_new(user_id: int) -> dict:
                 "updated_at": stats.updated_at if stats else None,
             },
         }
-
-
-if __name__ == "__main__":
-    import json
-
-    TEST_USER_ID = 915837736819249223
-
-    try:
-        profile = get_user_profile_new(TEST_USER_ID)
-        print(json.dumps(profile, default=str, indent=2))
-    except Exception as e:
-        logger.exception("Failed to fetch profile for user_id=%s", TEST_USER_ID)
-        raise

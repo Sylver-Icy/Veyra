@@ -4,7 +4,7 @@ from domain.crafting.rules import validate_smelt_amount, get_required_ore, requi
 from domain.shared.errors import InvalidAmountError, InvalidRecipeError
 
 from utils.itemname_to_id import get_item_id_safe
-from utils.custom_errors import NotEnoughItemError
+from utils.custom_errors import NotEnoughItemError, FullInventoryError, PartialInventoryError
 
 
 def smelt(user_id: int, bar_name: str, amount: int, coal_cost: int):
@@ -59,5 +59,11 @@ def smelt(user_id: int, bar_name: str, amount: int, coal_cost: int):
         return "Not enough coal to smelt."
 
     # Give smelted bars to user
-    give_item(user_id, bar_id, amount)
+    try:
+        give_item(user_id, bar_id, amount)
+    except (FullInventoryError,PartialInventoryError):
+        give_item(user_id, ore_id, ore_needed)
+        give_item(user_id, coal_id, amount * coal_cost)
+        return "No Space in inventory to craft this! Either free up or upgrade via `!upgrade inventory`"
+
     return f"🔥 Successfully smelted {amount}x {bar_name.title()}."

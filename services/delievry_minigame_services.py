@@ -9,6 +9,7 @@ from domain.quest.rules import (
     number_of_items_for_quest,
     final_delivery_reward,
     can_skip,
+    REROLL_COST
 )
 from models.inventory_model import Items
 from models.users_model import Quests
@@ -16,9 +17,12 @@ from models.users_model import Quests
 from services.exp_services import current_exp
 from services.inventory_services import fetch_inventory, take_item
 from services.users_services import update_longest_quest_streak
+from services.economy_services import remove_gold
 
 from utils.embeds.delieveryembed import delievery_embed
 from utils.itemname_to_id import get_item_id_safe
+from utils.custom_errors import NotEnoughGoldError
+from utils.emotes import GOLD_EMOJI
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +41,8 @@ def requested_items(user_name: str, user_id: int):
             select(Quests).where(Quests.user_id == user_id)
         ).scalar_one_or_none()
         streak = quest.streak if quest else 0
+        rerolls = quest.rerolls if quest else 0
+        gold_needed = REROLL_COST.get(rerolls, 500)
 
     quest = fetch_quest(user_id)
 
@@ -52,11 +58,12 @@ def requested_items(user_name: str, user_id: int):
         reward,
         user_id,
         streak,
+        gold_needed
     )
     return embed
 
 
-def create_quest(user_id: int):
+def create_quest(user_id: int, reset_rerolls: bool = False):
     """
     Creates or updates a delivery quest for the user.
 
@@ -106,8 +113,12 @@ def create_quest(user_id: int):
                     reward=reward,
                     limit=0,
                     skips=0,
+                    rerolls=0,
                 )
             )
+        if reset_rerolls:
+            if existing_quest:
+                existing_quest.rerolls = 0
 
         session.commit()
 
@@ -140,7 +151,7 @@ def delete_quest(user_id: int, streak: bool = False, skip: bool = True):
             select(Quests).where(Quests.user_id == user_id)
         ).scalar_one_or_none()
 
-        if not can_skip(quest.skips):
+        if skip and not can_skip(quest.skips):
             return False
 
         quest.delivery_items = None
@@ -157,6 +168,32 @@ def delete_quest(user_id: int, streak: bool = False, skip: bool = True):
     logger.info("Quest skipped", extra={"user": user_id})
     return True
 
+def reroll_quest(user_id: int):
+    with Session() as session:
+        quest = session.get(Quests, user_id)
+
+        if not quest:
+            # no quest exists yet, just generate one SHOULD NVR RUN IDK WHY I ADDED THIS
+            create_quest(user_id)
+            return "You didn’t even have a quest I made you one. Use `/quest`."
+
+        rerolls_used = quest.rerolls
+        gold_needed = REROLL_COST.get(rerolls_used, 500)
+
+        try:
+            remove_gold(user_id, gold_needed, session)
+        except NotEnoughGoldError:
+            return f"You don't have {gold_needed}{GOLD_EMOJI} to reroll."
+
+        # increment reroll count
+        quest.rerolls += 1
+        session.commit()
+
+    # refresh quest contents (preserve streak, don't count skip)
+    delete_quest(user_id, streak=True, skip=False)
+    create_quest(user_id)
+
+    return "Okeyyyy I'll see if I need something else from you. Use `/quest` again!"
 
 def fetch_quest(user_id: int):
     """

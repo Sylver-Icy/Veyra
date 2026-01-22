@@ -111,6 +111,8 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
         #raise an error is sender has insuffiecient items to send
         if not entry1 or entry1.item_quantity<amount:
             raise NotEnoughItemError
+        if not allow_item_in_inventory(receiver_id, item_id, amount, session):
+            return "full_inventory"
 
         entry1.item_quantity -= amount #deduct the amount for transaction
 

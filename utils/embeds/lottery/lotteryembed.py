@@ -1,9 +1,10 @@
 import discord
 from discord.ui import View, Button
 
-from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool
+from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool, get_lottery_stats
 from services.economy_services import add_gold
 from services.users_services import update_biggest_lottery_win
+
 from utils.emotes import GOLD_EMOJI
 
 
@@ -25,8 +26,9 @@ class LotteryButton(View):
                 "Only my friends are allowed to enter this. Greet me first with `!helloVeyra`"
             )
         else:
+            tickets_sold , prize_pool = get_lottery_stats()
             await interaction.response.send_message(
-                f"✅ You bought a ticket, {interaction.user.name}! Your ticket number is `{ticket_id}`."
+                f"✅ You bought a ticket, <@{interaction.user.id}>! Your ticket number is `{ticket_id}`.\n 🎫 Tickets Sold: {tickets_sold}\nTotal Prize Pool: {prize_pool}"
             )
 
 
@@ -45,7 +47,7 @@ def create_result_embed():
     if not result:
         embed = discord.Embed(
             title="🎟️ Lottery Results",
-            description="No tickets were purchased this round.\nVeyra keeps the prize… again 😏",
+            description="No tickets were purchased this round.",
             color=discord.Color.dark_grey()
         )
         return embed
@@ -62,5 +64,5 @@ def create_result_embed():
     embed.add_field(name=f"Congratulations on winning {prize} {GOLD_EMOJI}", value="Your winnings have been deposited")
     add_gold(winner_id, prize)
     update_biggest_lottery_win(winner_id, prize)
-    
-    return embed
+
+    return embed, winner_id

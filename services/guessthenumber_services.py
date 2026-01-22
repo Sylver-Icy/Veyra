@@ -64,7 +64,7 @@ class Guess:
             str: A description of the reward(s) given.
         """
         if stage == 1:
-            give_item(user_id, 176, 1)
+            give_item(user_id, 176, 1, True)
             return "1X Wooden Box"
         elif stage == 2:
             give_item(user_id, 177, 1)

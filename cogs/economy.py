@@ -32,18 +32,6 @@ class Economy(commands.Cog):
     @non_spam_command()
     async def transfer_gold(self, ctx, target_user: discord.Member, amount: int):
         """Transfer gold from your wallet to another user. There is a 5% fee"""
-        if not is_user(target_user.id):
-            await ctx.respond(f"They are not my friend. They don't even have a wallet where am I supposed to send this money to? Hmm <@{ctx.author.id}> ??")
-            return
-        if amount <=0:
-            await ctx.respond("Atleast send 1 gold come on", ephemeral = True)
-            return
-
-        if target_user.id == ctx.author.id:
-            response = create_response("transfer_gold", 1)
-            await ctx.respond(response)
-            return
-
         if target_user.id == self.bot.user.id:
             response = create_response("transfer_gold", 2, user=ctx.author.display_name)
             await ctx.respond(response)
@@ -57,6 +45,19 @@ class Economy(commands.Cog):
             add_friendship(ctx.author.id, 1)
 
             return
+        
+        if not is_user(target_user.id):
+            await ctx.respond(f"They are not my friend. They don't even have a wallet where am I supposed to send this money to? Hmm <@{ctx.author.id}> ??")
+            return
+        if amount <=0:
+            await ctx.respond("Atleast send 1 gold come on", ephemeral = True)
+            return
+
+        if target_user.id == ctx.author.id:
+            response = create_response("transfer_gold", 1)
+            await ctx.respond(response)
+            return
+
 
         try:
             new_amount = int(amount * 0.95)  #calculating 5% of total amount

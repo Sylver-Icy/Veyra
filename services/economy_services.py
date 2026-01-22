@@ -64,15 +64,17 @@ def add_gold(user_id: int, gold_amount: int):
                 user_id,
                 exc,
             )
+            raise
 
 
-def remove_gold(user_id: int, gold_amount: int):
+def remove_gold(user_id: int, gold_amount: int, session=None):
     """
     Remove gold from a user's wallet.
 
     Args:
         user_id (int): Target user ID
         gold_amount (int): Amount of gold to remove
+        session: Optional SQLAlchemy session to use. If not provided, a new session is created.
 
     Returns:
         tuple[Gold, Gold]: (new_balance, removed_amount)
@@ -82,6 +84,27 @@ def remove_gold(user_id: int, gold_amount: int):
     except InvalidAmountError as exc:
         raise NegativeGoldError from exc
 
+    # If a session is provided, use it (do not commit/rollback here because the caller owns it).
+    if session is not None:
+        user = session.get(Wallet, user_id)
+
+        if not user:
+            logger.warning(
+                "Attempted to remove %s gold from non-existent user %s",
+                gold_amount,
+                user_id,
+            )
+            raise UserNotFoundError(user_id)
+
+        try:
+            ensure_can_afford(user.gold, gold_amount)
+        except InsufficientFundsError as exc:
+            raise NotEnoughGoldError(gold_amount, user.gold) from exc
+
+        user.gold -= gold_amount
+        return user.gold, gold_amount
+
+    # Otherwise, create and manage our own session.
     with Session() as session:
         user = session.get(Wallet, user_id)
 
@@ -110,6 +133,7 @@ def remove_gold(user_id: int, gold_amount: int):
                 user_id,
                 exc,
             )
+            raise
 
 
 # ---------------------------------------------------------------------------

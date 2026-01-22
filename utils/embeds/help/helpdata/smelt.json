@@ -1,0 +1,56 @@
+{
+  "title": "🔥 Smelting Guide",
+  "color": "orange",
+  "footer": "Veyra • Smelting Help • Tip: Upgrade Smelter to unlock metals + reduce coal cost",
+  "pages": [
+    {
+      "title": "🔥 Smelting Basics",
+      "description": "Smelting converts **Ore → Bars** using **Coal** as fuel.\n\nCommand:\n• `/smelt <bar_name> <amount>`\nExample:\n• `/smelt iron 5`",
+      "fields": [
+        {
+          "name": "Valid Bar Names",
+          "value": "✅ `copper` / `copper bar`\n✅ `iron` / `iron bar`\n✅ `silver` / `silver bar`",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧱 Smelter Level Rules",
+      "description": "Your **Smelter level** decides what you can smelt + coal cost.",
+      "fields": [
+        {
+          "name": "Bars Unlocked",
+          "value": "**Lv 1:** Copper\n**Lv 2-4:** Copper + Iron\n**Lv 5-7:** Copper + Iron + Silver",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⛽ Coal Cost (per bar)",
+      "description": "Coal needed = `amount × coal_cost`",
+      "fields": [
+        {
+          "name": "Coal Cost per Bar",
+          "value": "**Lv 1:** 5\n**Lv 2-3:** 4\n**Lv 4-5:** 3\n**Lv 6:** 2\n**Lv 7:** 1",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📦 Getting Ores + Selling Bars",
+      "description": "Smelting is great for profit and crafting.\n\nOres come mainly from **Miner jobs**.",
+      "fields": [
+        {
+          "name": "How to Get Ores",
+          "value": "Use **Miner jobs** to obtain ores.\nMore info:\n• `!details jobs`",
+          "inline": false
+        },
+        {
+          "name": "Selling Bars Anytime",
+          "value": "Bars can always be sold to Veyra:\n• `!sell <barname> <amount>`\n\nPrices:\n• Copper Bar = **50G**\n• Iron Bar = **150G**\n• Silver Bar = **450G**",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

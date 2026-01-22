@@ -14,6 +14,14 @@ RARITY_REWARDS = {
     "Paragon": (799, 1211),
 }
 
+REROLL_COST = {
+        0: 25,
+        1: 75,
+        2: 150,
+        3: 300,
+        4: 500
+    }
+
 # Maximum number of skips allowed per reset period
 MAX_SKIPS = 3
 
