@@ -1,0 +1,158 @@
+{
+  "title": "🎰 Gambling System Guide",
+  "color": "purple",
+  "footer": "Veyra • Gambling Help • Tip: Use /casino to buy/sell chips",
+  "pages": [
+    {
+      "title": "🎰 Gambling Overview",
+      "description": "Veyra gambling is a **risk-based minigame system** where you bet **Chips** to win more chips.\n\nImportant:\n• Gambling uses **Chips**, not Gold\n• Games are designed with **fair odds (EV ≈ 1)**\n\nUse this guide to learn:\n✅ how chips work\n✅ commands + format\n✅ all games + their rules",
+      "fields": [
+        {
+          "name": "Core Currency",
+          "value": "• **Gold**: main economy currency (jobs, quests, shop, marketplace)\n• **Chips**: gambling-only currency (casino games)\n\nTo gamble, you need chips.",
+          "inline": false
+        },
+        {
+          "name": "Where to get Chips",
+          "value": "Use `/casino` to:\n• buy chips packs (Gold → Chips)\n• cashout chips (Chips → Gold)\n\nChip offers rotate daily.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⌨️ Commands & Format",
+      "description": "Gambling is played using a **prefix command format**.\n\n**Format:**\n`!gamble <game> <bet> <choice>`\n\nNot all games need a choice.",
+      "fields": [
+        {
+          "name": "Main Commands",
+          "value": "• `/casino` - open casino shop (buy chips / cashout chips)\n• `!gamble <game> <bet> <choice?>` - play a casino game\n• `!details gambling` - view this guide again",
+          "inline": false
+        },
+        {
+          "name": "Examples",
+          "value": "• `!gamble flipcoin 100 heads`\n• `!gamble roulette 50 7`\n• `!gamble slots 100`\n• `!gamble dungeon 200 caves`",
+          "inline": false
+        },
+        {
+          "name": "Bet Limits",
+          "value": "Each game has a minimum and maximum bet.\n\nIf you bet too low / too high, the command will be rejected with the correct limits.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🪙 Game 1: Flip Coin",
+      "description": "**Flip Coin** is a 50/50 gamble.\n\nYou pick **heads** or **tails**. If you guess right, your payout is **2x**.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`!gamble flipcoin <bet> <heads/tails>`\nExample: `!gamble flipcoin 100 heads`",
+          "inline": false
+        },
+        {
+          "name": "Valid Inputs",
+          "value": "Accepted choices:\n• `heads`, `head`\n• `tails`, `tail`\n\nCase-insensitive.\nInvalid choice → no loss.",
+          "inline": false
+        },
+        {
+          "name": "Rules",
+          "value": "• 50% chance win\n• 50% chance lose\n\nOutcomes:\n✅ win → **2x payout**\n❌ lose → lose your bet",
+          "inline": false
+        },
+        {
+          "name": "Bet Range",
+          "value": "Min bet: **1** chip\nMax bet: **5000** chips",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🎡 Game 2: Roulette (0–9)",
+      "description": "**Roulette** is a high-risk jackpot game.\n\nYou pick a number from **0 to 9**.\nIf it hits, payout is **10x**. Otherwise you lose the bet.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`!gamble roulette <bet> <0-9>`\nExample: `!gamble roulette 100 7`",
+          "inline": false
+        },
+        {
+          "name": "Rules",
+          "value": "• Veyra rolls a number from **0 to 9**\n• If your pick matches → **10x payout**\n• If not → lose bet",
+          "inline": false
+        },
+        {
+          "name": "Invalid Input",
+          "value": "If your number is not 0–9:\n✅ no loss\nYou’ll be told the correct format.",
+          "inline": false
+        },
+        {
+          "name": "Bet Range",
+          "value": "Min bet: **10** chips\nMax bet: **2500** chips",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🎰 Game 3: Slots",
+      "description": "**Slots** is the dopamine machine.\n\nIt spins 3 symbols. You can hit:\n• **triple match** → big payout\n• **pair match** → small payout\n• no match → lose bet",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`!gamble slots <bet>`\nExample: `!gamble slots 200`",
+          "inline": false
+        },
+        {
+          "name": "Symbols (Weighted)",
+          "value": "Slots are not equal chance.\n\nSo 🍒 appears most. 💎 is rare.",
+          "inline": false
+        },
+        {
+          "name": "Triple Match Payouts",
+          "value": "Triple hit payouts:\n• 🍒🍒🍒 → **x5**\n• 🍋🍋🍋 → **x4**\n• 🍇🍇🍇 → **x4**\n• 🔔🔔🔔 → **x8**\n• ⭐⭐⭐ → **x12**\n• 💎💎💎 → **x25**",
+          "inline": false
+        },
+        {
+          "name": "Pair Match",
+          "value": "Any pair (like 🍒🍒🍋) pays:\n• **x1.66** multiplier\n\nNo match → lose bet.",
+          "inline": false
+        },
+        {
+          "name": "Bet Range",
+          "value": "Min bet: **10** chips\nMax bet: **2000** chips",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🗡️ Game 4: Dungeon Raid",
+      "description": "**Dungeon Raid** is an RPG-style gambling game.\n\nYou choose a dungeon area.\nEach area has:\n• a **death chance** (lose bet)\n• a **treasure multiplier** (win payout)\n\nHigher risk areas have bigger multipliers.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`!gamble dungeon <bet> <area>`\nExample: `!gamble dungeon 300 ruins`",
+          "inline": false
+        },
+        {
+          "name": "Valid Areas",
+          "value": "`caves`, `tunnels`, `ruins`, `lair`, `abyss`\n\nInvalid area → no loss (delta = 0).",
+          "inline": false
+        },
+        {
+          "name": "Areas, Risk & Multipliers",
+          "value": "• **Safe Caves** → 20% death, **x1.20**\n• **Goblin Tunnels** → 35% death, **x1.50**\n• **Ancient Ruins** → 50% death, **x2.00**\n• **Dragon Lair** → 70% death, **x3.33**\n• **Abyss Gate** → 85% death, **x6.66**",
+          "inline": false
+        },
+        {
+          "name": "Rules",
+          "value": "• Veyra rolls a random number\n• If roll < death chance → you die 💀 and lose bet\n• Else → you find treasure 🎁 and get payout = bet * multiplier",
+          "inline": false
+        },
+        {
+          "name": "Bet Range",
+          "value": "Min bet: **10** chips\nMax bet: **3000** chips",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

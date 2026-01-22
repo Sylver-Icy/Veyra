@@ -165,8 +165,8 @@ def dungeon_game(bet: int, choice: str) -> GameResult:
         )
 
     DUNGEON_AREAS = {
-        "caves": {"death": 0.20, "mult": 1.25, "name": "Safe Caves"},
-        "tunnels": {"death": 0.35, "mult": 1.54, "name": "Goblin Tunnels"},
+        "caves": {"death": 0.20, "mult": 1.20, "name": "Safe Caves"},
+        "tunnels": {"death": 0.35, "mult": 1.50, "name": "Goblin Tunnels"},
         "ruins": {"death": 0.50, "mult": 2.00, "name": "Ancient Ruins"},
         "lair": {"death": 0.70, "mult": 3.33, "name": "Dragon Lair"},
         "abyss": {"death": 0.85, "mult": 6.66, "name": "Abyss Gate"},

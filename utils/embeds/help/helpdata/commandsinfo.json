@@ -29,6 +29,15 @@
     "examples": ["!solve_wordle"],
     "notes": "Utilizes logical deduction rather than random guesses for solving."
   },
+    "gamble": {
+    "title": "🎰 Gamble",
+    "description": "Play casino games using chips. Bet chips, pick your game, and test your luck.",
+    "usage": "!gamble <game> <bet> <choice?>",
+    "category": "Gambling",
+    "cooldown": "5s per user",
+    "examples": ["!gamble flipcoin 100 heads", "!gamble roulette 50 7", "!gamble slots 200", "!gamble dungeon 300 caves"],
+    "notes": "Use `!details gambling` for the full casino guide, rules, and game mechanics."
+  },
 
   "quest": {
     "title": "🎯 Quest",
@@ -108,7 +117,7 @@
     "category": "Games",
     "cooldown": "One game at a time",
     "examples": ["/battle @Sylver"],
-    "notes": "Use `!commandhelp explainbattle` for detailed rules and gameplay information."
+    "notes": "Use `!details battle` for detailed rules and gameplay information."
   },
 
   "start_race": {
@@ -305,6 +314,6 @@
   "category": "Job",
   "cooldown": "No cooldown (limited only by your energy)",
   "examples": ["!work knight", "!work digger", "!work miner", "!work thief @target"],
-  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!commandhelp explain jobs` for details about each job title."
+  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!details jobs` for details about each job title."
 }
 }

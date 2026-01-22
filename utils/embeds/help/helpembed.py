@@ -254,7 +254,8 @@ DETAILS_MAP = {
         "loadout": "loadout.json",
         "race": "race.json",
         "smelting": "smelt.json",
-        "inventory": "inventory.json"
+        "inventory": "inventory.json",
+        "gambling": "gambling.json"
     }
 
 def get_json_pages_embed(user: discord.User, topic: str):
@@ -264,7 +265,7 @@ def get_json_pages_embed(user: discord.User, topic: str):
     if not mapped_file:
         embed = discord.Embed(
             title="❌ No such system",
-            description="Try `!details race` \n allowed arguments: battle, jobs, loadout, race, smelting",
+            description="Try `!details race` \n allowed arguments: battle, jobs, loadout, race, smelting, inventory, gambling",
             color=discord.Color.red()
         )
         return embed, None
