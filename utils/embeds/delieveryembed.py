@@ -29,7 +29,7 @@ class DeliveryView(discord.ui.View):
         if items_check(self.user_id,self.items): #checks if user has enough items and if delivery succeed
             add_gold(self.user_id, self.reward) #gives the gold for quest
             delete_quest(self.user_id, True, False) #delete the current
-            create_quest(self.user_id) #create a new quest
+            create_quest(self.user_id,True) #create a new quest
             await interaction.response.edit_message(content="✅ You delivered the items!", embed=None, view=None)
 
         else:
