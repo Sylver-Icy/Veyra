@@ -218,7 +218,7 @@ GAMES: dict[str, CasinoGame] = {
     # Roulette (0-9) game registration
     "roulette": CasinoGame(
         id="roulette",
-        name="Roulette (0-9)",
+        name="Roulette",
         min_bet=10,
         max_bet=2500,
         play=roulette_game
@@ -236,7 +236,7 @@ GAMES: dict[str, CasinoGame] = {
     # Dungeon Raid game registration
     "dungeon": CasinoGame(
         id="dungeon",
-        name="Dungeon Raid",
+        name="Dungeon",
         min_bet=10,
         max_bet=3000,
         play=dungeon_game

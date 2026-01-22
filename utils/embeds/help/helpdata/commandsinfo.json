@@ -226,6 +226,33 @@
     "examples": ["/profile"],
     "notes": "Opens an interactive embed with multiple pages. Only you can control your own profile view."
   },
+  "buychips": {
+  "title": "🪙 Buy Chips",
+  "description": "Buy casino chips using your gold. Chips are used for gambling games.",
+  "usage": "!buychips <pack_id>",
+  "category": "Gambling",
+  "cooldown": "5s per user",
+  "examples": ["!buychips 1", "!buychips 2", "!buychips 3"],
+  "notes": "Chips are a separate gambling currency. Use `/casino` to view today’s chip packs and offers. Full guide: `!details gambling`."
+},
+"cashout": {
+  "title": "💸 Cashout Chips",
+  "description": "Convert your casino chips back into gold using today’s cashout offers.",
+  "usage": "!cashout <pack_id>",
+  "category": "Gambling",
+  "cooldown": "5s per user",
+  "examples": ["!cashout 1", "!cashout 2"],
+  "notes": "Cashout rates depend on today’s offers. Use `/casino` to see the current cashout packs. Full guide: `!details gambling`."
+},
+"casino": {
+  "title": "🏛️ Casino",
+  "description": "Open the casino shop to buy chips, cashout chips, and view today’s casino offers.",
+  "usage": "/casino",
+  "category": "Gambling",
+  "cooldown": "155s per user",
+  "examples": ["/casino"],
+  "notes": "Use this as the main hub for gambling currency conversion. To play games: `!gamble <game> <bet> <choice?>`. Full guide: `!details gambling`."
+},
   "info": {
     "title": "ℹ️ Item Info",
     "description": "Get detailed information about a specific item, including its rarity, value, and details if available.",

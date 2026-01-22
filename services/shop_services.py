@@ -343,7 +343,6 @@ def cashout_chips(user_id: int, pack_id: str):
     with Session() as session:
         try:
             remove_chips(user_id, chips_cost, session)
-            print(total_gold, type(total_gold))
             add_gold(user_id, total_gold, session)
             session.commit()
         except VeyraError as e:
