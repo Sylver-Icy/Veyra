@@ -13,7 +13,7 @@ from services.inventory_services import give_item
 from services.users_services import is_user
 from services.response_services import create_response
 
-from utils.custom_errors import FullInventoryError
+from utils.custom_errors import VeyraError
 
 
 
@@ -124,22 +124,46 @@ class JobsClass:
             return response
 
         if reward == "woodenbox":
-            give_item(self.user_id, 176, 1)
+            try:
+                give_item(self.user_id, 176, 1, True)
+            except VeyraError:
+                return (
+                    "You dug for hours and unearthed a Wooden Box, but your satchel was already bursting. "
+                    "With nowhere to stash it, you had to leave it half-buried in the dirt."
+                )
             response = create_response("digger", 2, reward="Wooden Box")
             return response
 
         if reward == "stonebox":
-            give_item(self.user_id, 177, 1)
+            try:
+                give_item(self.user_id, 177, 1, True)
+            except VeyraError:
+                return (
+                    "You struck stone and found a Stone Box, but your pack was stuffed to the brim. "
+                    "You marked the spot with a pebble and walked away empty-handed."
+                )
             response = create_response("digger", 2, reward="Stone Box")
             return response
 
         if reward == "ironbox":
-            give_item(self.user_id, 178, 1)
+            try:
+                give_item(self.user_id, 178, 1, True)
+            except VeyraError:
+                return (
+                    "You finally hauled up an Iron Box... then remembered your inventory has the storage capacity of a napkin. "
+                    "No space left, so you had to abandon it."
+                )
             response = create_response("digger", 2, reward="Iron Box")
 
             return response
 
-        give_item(self.user_id, 179, 1)
+        try:
+            give_item(self.user_id, 179, 1, True)
+        except VeyraError:
+            return (
+                "You uncovered a Platinum Box gleaming in the soil, but your satchel couldn't fit another pebble. "
+                "You left it behind, cursing your lack of space all the way home."
+            )
         response = create_response("digger", 2, reward="Platinum Box")
         return response
 
@@ -185,23 +209,47 @@ class JobsClass:
             ore_amount = random.randint(12, 20)
 
         if reward == "coal":
-            give_item(self.user_id, 187, ore_amount)
+            try:
+                give_item(self.user_id, 187, ore_amount)
+            except VeyraError:
+                return (
+                    f"You mined {ore_amount}x Coal, but your satchel had no room left. "
+                    "With a heavy sigh, you left the haul by the tunnel mouth for someone luckier."
+                )
             response = create_response("miner", 1, amount=ore_amount, ores="Coal")
             return response
 
         if reward == "copperore":
-            give_item(self.user_id, 184, ore_amount)
+            try:
+                give_item(self.user_id, 184, ore_amount)
+            except VeyraError:
+                return (
+                    f"You pried loose {ore_amount}x Copper Ore, but your pack was packed tighter than a tavern on payday. "
+                    "You stashed the ore behind a rock and left with empty hands."
+                )
             response = create_response("miner", 1, amount=ore_amount, ores="Copper Ore")
 
             return response
 
         if reward == "ironore":
-            give_item(self.user_id, 185, ore_amount)
+            try:
+                give_item(self.user_id, 185, ore_amount)
+            except VeyraError:
+                return (
+                    f"You dragged out {ore_amount}x Iron Ore, but your inventory was already full. "
+                    "You had to leave the ore behind before the tunnel collapsed."
+                )
             response = create_response("miner", 1, amount=ore_amount, ores="Iron Ore")
 
             return response
 
-        give_item(self.user_id, 186, ore_amount)
+        try:
+            give_item(self.user_id, 186, ore_amount)
+        except VeyraError:
+            return (
+                f"You uncovered {ore_amount}x Silver Ore, but your satchel couldn't carry another shard. "
+                "You reluctantly left the glittering prize in the darkness."
+            )
         response = create_response("miner", 1, amount=ore_amount, ores="Silver Ore")
 
         return response
@@ -269,7 +317,7 @@ class JobsClass:
         try:
             give_item(self.user_id, item.item_id, 1)
 
-        except FullInventoryError:
+        except VeyraError:
             return (
                 f"You found {item.item_name} but your satchel was already stuffed to the brim. With no room to carry it, you left the find behind in the wilds."
             )

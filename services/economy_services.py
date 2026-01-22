@@ -13,9 +13,8 @@ from domain.economy.rules import (
 
 from utils.custom_errors import (
     UserNotFoundError,
-    NegativeGoldError,
     NotEnoughGoldError,
-    WrongInputError,
+    NegativeGoldError
 )
 
 logger = logging.getLogger(__name__)

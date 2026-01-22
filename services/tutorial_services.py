@@ -72,9 +72,7 @@ async def handle_check_wallet(ctx, command, arg):
     await advance(ctx.author.id, TutorialState.PLAY)
     await asyncio.sleep(1.4)
 
-    await safe_send(ctx, "HAHA! Brokie!!!\n\nRelax, I got you.\nHere have these bags of gold.\n\nThe `check` command works for other stats too — you’ll discover those later.\n\nNext step: let’s make money.\nType `!play`")
-    if not await tutorial_completed(ctx.author.id):
-        give_item(ctx.author.id, 183, 2)
+    await safe_send(ctx, "Yes that's you balance not the highest but still something follow along and we are getting rich.\n\nThe `check` command works for other stats too — you’ll discover those later.\n\nNext step: let’s make money.\nType `!play`")
 
     return True
 

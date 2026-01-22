@@ -4,7 +4,7 @@ from models.marketplace_model import Marketplace
 from database.sessionmaker import Session
 from services.inventory_services import take_item, give_item
 from services.economy_services import add_gold, remove_gold
-from utils.custom_errors import VeyraError, NotEnoughGoldError
+from utils.custom_errors import VeyraError, NotEnoughGoldError, FullInventoryError, PartialInventoryError
 from utils.embeds.marketplaceembed import build_marketplace
 from utils.emotes import GOLD_EMOJI
 
@@ -118,9 +118,13 @@ def remove_listing(user_id: int, listing_id: int) -> str:
         try:
             give_item(user_id, listing.item_id, listing.quantity)
 
+        except (FullInventoryError,PartialInventoryError):
+            return "Can't remove the listing as there is no space for items in inventory"
+
         except Exception as e:
             logger.error(f"Failed to refund items for listing {listing_id}: {e}")
             return "Failed to refund items — please contact support."
+
 
         # Delete the listing
         listing_name = listing.item.item_name
