@@ -2,8 +2,10 @@
 import discord
 from discord.ext import commands
 import asyncio
+
 from services.race_services import start_race, add_bets
 from services.economy_services import remove_gold, add_gold
+from services.casino_services import play_casino_game
 
 from utils.embeds.animalraceembed import race_start_embed
 from utils.custom_errors import NotEnoughGoldError
@@ -126,6 +128,15 @@ class Gambling(commands.Cog):
         else:
             # Inform user that betting is currently closed
             await ctx.send("There is no ongoing betting phase right now.")
+
+    @commands.command()
+    # @commands.cooldown(1,5, commands.BucketType.user)
+    async def gamble(self, ctx, game_name: str, bet: int, choice: str):
+        
+        msg = play_casino_game(ctx.author.id, game_name, bet, choice)
+        await ctx.send(msg)
+
+
 
 def setup(bot):
     """Setup function to add the Gambling cog to the bot."""
