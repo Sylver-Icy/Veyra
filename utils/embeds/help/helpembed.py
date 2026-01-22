@@ -253,7 +253,8 @@ DETAILS_MAP = {
         "jobs": "jobs.json",
         "loadout": "loadout.json",
         "race": "race.json",
-        "smelting": "smelt.json"
+        "smelting": "smelt.json",
+        "inventory": "inventory.json"
     }
 
 def get_json_pages_embed(user: discord.User, topic: str):

@@ -1,0 +1,138 @@
+{
+  "title": "🎒 Inventory Guide (Storage + Pockets)",
+  "color": "purple",
+  "footer": "Veyra • Inventory management is a skill issue • Tip: Sell or trade extras",
+  "pages": [
+    {
+      "title": "🎒 Inventory Overview",
+      "description": "Your **Inventory** is where all your items live.\n\nIf you hoard items like a dragon: ✅ Inventory.\nIf you're broke but still collecting junk: also ✅ Inventory.\n\nInventory items are shown with:\n• item name\n• quantity (`X amount`)\n• rarity\n• description",
+      "fields": [
+        {
+          "name": "Core Commands",
+          "value": "• `!checkinventory` - view your inventory\n• `!info <item>` - detailed item info\n• `/transfer_item <user> <item> <amount>` - give items to someone\n• `!use <item>` - use an item (only works if usable)\n\nExamples:\n`!checkinventory`\n`!info copper ore`\n`/transfer_item @user wooden box 2`\n`!use bread`",
+          "inline": false
+        },
+        {
+          "name": "Quick Reminder",
+          "value": "Items can be **traded**, **sold**, or sometimes **used**.\nSome items (like loot boxes) are *not usable* with `!use`. They are opened via `!open`",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🔍 Item Info (What is this thing?)",
+      "description": "`!info` gives detailed information about an item.\nThis is what you use when you're staring at an item name like it's ancient scripture.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "• `!info <item name>`",
+          "inline": true
+        },
+        {
+          "name": "What it shows",
+          "value": "• item name\n• description\n• rarity color\n• icon (if the item has one)\n• how many you own",
+          "inline": false
+        },
+        {
+          "name": "Typos & Suggestions",
+          "value": "If you type the wrong item name, Veyra tries to suggest the closest match.\n\nIf your spelling is beyond saving, you'll get:\n\"Idk about anything like that.\"",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🎁 Giving Items (Transfer System)",
+      "description": "You can transfer items to other players (or even to Veyra).\n\nBecause sometimes generosity is cool.\nAnd sometimes you're just clearing junk.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`/transfer_item <target> <item> <amount>`",
+          "inline": false
+        },
+        {
+          "name": "Rules",
+          "value": "✅ Target must be a registered player\n❌ You can't transfer to yourself\n✅ If the target is Veyra, special logic applies",
+          "inline": false
+        },
+        {
+          "name": "Veyra Transfers (Special)",
+          "value": "If you transfer items to Veyra:\n• items are taken from you and given to her\n• you gain **friendship** with Veyra\n\nSo yes, you can bribe her. Nice.",
+          "inline": false
+        },
+        {
+          "name": "Common Errors",
+          "value": "• mistyped item → suggestions\n• target not registered → can't interact\n• receiver full → transfer fails",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧪 Using Items (Use vs Open)",
+      "description": "`!use` is only for items that are actually *usable*.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "`!use <item name>`",
+          "inline": true
+        },
+        {
+          "name": "Loot Boxes",
+          "value": "Lootboxes cannot be used.\nThese include:\n• Wooden Box\n• Stone Box\n• Iron Box\n• Platinum Box\n\nInstead use:\n`!open wooden box`",
+          "inline": false
+        },
+        {
+          "name": "If you don’t own it",
+          "value": "If you try using an item you don’t have, Veyra will block you.\nExample:\n\"You don't have any <item>. Can't use!\"",
+          "inline": false
+        }
+      ]
+    },
+    {
+  "title": "👝 Pockets vs 🎒 Inventory (Super Important)",
+  "description": "Veyra storage has **two upgrade paths** and they do *different* things:\n\n🎒 **Inventory = how many slots you own**\n👝 **Pockets = how much each slot can hold**\n\nSo:\n• Inventory decides **how many different stacks you can store**\n• Pockets decides **how big each stack can be**\n\nUpgrade both if you don’t want to live the painful \"Inventory Full\" lifestyle.",
+  "fields": [
+    {
+      "name": "🎒 Inventory (Slot Count)",
+      "value": "Inventory upgrades increase your **total slots**.\n\nEach slot holds **one stack** of an item.\nMore slots = more different item stacks you can keep.\n\nExample:\nIf you have **30 slots**, you can hold up to **30 stacks** (not 30 items).",
+      "inline": false
+    },
+    {
+      "name": "👝 Pockets (Stack Size per Slot)",
+      "value": "Pockets upgrades increase **stack size limits** per slot.\n\nStack limits depend on the item rarity/category:\n• Common stacks bigger than Legendary\n• Minerals stack larger than normal items\n• Lootboxes have their own limits\n\nExample:\nIf Common stack limit is **20**, one slot can hold **20 Common** items.",
+      "inline": false
+    },
+    {
+      "name": "So what does “Inventory Full” mean?",
+      "value": "It means you ran out of **free slots**, not that you hit some random total item limit.\n\nEven if you have only 1 item type, if it needs multiple stacks:\n`slots used = ceil(quantity / stack_limit)`\n\nSo if you're carrying 41 Common items and your stack limit is 20:\n`ceil(41/20) = 3 slots used`",
+      "inline": false
+    },
+    {
+      "name": "The Smart Upgrade Strategy",
+      "value": "• Upgrade **Inventory** if you own many different items.\n• Upgrade **Pockets** if one item keeps overflowing into multiple stacks.",
+      "inline": false
+    }
+  ]
+},
+    {
+      "title": "⬆️ Upgrading Storage (Inventory + Pockets)",
+      "description": "Both **Inventory** and **Pockets** can be upgraded.\n\nUpgrades follow Veyra’s \"confirmation before buying\" style.\nSo the bot won’t steal your gold instantly (rare W).",
+      "fields": [
+        {
+          "name": "Upgrade Levels",
+          "value": "Inventory: **7 levels**\nPockets: **5 levels**",
+          "inline": true
+        },
+        {
+          "name": "How upgrades work",
+          "value": "Upgrades are like buildings:\n• Veyra shows description + cost\n• you must type `yes` to confirm\n• if you don’t confirm in time → cancelled",
+          "inline": false
+        },
+        {
+          "name": "Why upgrade?",
+          "value": "More capacity =\n• accept more items\n• hold more loot\n• trade more\n• stop crying about \"inventory full\"",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}
