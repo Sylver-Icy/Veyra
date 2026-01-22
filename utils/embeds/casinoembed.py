@@ -2,6 +2,12 @@ import discord
 from discord.ui import View, button
 from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
 
+# Optional flair emojis (safe fallback if your emotes module doesn’t have them)
+SPARKLES = "✨"
+TICKET = "🎟️"
+ARROW = "➡️"
+COIN = "🪙"
+
 
 def casino_buy_embed(offers: dict) -> discord.Embed:
     """
@@ -16,23 +22,41 @@ def casino_buy_embed(offers: dict) -> discord.Embed:
       }
     """
     embed = discord.Embed(
-        title="**Veyra's Casino**",
-        description="*Welcome to the casino. Please gamble responsibly (lol).*",
-        color=discord.Color.gold()
+        title=f"{CHIP_EMOJI} **Buy Chips** {CHIP_EMOJI}",
+        description=(
+            "*Exchange gold for casino chips.*\n"
+            "\n"
+            "**How this works**\n"
+            "• Buying chips unlocks casino games\n"
+            "• Bigger packs usually give better value\n"
+        ),
+        color=discord.Color.gold(),
     )
 
-    for pack_id, pack in offers.items():
+    # Sort packs by price so the list feels intentional
+    sorted_items = sorted(offers.items(), key=lambda kv: kv[1].get("gold_cost", 0))
+
+    embed.add_field(name=f"{CHIP_EMOJI} Chip Packs", value="Pick a pack to exchange gold for chips.", inline=False)
+
+    for pack_id, pack in sorted_items:
         bonus = int(pack.get("bonus", 0) or 0)
-        total_chips = pack["chips"] + bonus
-        bonus_text = f" (+{bonus} bonus)" if bonus > 0 else ""
+        base_chips = int(pack.get("chips", 0) or 0)
+
+        gold_cost = int(pack.get("gold_cost", 0) or 0)
+
+        bonus_text = f"+{bonus} bonus" if bonus > 0 else "No bonus"
+
         embed.add_field(
-            name=f"**{pack['name']}**\nID: {pack_id} | Price: {pack['gold_cost']} {GOLD_EMOJI}",
-            value=f"You get: **{total_chips}** {CHIP_EMOJI}{bonus_text}",
-            inline=True
+            name=f"**{pack.get('name', 'Unnamed Pack')}**",
+            value=(
+                f"{SPARKLES} **ID:** `{pack_id}`\n"
+                f"{GOLD_EMOJI} **Price:** `{gold_cost}`\n"
+                f"{CHIP_EMOJI} **Chips:** `{base_chips}` ({bonus_text})\n"
+            ),
+            inline=True,
         )
 
-    embed.set_author(name="Casino deals refresh daily")
-    embed.set_footer(text="**How to buy** -> !buychips <pack_id>  e.g.  !buychips pack1")
+    embed.set_footer(text=f"{ARROW} Buy: !buychips <pack_id>   |   {ARROW} Convert: press the button below")
     embed.set_image(url="https://cdn.discordapp.com/attachments/921681249817493554/1463809646447038637/image.png")
     return embed
 
@@ -50,27 +74,40 @@ def casino_convert_embed(cashout_offers: dict) -> discord.Embed:
       }
     """
     embed = discord.Embed(
-        title="**Veyra's Casino**",
-        description="*Convert chips → gold. Casino still wins. Always.*",
-        color=discord.Color.gold()
+        title=f"{COIN} **Chip Cashout** {COIN}",
+        description=(
+            "*Convert chips back into gold.*\n"
+            "\n"
+            "**How this works**\n"
+            "• Cashout packs give gold for chips\n"
+            "• Bigger packs have higher bonus gold\n"
+        ),
+        color=discord.Color.gold(),
     )
 
-    for pack_id, pack in cashout_offers.items():
+    sorted_items = sorted(cashout_offers.items(), key=lambda kv: kv[1].get("chips_cost", 0))
+
+    embed.add_field(name="🪙 Cashout Offers", value="Pick a pack to exchange chips for gold.", inline=False)
+
+    for pack_id, pack in sorted_items:
+        chips_cost = int(pack.get("chips_cost", 0) or 0)
+        gold_received = int(pack.get("gold_received", 0) or 0)
         bonus_gold = int(pack.get("bonus_gold", 0) or 0)
-        total_gold = pack["gold_received"] + bonus_gold
-        bonus_text = f" (+{bonus_gold} bonus)" if bonus_gold > 0 else ""
+
+
+        bonus_line = f"+{bonus_gold} bonus" if bonus_gold > 0 else "No bonus"
 
         embed.add_field(
-            name=(
-                f"**{pack['name']}**\n"
-                f"ID: {pack_id} | Cost: {pack['chips_cost']} {CHIP_EMOJI}"
+            name=f"**{pack.get('name', 'Cashout')}**",
+            value=(
+                f"{SPARKLES} **ID:** `{pack_id}`\n"
+                f"{CHIP_EMOJI} **Cost:** `{chips_cost}`\n"
+                f"{GOLD_EMOJI} **Gold:** `{gold_received}` ({bonus_line})\n"
             ),
-            value=f"You receive: **{total_gold}** {GOLD_EMOJI}{bonus_text}",
-            inline=True
+            inline=True,
         )
 
-    embed.set_author(name="Cashout deals refresh daily")
-    embed.set_footer(text="**How to cashout** -> !cashout <pack_id>  e.g.  !cashout 501")
+    embed.set_footer(text=f"{ARROW} Cashout: !cashout <pack_id>   |   {ARROW} Buy: press the button below")
     return embed
 
 

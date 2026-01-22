@@ -15,6 +15,8 @@ from utils.emotes import GOLD_EMOJI
 from services.inventory_services import give_item, take_item, fetch_inventory
 from services.economy_services import remove_gold, add_gold, check_wallet
 
+from domain.casino.rules import CONVERSION_RATES, CHIP_OFFERS
+
 logger = logging.getLogger(__name__)
 
 ITEM_RATE = {
@@ -155,6 +157,9 @@ def daily_shop():
     Returns:
     - Tuple[discord.Embed, discord.ui.View]: The visual representation of the shop.
     """
+    # Self-heal: ensure today's shops exist (scheduler may miss midnight)
+    update_daily_shop()
+    update_daily_buyback_shop()
     sell_items = db_get_shop_items("sell")
     buyback_items = db_get_shop_items("buyback")
     return get_shop_view_and_embed(sell_items, buyback_items)
@@ -250,3 +255,37 @@ def sell_item(user_id: int, item_id: int, item_quantity: int) -> str:
         f"Great doing business with you! I transferred your {total_gold} {GOLD_EMOJI}.\n"
         "You can check with `!checkwallet` :3"
     )
+
+CASINO_ROTATION = {
+    "date": None,
+    "chip_offer_ids": [],
+    "cashout_offer_ids": []
+}
+
+def get_daily_rotation():
+    if CASINO_ROTATION["date"] != today():
+        CASINO_ROTATION["date"] = today()
+
+        chip_ids = list(CHIP_OFFERS.keys())
+        cashout_ids = list(CONVERSION_RATES.keys())
+
+        CASINO_ROTATION["chip_offer_ids"] = random.sample(chip_ids, min(5, len(chip_ids)))
+        CASINO_ROTATION["cashout_offer_ids"] = random.sample(cashout_ids, min(5, len(cashout_ids)))
+
+    return CASINO_ROTATION
+
+
+def get_today_chip_offers():
+    offer = get_daily_rotation()
+    allowed_ids = offer.get("chip_offer_ids", [])
+
+    return {k: CHIP_OFFERS[k] for k in allowed_ids if k in CHIP_OFFERS}
+
+
+def get_today_cashout_offers():
+    offer = get_daily_rotation()
+    allowed_ids = offer.get("cashout_offer_ids", [])
+
+    return {k: CONVERSION_RATES[k] for k in allowed_ids if k in CONVERSION_RATES}
+
+

@@ -5,12 +5,11 @@ from utils.custom_errors import NotEnoughItemError
 from utils.itemname_to_id import get_item_id_safe
 from utils.embeds.casinoembed import get_casino_view_and_embed
 
-from services.shop_services import buy_item, sell_item, daily_shop
+from services.shop_services import buy_item, sell_item, daily_shop, get_today_cashout_offers, get_today_chip_offers
 from services.economy_services import add_gold
 from services.inventory_services import take_item
 
 from domain.guild.commands_policies import non_spam_command
-from domain.casino.rules import CHIP_OFFERS, CONVERSION_RATES
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +108,9 @@ class Shop(commands.Cog):
     @non_spam_command()
     async def casino(self, ctx):
         # Placeholder packs (temporary)
-        embed, view = get_casino_view_and_embed(CHIP_OFFERS, CONVERSION_RATES)
+        chip_offer = get_today_chip_offers()
+        cashout_offer = get_today_cashout_offers()
+        embed, view = get_casino_view_and_embed(chip_offer, cashout_offer)
         await ctx.respond(embed=embed, view=view)
 
 
