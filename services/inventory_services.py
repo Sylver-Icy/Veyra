@@ -190,7 +190,7 @@ def get_item_details(user_id, item_id: int):
         item_details['description'] = item.item_description
         item_details['rarity'] = item.item_rarity
         item_details['icon'] = item.item_icon
-        item_details['amount_owned'] = user_inv.item_quantity
+        item_details['amount_owned'] = user_inv.item_quantity if user_inv else 0
     return build_item_info_embed(item_details)
 
 def use_item(user_id: int, item_id: str):

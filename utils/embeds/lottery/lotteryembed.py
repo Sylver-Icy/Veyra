@@ -28,7 +28,7 @@ class LotteryButton(View):
         else:
             tickets_sold , prize_pool = get_lottery_stats()
             await interaction.response.send_message(
-                f"✅ You bought a ticket, <@{interaction.user.id}>! Your ticket number is `{ticket_id}`.\n 🎫 Tickets Sold: {tickets_sold}\nTotal Prize Pool: {prize_pool}"
+                f"✅ You bought a ticket, <@{interaction.user.id}>! Your ticket number is `{ticket_id}`.\n 🎫 Tickets Sold: {tickets_sold}\nTotal Prize Pool: {prize_pool}{GOLD_EMOJI}"
             )
 
 
