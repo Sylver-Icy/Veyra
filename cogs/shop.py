@@ -4,12 +4,14 @@ from discord.ext import commands
 from utils.custom_errors import NotEnoughItemError
 from utils.itemname_to_id import get_item_id_safe
 from utils.embeds.casinoembed import get_casino_view_and_embed
+from utils.emotes import CHIP_EMOJI
 
-from services.shop_services import buy_item, sell_item, daily_shop, get_today_cashout_offers, get_today_chip_offers
-from services.economy_services import add_gold
+from services.shop_services import buy_item, sell_item, daily_shop, get_today_cashout_offers, get_today_chip_offers, buy_chips, cashout_chips
+from services.economy_services import add_gold, remove_chips, remove_gold, add_chip
 from services.inventory_services import take_item
 
 from domain.guild.commands_policies import non_spam_command
+from domain.casino.rules import CHIP_OFFERS, CONVERSION_RATES
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +98,16 @@ class Shop(commands.Cog):
 
         response = sell_item(ctx.author.id, item_id, quantity)
         await ctx.send(response)
+
+    @commands.command()
+    async def buychips(self, ctx, pack_id: str):
+        result = buy_chips(ctx.author.id, pack_id)
+        await ctx.send(result)
+
+    @commands.command()
+    async def cashout(self, ctx, pack_id: str):
+        result = cashout_chips(ctx.author.id, pack_id)
+        await ctx.send(result)
 
     @commands.slash_command()
     @commands.cooldown(1, 15, commands.BucketType.user)

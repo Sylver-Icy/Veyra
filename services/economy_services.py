@@ -25,13 +25,13 @@ logger = logging.getLogger(__name__)
 # Wallet mutation services
 # ---------------------------------------------------------------------------
 
-def add_gold(user_id: int, gold_amount: int):
-    """
-    Add gold to a user's wallet.
+def add_gold(user_id: int, gold_amount: int, session=None):
+    """Add gold to a user's wallet.
 
     Args:
         user_id (int): Target user ID
         gold_amount (int): Amount of gold to add
+        session: Optional SQLAlchemy session to use. If not provided, a new session is created.
 
     Returns:
         tuple[Gold, Gold]: (new_balance, added_amount)
@@ -41,6 +41,22 @@ def add_gold(user_id: int, gold_amount: int):
     except InvalidAmountError as exc:
         raise NegativeGoldError from exc
 
+    # If a session is provided, use it (do not commit/rollback here because the caller owns it).
+    if session is not None:
+        user = session.get(Wallet, user_id)
+
+        if not user:
+            logger.warning(
+                "Attempted to add %s gold to non-existent user %s",
+                gold_amount,
+                user_id,
+            )
+            raise UserNotFoundError(user_id)
+
+        user.gold += gold_amount
+        return user.gold, gold_amount
+
+    # Otherwise, create and manage our own session.
     with Session() as session:
         user = session.get(Wallet, user_id)
 
@@ -258,7 +274,7 @@ def remove_chips(user_id: int, amount: int, session=None):
     try:
         stmt = (
             update(Wallet)
-            .where(Wallet.id == user_id)
+            .where(Wallet.user_id == user_id)
             .where(Wallet.chip >= amount)
             .values(chip=Wallet.chip - amount)
             .returning(Wallet.chip)

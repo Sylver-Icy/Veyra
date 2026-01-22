@@ -10,10 +10,11 @@ from models.marketplace_model import ShopDaily
 
 from utils.embeds.shopembed import get_shop_view_and_embed
 from utils.time_utils import today
-from utils.emotes import GOLD_EMOJI
+from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
+from utils.custom_errors import VeyraError
 
 from services.inventory_services import give_item, take_item, fetch_inventory
-from services.economy_services import remove_gold, add_gold, check_wallet
+from services.economy_services import remove_gold, add_gold, check_wallet, add_chip, remove_chips
 
 from domain.casino.rules import CONVERSION_RATES, CHIP_OFFERS
 
@@ -288,4 +289,74 @@ def get_today_cashout_offers():
 
     return {k: CONVERSION_RATES[k] for k in allowed_ids if k in CONVERSION_RATES}
 
+def buy_chips(user_id: int, pack_id: str):
+    allowed_ids = get_daily_rotation().get("chip_offer_ids", [])
+    if pack_id not in allowed_ids:
+        return "This pack is unavailable rn. Use `/casino` to check available packs."
+
+    offer = CHIP_OFFERS.get(pack_id)
+    if not offer:
+        return "This pack is invalid. Ping staff."
+
+    name = offer.get("name", "Unknown Pack")
+    gold_cost = int(offer.get("gold_cost", 0) or 0)
+    chips = int(offer.get("chips", 0) or 0)
+    bonus = int(offer.get("bonus", 0) or 0)
+
+    total_chips = chips + bonus
+
+    with Session() as session:
+        try:
+            remove_gold(user_id, gold_cost, session)
+            add_chip(user_id, total_chips, session)
+            session.commit()
+        except VeyraError:
+            session.rollback()
+            return f"Can't buy {name}! Need {gold_cost} {GOLD_EMOJI}."
+        except Exception:
+            session.rollback()
+            raise
+
+    return (
+        f"✅ Bought **{name}**\n"
+        f"Added **{total_chips}** {CHIP_EMOJI} (`{chips}` + `{bonus}` bonus)"
+    )
+
+
+def cashout_chips(user_id: int, pack_id: str):
+    allowed_ids = get_daily_rotation().get("cashout_offer_ids", [])
+
+    if pack_id not in allowed_ids:
+        return "Nope! Use `/casino` to check available deals"
+
+    offer = CONVERSION_RATES.get(pack_id)
+    if not offer:
+        return "Blehhhhhhhh" #if this line runs i'll starve till release of gta VII
+
+    name = offer.get("name", "Unknown Pack")
+    chips_cost = int(offer.get("chips_cost", 0) or 0)
+    gold = int(offer.get("gold_received", 0) or 0)
+    bonus = int(offer.get("bonus_gold", 0) or 0)
+
+    total_gold = gold + bonus
+
+    with Session() as session:
+        try:
+            remove_chips(user_id, chips_cost, session)
+            print(total_gold, type(total_gold))
+            add_gold(user_id, total_gold, session)
+            session.commit()
+        except VeyraError as e:
+            logger.exception("Cashout failed with VeyraError: %s", e)
+            session.rollback()
+            return f"Can't buy {name}! Required {chips_cost}{CHIP_EMOJI}"
+
+        except Exception:
+            session.rollback()
+            raise
+
+    return (
+        f"✅ Cashout Succesfull for **{name}**\n"
+        f"Added **{total_gold}** {GOLD_EMOJI} (`{gold}` + `{bonus}` bonus)"
+    )
 
