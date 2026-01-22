@@ -12,7 +12,7 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from database.sessionmaker import Session
 from models.inventory_model import Inventory
-from models.users_model import Quests, User, UserStats, Wallet
+from models.users_model import Quests, User, UserStats, Wallet, Upgrades
 
 from domain.friendship.rules import friendship_title_and_progress
 
@@ -49,6 +49,8 @@ def add_user(user_id: int, user_name: str):
         new_user = User(user_id=user_id, user_name=user_name, joined=datetime.utcnow())
         new_user.wallet = Wallet()
         new_user.user_stats = UserStats()
+        new_user.upgrades.append(Upgrades(upgrade_name="pockets", level=1))
+        new_user.upgrades.append(Upgrades(upgrade_name="inventory", level=1))
         session.add(new_user)
         try:
             session.commit()

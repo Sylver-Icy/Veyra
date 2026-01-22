@@ -56,8 +56,11 @@ class Marketplace(commands.Cog):
                 "flex": f"item_name {item_name} | amount {quantity}",
                 "cmd": "create listing"
             })
-        else:
+        elif listing_id == 0:
             await ctx.respond("You don't own enough items to create that listing. Maybe try selling fewer items?")
+
+        else:
+            await ctx.respond("You already have 4 active listings\nDelete old ones first or stop selling items overpriced?")
 
     @commands.slash_command()
     @commands.cooldown(1,30,commands.BucketType.user)

@@ -141,4 +141,4 @@ def can_skip(skips: int) -> bool:
     Returns:
         bool: True if skipping is allowed, False otherwise
     """
-    return skips <= MAX_SKIPS
+    return skips < MAX_SKIPS
