@@ -1,7 +1,7 @@
 import logging
 from discord.ext import commands
 import discord
-from services.economy_services import add_gold, remove_gold, check_wallet
+from services.economy_services import add_gold, remove_gold
 from services.response_services import create_response
 from services.users_services import is_user
 from services.friendship_services import add_friendship
@@ -45,7 +45,7 @@ class Economy(commands.Cog):
             add_friendship(ctx.author.id, 1)
 
             return
-        
+
         if not is_user(target_user.id):
             await ctx.respond(f"They are not my friend. They don't even have a wallet where am I supposed to send this money to? Hmm <@{ctx.author.id}> ??")
             return

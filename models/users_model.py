@@ -58,6 +58,7 @@ class Wallet(Base):
 
     user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'), primary_key=True)
     gold = Column(Integer, default=0)
+    chip = Column(Integer,default=0)
 
     user = relationship("User", back_populates="wallet")
 

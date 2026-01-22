@@ -3,13 +3,13 @@ import time
 from discord.ext import commands, pages
 
 from services.exp_services import current_exp
-from services.economy_services import check_wallet
+from services.economy_services import check_wallet_full
 from services.inventory_services import get_inventory
 from services.jobs_services import JobsClass
 from services.response_services import create_response
 from services.friendship_services import add_friendship
 
-from utils.emotes import GOLD_EMOJI
+from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
 
 
 user_cooldowns = {}
@@ -49,9 +49,9 @@ class Exp(commands.Cog):
         # WALLET
         # ──────────────────────────────
         if val.startswith(("wal", "wall", "walle")):
-            gold = check_wallet(ctx.author.id)
+            gold,chip = check_wallet_full(ctx.author.id)
             response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
-            await ctx.send(response)
+            await ctx.send(f"{response}\nChips Available: {chip}{CHIP_EMOJI}")
             return
 
         # ──────────────────────────────

@@ -1,4 +1,5 @@
 import logging
+from sqlalchemy import update
 
 from database.sessionmaker import Session
 from models.users_model import Wallet
@@ -217,6 +218,76 @@ def check_wallet(user_id: int) -> Gold:
         user = session.get(Wallet, user_id)
         return user.gold
 
+
+def check_wallet_full(user_id: int, session = None):
+    if session is not None:
+        user = session.get(Wallet, user_id)
+        return user.gold, user.chip
+
+    with Session() as session:
+        user = session.get(Wallet, user_id)
+        return user.gold, user.chip
+
+def add_chip(user_id: int, amount: int, session = None):
+    if session is not None:
+        user = session.get(Wallet, user_id)
+        user.chip += amount
+        return
+
+    with Session() as session:
+        user = session.get(Wallet, user_id)
+        user.chip += amount
+        session.commit()
+
+
+def remove_chips(user_id: int, amount: int, session=None):
+    """
+    Truly atomic chip removal.
+    Uses a single UPDATE statement guarded by chips >= amount.
+    Prevents race-condition double spends.
+    """
+    try:
+        amount = validate_transfer_amount(amount)
+    except InvalidAmountError as exc:
+        raise NegativeGoldError from exc
+
+    owns_session = session is None
+    if owns_session:
+        session = Session()
+
+    try:
+        stmt = (
+            update(Wallet)
+            .where(Wallet.id == user_id)
+            .where(Wallet.chip >= amount)
+            .values(chip=Wallet.chip - amount)
+            .returning(Wallet.chip)
+        )
+
+        result = session.execute(stmt).first()
+
+        if result is None:
+            # Could be user not found OR not enough chips
+            # So detect existence:
+            user_exists = session.get(Wallet, user_id) is not None
+            if not user_exists:
+                raise UserNotFoundError(user_id)
+            raise NotEnoughGoldError(amount, "chip")
+
+        new_balance = result[0]
+
+        if owns_session:
+            session.commit()
+
+        return new_balance, amount
+
+    except Exception:
+        if owns_session:
+            session.rollback()
+        raise
+    finally:
+        if owns_session:
+            session.close()
 
 def get_richest_users(limit: int = 10):
     """
