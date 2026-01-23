@@ -1,5 +1,5 @@
 LOAN_OFFERS = {
-    "000": {
+    "0": {
       "id": "000",
       "name": "Starter Pack",
       "desc": "A no-risk starter loan to learn money basics — how you use and repay it shapes your credit score.",
@@ -11,7 +11,7 @@ LOAN_OFFERS = {
       "min_lvl": 1,
       "min_credit_score": 0
     },
-    "001": {
+    "111": {
       "id": "001",
       "name": "Squire’s Advance",
       "desc": "A modest pouch of coin for new adventurers.",
@@ -23,7 +23,7 @@ LOAN_OFFERS = {
       "min_lvl": 7,
       "min_credit_score": 400
     },
-    "002": {
+    "902": {
       "id": "002",
       "name": "Tavernkeeper’s Tab",
       "desc": "Quick funds to restock and stay afloat.",
@@ -35,7 +35,7 @@ LOAN_OFFERS = {
       "min_lvl": 8,
       "min_credit_score": 600
     },
-    "003": {
+    "203": {
       "id": "003",
       "name": "Apprentice’s Purse",
       "desc": "A small boost to begin your trade route.",
@@ -47,7 +47,7 @@ LOAN_OFFERS = {
       "min_lvl": 10,
       "min_credit_score": 700
     },
-    "004": {
+    "344": {
       "id": "004",
       "name": "Mercenary’s Stipend",
       "desc": "Coin for supplies before the next contract.",
@@ -59,7 +59,7 @@ LOAN_OFFERS = {
       "min_lvl": 12,
       "min_credit_score": 800
     },
-    "005": {
+    "665": {
       "id": "005",
       "name": "Guild Ledger Loan",
       "desc": "For merchants seeking a steady expansion.",
@@ -71,7 +71,7 @@ LOAN_OFFERS = {
       "min_lvl": 12,
       "min_credit_score": 800
     },
-    "006": {
+    "696": {
       "id": "006",
       "name": "Baron’s Favor",
       "desc": "A noble-backed loan with noble expectations.",
@@ -83,7 +83,7 @@ LOAN_OFFERS = {
       "min_lvl": 15,
       "min_credit_score": 850
     },
-    "007": {
+    "337": {
       "id": "007",
       "name": "Caravan Investment Writ",
       "desc": "Fund trade ventures and seize market tides.",
@@ -95,7 +95,7 @@ LOAN_OFFERS = {
       "min_lvl": 15,
       "min_credit_score": 850
     },
-    "008": {
+    "834": {
       "id": "008",
       "name": "Royal Treasury Credit",
       "desc": "High coin, high scrutiny, no room for delay.",
@@ -107,7 +107,7 @@ LOAN_OFFERS = {
       "min_lvl": 15,
       "min_credit_score": 850
     },
-    "009": {
+    "999": {
       "id": "009",
       "name": "Knight-Commander’s Line",
       "desc": "Interest-free coin for the truly trusted.",
@@ -119,7 +119,7 @@ LOAN_OFFERS = {
       "min_lvl": 11,
       "min_credit_score": 950
     },
-    "010": {
+    "101": {
       "id": "010",
       "name": "Dragon Covenant Grant",
       "desc": "A legendary sum offered only to spotless names.",
@@ -133,10 +133,10 @@ LOAN_OFFERS = {
     }
   }
 
-def get_loan_period(loan_id: str):
+def get_loan_details(loan_id: str):
     loan =  LOAN_OFFERS.get(loan_id)
 
     if loan:
-        return loan["term_days"]
+        return loan
 
     return -1

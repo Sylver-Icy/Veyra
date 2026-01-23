@@ -82,9 +82,18 @@ class PolicyError(VeyraError):
         super().__init__(message)
 
 
+
 class WrongChannelError(PolicyError):
     """Raised when a command is used in a disallowed channel"""
     def __init__(self, message="This command is not allowed in this channel"):
+        super().__init__(message)
+
+
+# DMsDisabledError: Raised when a command is used in DMs but should be used in a server
+class DMsDisabledError(PolicyError):
+    """Raised when a command is used in DMs but should be used in a server"""
+
+    def __init__(self, message="🚫 Commands aren’t available in DMs yet. Please use Veyra in a server so we can track issues during alpha."):
         super().__init__(message)
 
 

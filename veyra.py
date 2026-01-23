@@ -41,7 +41,7 @@ from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
 from utils.jobs import schedule_jobs
 from utils.fuzzy import get_closest_command
-from utils.custom_errors import WrongChannelError, ServerRestrictedError
+from utils.custom_errors import WrongChannelError, ServerRestrictedError, DMsDisabledError
 
 
 from domain.guild.guild_config import get_config, is_channel_allowed, ChannelPolicy
@@ -63,12 +63,9 @@ bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True, h
 
 @bot.check
 async def block_dms(ctx):
+    # disallow using bot in DMs during alpha
     if ctx.guild is None:
-        if hasattr(ctx, "respond"):
-            await ctx.respond("DMs disabled.", ephemeral=True)
-        else:
-            await ctx.send("DMs disabled.")
-        return False
+        raise DMsDisabledError()
     return True
 
 @bot.check

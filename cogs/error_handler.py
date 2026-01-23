@@ -3,7 +3,7 @@ from discord.ext import commands
 import logging
 from utils.embeds.animalraceembed import race_cooldown_embed
 # import utils.custom_errors as err
-from utils.custom_errors import VeyraError, FullInventoryError, PartialInventoryError
+from utils.custom_errors import VeyraError, FullInventoryError, PartialInventoryError, DMsDisabledError
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +37,11 @@ class ErrorHandler(commands.Cog):
         elif isinstance(original, commands.BotMissingPermissions):
             await ctx.send("⚠️ I don't have permission to do that.")
             logger.warning("Bot missing permissions for %s in %s", ctx.command, ctx.guild.name)
+
+        elif isinstance(original, DMsDisabledError):
+            # Happens when someone tries to use the bot in DMs
+            await ctx.send(str(original))
+            logger.warning("%s tried to use %s in DMs", ctx.author.name, ctx.command)
 
         elif isinstance(original, commands.CheckFailure):
             # Generic check failure (we don't know why). If a check raised VeyraError,
@@ -84,6 +89,11 @@ class ErrorHandler(commands.Cog):
         if isinstance(original, VeyraError):
             await ctx.respond(str(original), ephemeral=True)
             logger.warning("Veyra policy/check error from %s on slash command %s: %s", ctx.author.name, ctx.command, str(error))
+            return
+
+        if isinstance(original, DMsDisabledError):
+            await ctx.respond(str(original), ephemeral=True)
+            logger.warning("%s tried to use slash command %s in DMs", ctx.author.name, ctx.command)
             return
 
         # Ignore generic global check failures completely (like DM-block)

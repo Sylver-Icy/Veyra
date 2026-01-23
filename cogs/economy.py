@@ -6,7 +6,7 @@ from services.economy_services import add_gold, remove_gold
 from services.response_services import create_response
 from services.users_services import is_user
 from services.friendship_services import add_friendship
-
+from services.loan_services import issue_loan, check_starter_loan_given
 
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
@@ -66,24 +66,32 @@ class Economy(commands.Cog):
             principal = 2000
             term_days = 7
 
-            # NOTE: This only grants gold. Persisting loans/credit score should be handled
-            # by your upcoming loan service + DB schema.
             new_balance, _ = add_gold(interaction.user.id, principal)
 
-            await interaction.response.send_message(
-                f"✅ **Starter Pack Loan Granted!**\n\n"
-                f"You received **{principal}{GOLD_EMOJI}**.\n"
-                f"Repay within **{term_days} days** (no interest).\n"
-                f"Failing to repay will **hurt your credit score** and you'll be **locked out of loans**.\n\n"
-                f"Your new balance: **{new_balance}{GOLD_EMOJI}**",
-                ephemeral=True,
-            )
+            ok, _, _ = issue_loan(interaction.user.id, "000")
+            if ok:
+                await interaction.response.send_message(
+                    f"✅ Loan Granted!**\n\n"
+                    f"You received **{principal}{GOLD_EMOJI}**.\n"
+                    f"Repay within **{term_days} days** (no interest).\n"
+                    f"Failing to repay will **hurt your credit score** and you'll be **locked out of loans**.\n\n"
+                    f"Your new balance: **{new_balance}{GOLD_EMOJI}**",
+                    ephemeral=True,
+                )
+                return
+
+            await interaction.response.send_message("You already have an active loan")
 
 
     @commands.slash_command(name="loan")
     @non_spam_command()
     async def loan(self, ctx: discord.ApplicationContext):
+        #todo: this shit basic af only for starter loan later when adding more loan types check credit score and stuff
+
         """Take a starter pack loan (one-time). Shows terms before confirmation."""
+        if check_starter_loan_given(ctx.author.id):
+            await ctx.respond("You already took your one time loan")
+            return
 
         embed = build_loan_terms_embed()
 
