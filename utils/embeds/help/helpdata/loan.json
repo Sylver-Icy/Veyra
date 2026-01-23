@@ -1,0 +1,124 @@
+{
+  "title": "🏦 Loan System Guide",
+  "color": "gold",
+  "footer": "Veyra • Loans Help • Tip: Debt is temporary, screenshots are forever",
+  "pages": [
+    {
+      "title": "🏦 Loans Overview",
+      "description": "Veyra loans are a **controlled boost**: you borrow coin now, repay later, and your choices affect your **credit score**.\n\nLoans are meant to help progression, not enable scam empires (yes, I’m looking at you).",
+      "fields": [
+        {
+          "name": "What Loans Do",
+          "value": "✅ Get instant gold for upgrades, gear, trade\n✅ Unlock bigger loans with good repayment\n❌ Default and your credit score gets cooked",
+          "inline": false
+        },
+        {
+          "name": "Main Commands",
+          "value": "• `/loan` - take starter loan (one-time)\n• `!repayloan` - repay your active loan\n\n(Upcoming system: `/take_loan`, `/pay_loan`, `/my_packs`)",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📜 Core Rules (Very important)",
+      "description": "Loans are **strict**. Veyra is not running a charity stream.",
+      "fields": [
+        {
+          "name": "1 Active Loan Limit",
+          "value": "You can only have **ONE active loan** at a time.",
+          "inline": false
+        },
+        {
+          "name": "Due Date",
+          "value": "Every loan has a **term** (days).\nWhen issued, you get a **due date**.\nPay before due date to stay clean.",
+          "inline": false
+        },
+        {
+          "name": "Default = Consequences",
+          "value": "If you default:\n• credit score drops hard\n• you can get **locked out of loans**\n• Veyra becomes… less polite 😇",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🟡 Starter Loan (How it works)",
+      "description": "This is the beginner-friendly loan. One-time offer.\nIt teaches you the system without ruining your life.",
+      "fields": [
+        {
+          "name": "Starter Pack Terms",
+          "value": "• **Principal:** 2000G\n• **Interest:** 0%\n• **Term:** 7 days\n• **Repay:** 2000G",
+          "inline": false
+        },
+        {
+          "name": "How to Claim",
+          "value": "1) Run `/loan`\n2) Read terms\n3) Press **Accept Terms**\n4) Type **CONFIRM** (exactly)\n\nThen the gold is credited instantly.",
+          "inline": false
+        },
+        {
+          "name": "Important",
+          "value": "This loan offer is one time its used to set your credit score.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "💰 Repayment (Pay up, hero)",
+      "description": "Repayment is simple. No essays. No paperwork. Just money.",
+      "fields": [
+        {
+          "name": "Command",
+          "value": "Use: `!repayloan`",
+          "inline": false
+        },
+        {
+          "name": "What Happens",
+          "value": "• Veyra checks if you have an **active loan**\n• removes repayment gold from your wallet\n• loan status becomes **paid** ✅",
+          "inline": false
+        },
+        {
+          "name": "Not Enough Gold?",
+          "value": "If you don’t have enough, the Veyra tells you.\nNo payment = no forgiveness.\nYou’re not in a Netflix redemption arc.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📬 Reminder DMs (Veyra remembers everything)",
+      "description": "If your loan is due soon, she can DM you.\nIf your dms are disabled you won't get reminder",
+      "fields": [
+        {
+          "name": "Reminder Window",
+          "value": "A reminder DM is sent if your loan is due within **2 days**.",
+          "inline": false
+        },
+        {
+          "name": "DM Includes",
+          "value": "• loan name + pack\n• time left (Discord relative time)\n• due date\n• repayment hint: `!repayloan`",
+          "inline": false
+        }
+      ]
+    },
+
+    {
+      "title": "🧠 How to Use Loans Like a Smart Villain",
+      "description": "Loans are leverage. Use them like a merchant, not like a gambling addict.",
+      "fields": [
+        {
+          "name": "Good Uses",
+          "value": "✅ buy tools/gear that increase income\n✅ invest in production upgrades\n✅ restock items for quests",
+          "inline": false
+        },
+        {
+          "name": "Bad Uses",
+          "value": "❌ gambling it all\n❌ giving it away to friends\n❌ impulse buying shiny nonsense\n\n(You know who you are.)",
+          "inline": false
+        },
+        {
+          "name": "Rule of Thumb",
+          "value": "If the loan doesn’t help you earn **more than repayment**, you’re just renting dopamine.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

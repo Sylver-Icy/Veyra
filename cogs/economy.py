@@ -54,7 +54,7 @@ class Economy(commands.Cog):
             self.add_item(self.confirm)
 
         async def callback(self, interaction: discord.Interaction):
-            value = (self.confirm.value or "").strip().upper()
+            value = (self.confirm.value or "").strip()
             if value != "CONFIRM":
                 await interaction.response.send_message(
                     "Loan cancelled. Type **CONFIRM** exactly if you want the starter loan.",
@@ -68,7 +68,7 @@ class Economy(commands.Cog):
 
             new_balance, _ = add_gold(interaction.user.id, principal)
 
-            ok, _, _ = issue_loan(interaction.user.id, "000")
+            ok, _, _ = issue_loan(interaction.user.id, "0")
             if ok:
                 await interaction.response.send_message(
                     f"✅ Loan Granted!**\n\n"

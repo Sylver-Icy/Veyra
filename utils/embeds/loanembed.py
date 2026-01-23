@@ -3,8 +3,10 @@ from datetime import datetime, timedelta, timezone
 
 from domain.loans.rules import LOAN_OFFERS
 
+from utils.emotes import GOLD_EMOJI
 
-def build_loan_terms_embed(loan_id: str = "000") -> discord.Embed:
+
+def build_loan_terms_embed(loan_id: str = "0") -> discord.Embed:
     """Build a clean loan terms embed for the given loan offer id."""
     loan_id = str(loan_id).strip()
     offer = LOAN_OFFERS.get(loan_id)
@@ -37,9 +39,9 @@ def build_loan_terms_embed(loan_id: str = "000") -> discord.Embed:
         ),
     )
 
-    embed.add_field(name="You Receive", value=f"**{principal}** gold", inline=True)
+    embed.add_field(name="You Receive", value=f"**{principal}** {GOLD_EMOJI}", inline=True)
     embed.add_field(name="Interest", value=f"**{interest_rate * 100:.2f}% / day**" if interest_rate else "**0%**", inline=True)
-    embed.add_field(name="Repay", value=f"**{repay_amount}** gold", inline=True)
+    embed.add_field(name="Repay", value=f"**{repay_amount}** {GOLD_EMOJI}", inline=True)
 
     embed.add_field(name="Due", value=due_date_str, inline=False)
 
