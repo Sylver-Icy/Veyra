@@ -28,7 +28,8 @@ class Gambling(commands.Cog):
         # Flag to indicate whether betting is currently allowed
         self.betting_phase = False
 
-    @commands.slash_command()
+
+    @commands.slash_command(name="start race", description="Start an animal race and bet on the animals")
     @commands.cooldown(1,900, commands.BucketType.guild)
     @non_spam_command()
     async def start_race(self, ctx):

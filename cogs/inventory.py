@@ -44,7 +44,7 @@ class Inventory(commands.Cog):
         self.bot = bot
 
 
-    @commands.slash_command()
+    @commands.slash_command(description = "Tranfer any item from your inventory to another user")
     async def transfer_item(self, ctx, target: discord.Member, item_name: str, amount: int):
         """
         Transfer your items to another user or the bot.

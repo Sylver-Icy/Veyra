@@ -1,31 +1,56 @@
-import logging
-from discord.ext import commands, pages
-from discord.commands import Option
+"""marketplace.py
 
-from services.marketplace_services import create_listing, remove_listing, load_marketplace, buy_listed_item
+Marketplace commands.
+
+Players can:
+- Create item listings (items moved into escrow)
+- Delete their listings
+- Browse the marketplace (paginated embed pages)
+- Buy from an active listing
+
+This cog should remain a thin command layer: it validates input and delegates
+business logic to the services layer.
+"""
+
+import logging
+
+from discord.commands import Option
+from discord.ext import commands, pages
+
+from services.marketplace_services import (
+    buy_listed_item,
+    create_listing,
+    load_marketplace,
+    remove_listing,
+)
 from utils.itemname_to_id import get_item_id_safe
 
 logger = logging.getLogger(__name__)
 
+
 class Marketplace(commands.Cog):
-    def __init__(self, bot):
+    """Marketplace-related slash commands."""
+
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-
-    @commands.slash_command()
-    @commands.cooldown(2,3600,commands.BucketType.user)
+    # -----------------------------
+    # Create Listing
+    # -----------------------------
+    @commands.slash_command(description="List an item on the marketplace.")
+    @commands.cooldown(2, 3600, commands.BucketType.user)
     async def create_listing(
         self,
         ctx,
-        item_name = Option(str, "Name of the item you want to list"),
-        quantity = Option(int, "Number of items to list"),
-        price = Option(int, "Cost for each item", min_value=0, max_value=9999)
+        item_name=Option(str, "Name of the item you want to list"),
+        quantity=Option(int, "Number of items to list"),
+        price=Option(int, "Cost for each item", min_value=0, max_value=9999),
     ):
-        """
-        Create a marketplace listing for a given item name, quantity, and price.
+        """Create a marketplace listing for an item.
 
-        The item(s) will be taken from your inventory and held in escrow.
+        Items are taken from inventory and held in escrow by the marketplace.
         """
+
         # Validate price and quantity
         if price < 0:
             await ctx.respond("Hmm, you can give freebies, but negative prices? Not allowed.")
@@ -40,7 +65,7 @@ class Marketplace(commands.Cog):
 
         # Suggest corrections if item is invalid
         if suggestions:
-            suggestion_str = ', '.join(suggestions)
+            suggestion_str = ", ".join(suggestions)
             await ctx.respond(f"Hmm, I couldn't find that item. Did you mean: {suggestion_str}?")
             return
 
@@ -51,41 +76,51 @@ class Marketplace(commands.Cog):
             await ctx.respond(
                 f"Hi, your listing of {quantity}x {item_name.capitalize()} @ {price} per unit is online with ID → `{listing_id}`"
             )
-            logger.info("Market Place listing was created", extra={
-                "user": ctx.author.name,
-                "flex": f"item_name {item_name} | amount {quantity}",
-                "cmd": "create listing"
-            })
+            logger.info(
+                "Market Place listing was created",
+                extra={
+                    "user": ctx.author.name,
+                    "flex": f"item_name {item_name} | amount {quantity}",
+                    "cmd": "create listing",
+                },
+            )
         elif listing_id == 0:
-            await ctx.respond("You don't own enough items to create that listing. Maybe try selling fewer items?")
-
+            await ctx.respond(
+                "You don't own enough items to create that listing. Maybe try selling fewer items?"
+            )
         else:
-            await ctx.respond("You already have 4 active listings\nDelete old ones first or stop selling items overpriced?")
+            await ctx.respond(
+                "You already have 4 active listings\nDelete old ones first or stop selling items overpriced?"
+            )
 
-    @commands.slash_command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    # -----------------------------
+    # Delete Listing
+    # -----------------------------
+    @commands.slash_command(description="Delete one of your marketplace listings.")
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def delete_listing(self, ctx, listing_id):
+        """Remove an existing listing (owned by the user)."""
         response = remove_listing(ctx.author.id, listing_id)
         await ctx.respond(response)
 
-
-    @commands.slash_command()
-    @commands.cooldown(1,15,commands.BucketType.user)
+    # -----------------------------
+    # Browse Marketplace
+    # -----------------------------
+    @commands.slash_command(description="Browse all active marketplace listings.")
+    @commands.cooldown(1, 15, commands.BucketType.user)
     async def loadmarketplace(self, ctx):
-        """
-        Display all active listings in the marketplace.
-        """
+        """Display all active listings in the marketplace."""
         embed_pages = load_marketplace()
         paginator = pages.Paginator(pages=embed_pages)
         await paginator.respond(ctx.interaction)
 
-
-    @commands.slash_command()
-    @commands.cooldown(1,5,commands.BucketType.user)
+    # -----------------------------
+    # Buy from Marketplace
+    # -----------------------------
+    @commands.slash_command(description="Buy an item from a marketplace listing by ID.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def buy_from_marketplace(self, ctx, listing_id: int, quantity: int):
-        """
-        Buy any  item from a marketplace listing using the ID.
-        """
+        """Buy item(s) from a marketplace listing."""
         response = buy_listed_item(ctx.author.id, listing_id, quantity)
         await ctx.respond(response)
 
@@ -94,5 +129,6 @@ class Marketplace(commands.Cog):
 # Cog setup function
 # ──────────────────────────────────────────────────────────────
 
-def setup(bot):
+def setup(bot: commands.Bot):
+    """Discord.py extension entrypoint."""
     bot.add_cog(Marketplace(bot))
