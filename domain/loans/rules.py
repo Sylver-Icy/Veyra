@@ -132,3 +132,11 @@ LOAN_OFFERS = {
       "min_credit_score": 900
     }
   }
+
+def get_loan_period(loan_id: str):
+    loan =  LOAN_OFFERS.get(loan_id)
+
+    if loan:
+        return loan["term_days"]
+
+    return -1

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func, CheckConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -37,6 +37,12 @@ class User(Base):
         back_populates="user",
         uselist=False,
         cascade="all, delete"
+    )
+
+    loans = relationship(
+        'Loan',
+        back_populates='user',
+        cascade='all, delete'
     )
 
 class UserStats(Base):
@@ -147,3 +153,36 @@ class BattleLoadout(Base):
     win_streak = Column(Integer, default=0)
 
     user = relationship("User", back_populates="battle_loadout")
+
+
+# Loans model
+class Loan(Base):
+    __tablename__ = 'loans'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
+
+    loan_pack_id = Column(Integer, nullable=False)
+
+    status = Column(String, nullable=False, default='active')
+
+    issued_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+    due_date = Column(TIMESTAMP(timezone=True), nullable=False, index=True)
+
+    paid_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    defaulted_at = Column(TIMESTAMP(timezone=True), nullable=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            'NOT (paid_at IS NOT NULL AND defaulted_at IS NOT NULL)',
+            name='loans_paid_or_defaulted_check'
+        ),
+    )
+
+    user = relationship('User', back_populates='loans')
