@@ -29,6 +29,7 @@
    - [Friendship System](#friendship-system)
    - [Mini-Games](#mini-games)
    - [Gambling & Racing](#gambling--racing)
+   - [Casino System](#casino-system)
 4. [Items & Rarities](#items--rarities)
 5. [Weapons & Spells](#weapons--spells)
 6. [Command Reference](#command-reference)
@@ -55,11 +56,12 @@
 | **Economy** | Gold-based currency with wallets, transfers, and dynamic pricing |
 | **Combat** | Turn-based 1v1 PvP and PvE campaign battles with weapons/spells |
 | **Marketplace** | Player-driven trading with escrow and fee systems |
-| **Jobs** | Energy-based work system with rewards (knight, digger, miner, thief) |
+| **Jobs** | Energy-based work system with rewards (knight, digger, miner, thief, explorer) |
 | **Crafting** | Ore smelting with upgradable buildings |
 | **Lootboxes** | Tiered reward boxes with rarity-based drops |
 | **Quests** | Delivery quests with streak bonuses |
 | **Mini-Games** | Wordle solver, number guessing, coin flip, animal racing |
+| **Casino** | Chip-based gambling with slots, roulette, coin flip, and dungeon raid |
 | **Friendship** | Relationship leveling with Veyra through interactions |
 | **AI Chat** | GPT-based conversational AI (WIP) |
 
@@ -213,6 +215,7 @@ Defined in `utils/usable_items.py`:
 | Potion of EXP | +500 EXP |
 | Jar of EXP | +2000 EXP |
 | Bag of Gold | +100 Gold |
+| Bread | +100 Energy |
 | Hint Key | Activates hint in number guessing game |
 
 #### Item Name Resolution
@@ -263,7 +266,7 @@ The marketplace allows players to create listings for other players to buy.
 
 | Command | Description |
 |---------|-------------|
-| `/create_listing` | List items for sale (2 listings per hour) |
+| `/create_listing` | List items for sale (max 4 active listings) |
 | `/loadmarketplace` | Browse all active listings |
 | `/buy_from_marketplace <id> <qty>` | Purchase from a listing |
 | `/delete_listing <id>` | Remove your listing and refund items |
@@ -313,9 +316,9 @@ Each round, players choose one of five stances:
 
 | Effect | Duration | Per-Round Effect |
 |--------|----------|------------------|
-| Nightfall | 5 rounds | Random stat reduced by 2 |
+| Nightfall | 5 rounds | Random stat reduced (attack: -1, speed: -1, mana: -2, hp: -3, defense: -5) |
 | Large Heal | 4 rounds | Heal 4 HP per round |
-| Frostbite | Accumulates | At 10 stacks:  50% current HP damage |
+| Frostbite | Accumulates | At 10 stacks: 50% current HP damage |
 | Veil of Darkness | 4 rounds | Incoming attack damage reduced by 60% |
 
 **Timeout Penalty:**
@@ -418,7 +421,8 @@ Jobs are energy-based activities that generate resources.
 | **Knight** | 80 | 40-90 gold | Reliable gold income |
 | **Digger** | 70 | Lootboxes or 20 gold | See drop rates below |
 | **Miner** | 50 | Ores or 25 gold | See drop rates below |
-| **Thief** | 60 | Steal 10% of target's gold | 50% success rate; -30g fine on fail |
+| **Thief** | 60 | Steal 10% of target's gold (max 150g) | 50% success rate; -30g fine on fail |
+| **Explorer** | 20 | Random Common/Rare item | 85% Common, 15% Rare |
 
 **Digger Drop Rates:**
 - Gold: 27%
@@ -440,11 +444,12 @@ Jobs are energy-based activities that generate resources.
 
 **Commands:**
 ```
-! work knight
+!work knight
 !work digger
 !work miner
+!work explorer
 !work thief @target
-! check energy
+!check energy
 ```
 
 ---
@@ -505,10 +510,10 @@ Lootboxes contain gold and random items based on rarity tiers.
 
 | Box | Gold Range | Rolls | Drop Rates |
 |-----|------------|-------|------------|
-| **Wooden** | 3-12g | 1-2 (85%/15%) | Common:  88%, Rare: 10%, Epic: 2% |
+| **Wooden** | 3-12g | 1-2 (85%/15%) | Common: 88%, Rare: 10%, Epic: 2% |
 | **Stone** | 11-22g | 1-2 (60%/40%) | Common: 67%, Rare: 28%, Epic: 5% |
-| **Iron** | 65-110g | 1-3 (13%/70%/17%) | Common: 48%, Rare: 35%, Epic: 17% |
-| **Platinum** | 200-500g | 3-6 | Common: 15%, Rare: 50%, Epic: 31%, Legendary: 4% |
+| **Iron** | 65-110g | 1-3 (13%/70%/17%) | Common: 48%, Rare: 37%, Epic: 15% |
+| **Platinum** | 200-500g | 3-6 (33%/38%/20%/9%) | Common: 21%, Rare: 50%, Epic: 25%, Legendary: 4% |
 
 #### Item Quantities per Box/Rarity
 
@@ -517,7 +522,7 @@ Lootboxes contain gold and random items based on rarity tiers.
 | Wooden | 1-2 | 1 | 1 | - |
 | Stone | 1-3 | 1-2 | 1 | - |
 | Iron | 2-5 | 1-3 | 1-2 | - |
-| Platinum | 4-7 | 3-6 | 1-4 | 1 |
+| Platinum | 4-7 | 3-6 | 1-3 | 1 |
 
 **Command:**
 ```
@@ -570,6 +575,11 @@ Rewards are multiplied by:
 - Up to 3 skips per day
 - Skipping resets your streak
 - Skips reset daily at midnight UTC
+
+**Reroll System:**
+- Reroll your quest for a gold fee (preserves streak)
+- Reroll costs increase per use: 25g → 75g → 150g → 300g → 500g
+- Rerolls reset on quest completion
 
 ---
 
@@ -750,6 +760,65 @@ A betting game where 3 animals race to the finish line.
 
 ---
 
+### Casino System
+
+The casino provides chip-based gambling games with various risk/reward profiles.
+
+#### Chips Currency
+
+Chips are a separate currency used exclusively in the casino:
+- **Buy chips** with gold via `/casino` → chip packs
+- **Cash out** chips back to gold via `/casino` → cashout options
+- Daily rotation of available chip packs and cashout options
+
+#### Chip Packs (Examples)
+
+| Pack | Gold Cost | Chips | Bonus |
+|------|-----------|-------|-------|
+| Starter Stack | 1,000g | 100 | 0 |
+| Copper Kick | 3,200g | 320 | +80 |
+| Bronze Bundle | 7,444g | 744 | +100 |
+| Silver Surge | 10,667g | 1,067 | +120 |
+| Dragon Jackpot | 30,000g | 3,000 | +1,285 |
+
+#### Cashout Options (Examples)
+
+| Option | Chips Cost | Gold | Bonus Gold |
+|--------|------------|------|------------|
+| Quick Cash | 100 | 500g | 0 |
+| Snack Refund | 250 | 1,250g | +150 |
+| Full Refund | 1,000 | 5,000g | +1,000 |
+| Dragon Payday | 10,000 | 50,000g | +18,000 |
+
+#### Casino Games
+
+| Game | Min Bet | Max Bet | Description |
+|------|---------|---------|-------------|
+| **Flip Coin** | 1 | 5,000 | 50/50 heads or tails (2x payout) |
+| **Roulette** | 10 | 2,500 | Pick 0-9, win 10x if correct |
+| **Slots** | 10 | 2,000 | Triple match wins up to 25x |
+| **Dungeon Raid** | 10 | 3,000 | Risk-based area exploration |
+
+**Dungeon Areas:**
+
+| Area | Death Chance | Multiplier |
+|------|--------------|------------|
+| Safe Caves | 20% | 1.20x |
+| Goblin Tunnels | 35% | 1.50x |
+| Ancient Ruins | 50% | 2.00x |
+| Dragon Lair | 70% | 3.33x |
+| Abyss Gate | 85% | 6.66x |
+
+**Commands:**
+```
+/casino                           # View chip packs and cashout options
+!buychips <pack_id>               # Buy a chip pack
+!cashout <pack_id>                # Cash out chips for gold
+!gamble <game> <bet> <choice>     # Play a casino game
+```
+
+---
+
 ## Items & Rarities
 
 ### Rarity Tiers
@@ -783,6 +852,7 @@ A betting game where 3 animals race to the finish line.
 
 #### Consumables
 - Bag of Gold (183) - +100 gold
+- Bread - +100 energy
 - Potion of EXP - +500 EXP
 - Jar of EXP - +2000 EXP
 - Hint Key (180) - Use during guessing game
@@ -838,8 +908,8 @@ New players start with:
 | `!buy <item> <qty>` | Buy from shop | 5s |
 | `!sell <item> <qty>` | Sell to buyback | 5s |
 | `!open <box>` | Open a lootbox | 5s |
-| `!work <job>` | Perform a job | - |
-| `!unlock <building>` | Purchase a building | 10s |
+| `!work <job>` | Perform a job (knight/digger/miner/thief/explorer) | - |
+| `!unlock <building>` | Purchase a building | 20s |
 | `!upgrade <building>` | Upgrade a building | 20s |
 | `!bet <animal> <amount>` | Bet on race | - |
 | `!ping` | Ping-pong | - |
@@ -847,6 +917,10 @@ New players start with:
 | `!play` | Number guessing game | - |
 | `!solve_wordle` | Interactive Wordle solver | - |
 | `!commandhelp <cmd>` | Get command help | 5s |
+| `!details <topic>` | Get detailed info on a topic | - |
+| `!gamble <game> <bet> <choice>` | Play casino game | - |
+| `!buychips <pack_id>` | Buy casino chip pack | - |
+| `!cashout <pack_id>` | Cash out chips for gold | - |
 
 ### Slash Commands (`/`)
 
@@ -854,13 +928,14 @@ New players start with:
 |---------|-------------|----------|
 | `/help` | View all commands | 25s |
 | `/shop` | View daily shop | 15s |
+| `/casino` | View casino chip packs and cashout options | 155s |
 | `/quest` | View/start delivery quest | - |
 | `/battle @user <bet>` | Challenge to PvP | - |
 | `/campaign` | Fight Veyra (PvE) | - |
 | `/loadout <weapon> <spell>` | Set battle loadout | - |
 | `/transfer_gold @user <amount>` | Send gold (5% fee) | - |
 | `/transfer_item @user <item> <qty>` | Give items | - |
-| `/create_listing` | Create marketplace listing | 2/hour |
+| `/create_listing` | Create marketplace listing (max 4 active) | 2/hour |
 | `/delete_listing <id>` | Remove your listing | 30s |
 | `/loadmarketplace` | Browse marketplace | 15s |
 | `/buy_from_marketplace <id> <qty>` | Buy from listing | 5s |
@@ -869,6 +944,7 @@ New players start with:
 | `/wordle_hint` | Get Wordle hint | - |
 | `/start_race` | Start animal race | 900s (15min) |
 | `/introduction` | Create intro modal | - |
+| `/profile` | View your profile | 250s |
 
 ---
 
@@ -878,16 +954,16 @@ New players start with:
 
 ```
 Veyra/
-├── veyra. py              # Main bot entry point
+├── veyra.py              # Main bot entry point
 ├── cogs/                 # Command modules
 │   ├── battle.py         # PvP/PvE commands
 │   ├── crafting.py       # Smelting commands
 │   ├── economy.py        # Gold transfer, leaderboard
 │   ├── error_handler.py  # Global error handling
-│   ├── exp. py            # Stats checking
+│   ├── exp.py            # Stats checking
 │   ├── gambling.py       # Racing and betting
 │   ├── games.py          # Mini-games
-│   ├── inventory. py      # Item management
+│   ├── inventory.py      # Item management
 │   ├── jobs.py           # Work commands
 │   ├── lootbox.py        # Box opening
 │   ├── marketplace.py    # Player trading
@@ -913,12 +989,14 @@ Veyra/
 │   ├── jobs_services.py          # Job logic + energy
 │   ├── shop_services.py          # Daily shop
 │   ├── marketplace_services.py   # Player marketplace
-│   ├── lootbox_services. py       # Lootbox rewards
+│   ├── lootbox_services.py       # Lootbox rewards
+│   ├── casino_services.py        # Casino games
 │   ├── crafting_services.py      # Smelting
 │   ├── upgrade_services.py       # Buildings
-│   ├── delievry_minigame_services. py # Quests
+│   ├── delievry_minigame_services.py # Quests
 │   ├── guessthenumber_services.py    # Number game
 │   ├── race_services.py          # Animal racing
+│   ├── lottery_services.py       # Lottery system
 │   ├── tutorial_services.py      # Onboarding
 │   └── response_services.py      # Procedural responses
 ├── models/               # SQLAlchemy ORM models
@@ -933,9 +1011,16 @@ Veyra/
 │   ├── custom_errors.py  # Exception classes
 │   ├── usable_items.py   # Consumable handlers
 │   ├── itemname_to_id.py # Fuzzy item matching
-│   ├── jobs. py           # APScheduler setup
+│   ├── jobs.py           # APScheduler setup
 │   ├── chatexp.py        # Chat EXP logic
 │   └── levelup.py        # Level-up handling
+├── domain/               # Domain logic
+│   ├── casino/           # Casino game logic
+│   ├── crafting/         # Smelting rules
+│   ├── economy/          # Transfer rules
+│   ├── friendship/       # Friendship tiers
+│   ├── progression/      # EXP thresholds
+│   └── quest/            # Quest rules
 └── responses/            # Procedural dialogue templates
 ```
 
@@ -943,9 +1028,10 @@ Veyra/
 
 **Core Tables:**
 - `users` - User profiles (id, name, exp, level, energy, tutorial_state, campaign_stage)
-- `wallet` - Gold storage (user_id FK, gold)
+- `wallet` - Gold storage (user_id FK, gold, chip)
 - `inventory` - User items (user_id FK, item_id FK, quantity)
 - `items` - Item definitions (id, name, description, rarity, price, usable)
+- `user_stats` - Player statistics (battles_won, races_won, longest_quest_streak, weekly_rank1_count, biggest_lottery_win)
 
 **Trading Tables:**
 - `marketplace` - Active listings (listing_id, user_id, item_id, quantity, price)
@@ -1087,11 +1173,12 @@ Player 1 ◄──────────────────────�
 
 ### Daily Routine
 
-1. **Check in:** `! helloVeyra` to maintain relationship
+1. **Check in:** `!helloVeyra` to maintain relationship
 2. **Earn gold:** Use `/quest`, `!work knight`, or open lootboxes
 3. **Shop:** Check `/shop` for good deals
 4. **Play:** `!play` for daily number game rewards
 5. **Battle:** Challenge friends with `/battle` or progress through `/campaign`
+6. **Gamble:** Visit `/casino` to try your luck with chips
 
 ### Progression Path
 
@@ -1122,4 +1209,4 @@ New Player ──► Tutorial ──► Jobs & Quests ──► Shop & Marketpla
 
 ---
 
-*Last updated: December 2025*
+*Last updated: January 2026*
