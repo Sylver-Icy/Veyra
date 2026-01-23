@@ -135,7 +135,7 @@ def slots_game(bet: int, choice: str) -> GameResult:
             f"{spin}\n"
             f"PAIR! **x{mult}** YESSSSS LET THE CHIPS MULTIPLY!!!\n"
             f"You won **{payout}{CHIP_EMOJI}**\n"
-            f"LETS GO AGAIN THIS TIME JACKPOT!!!"
+            f"LET'S GO AGAIN THIS TIME JACKPOT!!!"
         )
 
     return GameResult(
