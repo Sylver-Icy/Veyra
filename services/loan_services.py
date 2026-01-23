@@ -7,9 +7,14 @@ from sqlalchemy import select, update
 
 from database.sessionmaker import Session
 
+from services.economy_services import remove_gold
+
 from models.users_model import Loan, User
 
 from domain.loans.rules import get_loan_details
+
+from utils.custom_errors import NotEnoughGoldError
+from utils.emotes import GOLD_EMOJI
 
 ACTIVE_LOAN_STATUS = "active"
 REMINDER_WINDOW_DAYS = 2
@@ -56,7 +61,7 @@ def issue_loan(user_id: int, loan_pack_id: str) -> Tuple[bool, Optional[int], Op
             due_date=due_date,
         )
 
-        # Mark starter loan as given (avoid loading the User row)
+        # Mark starter loan as given
         session.execute(
             update(User)
             .where(User.user_id == user_id)
@@ -69,6 +74,50 @@ def issue_loan(user_id: int, loan_pack_id: str) -> Tuple[bool, Optional[int], Op
         session.refresh(new_loan)
 
         return True, None, new_loan
+
+
+def repay_loan(user_id: int) -> str:
+    """Fetch the user's active loan row and repay it.
+
+    Returns:
+        (ok, message, loan_row)
+
+        - ok=True: repayment succeeded
+        - ok=False: repayment failed, message explains why
+
+    Notes:
+        - Currently assumes starter loan repayment amount is 2000.
+        - TODO: support multiple loan types dynamically.
+    """
+    with Session() as session:
+        active_loan: Loan | None = session.execute(
+            select(Loan)
+            .where(Loan.user_id == user_id)
+            .where(Loan.status == ACTIVE_LOAN_STATUS)
+            .limit(1)
+        ).scalar_one_or_none()
+
+        if active_loan is None:
+            return "You have no loan you can take with `/loan`"
+
+        try:
+            remove_gold(user_id, 2000, session)
+        except NotEnoughGoldError:
+            return f"You need 2000 {GOLD_EMOJI} to repay your current debt"
+
+        now = datetime.now(timezone.utc)
+
+        # mark as paid
+        session.execute(
+            update(Loan)
+            .where(Loan.id == active_loan.id)
+            .values(status="paid", paid_at=now)
+        )
+        session.commit()
+
+        # Detach-safe return
+        session.commit()
+        return "✅ Repaid your loan."
 
 
 def check_starter_loan_given(user_id: int) -> bool:

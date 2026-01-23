@@ -6,7 +6,7 @@ from services.economy_services import add_gold, remove_gold
 from services.response_services import create_response
 from services.users_services import is_user
 from services.friendship_services import add_friendship
-from services.loan_services import issue_loan, check_starter_loan_given
+from services.loan_services import issue_loan, check_starter_loan_given, repay_loan
 
 from utils.custom_errors import VeyraError
 from utils.emotes import GOLD_EMOJI
@@ -98,6 +98,10 @@ class Economy(commands.Cog):
         view = self.StarterLoanTermsView(self)
         await ctx.respond(embed=embed, view=view)
 
+    @commands.command()
+    async def repayloan(self, ctx):
+        result = repay_loan(ctx.author.id)
+        await ctx.send(result)
 
     @commands.slash_command()
     @non_spam_command()

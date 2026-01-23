@@ -342,5 +342,23 @@
   "cooldown": "No cooldown (limited only by your energy)",
   "examples": ["!work knight", "!work digger", "!work miner", "!work thief @target"],
   "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!details jobs` for details about each job title."
+},
+"repayloan": {
+  "title": "💳 Repay Loan",
+  "description": "Repay your currently active loan to clear your debt and unlock restricted actions again.",
+  "usage": "!repayloan",
+  "category": "Economy / Loans",
+  "cooldown": "5s per user",
+  "examples": ["!repayloan"],
+  "notes": "If you don’t have an active loan, Veyra will tell you to take one with `/loan`. Repayment will deduct the required gold instantly and mark the loan as paid."
+},
+"loan": {
+  "title": "🏦 Loan",
+  "description": "View available loan offers and take a loan pack. Loans must be repaid before you can take another one.",
+  "usage": "/loan",
+  "category": "Economy / Loans",
+  "cooldown": "25s per user",
+  "examples": ["/loan"],
+  "notes": "Loans are currently WIP. You can only have ONE active loan at a time.Defaulting may block you from future loans."
 }
 }
