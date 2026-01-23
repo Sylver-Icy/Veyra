@@ -7,15 +7,15 @@ CHIP_OFFERS = {
     },
     "402": {
         "name": "Copper Kick",
-        "gold_cost": 4222,
-        "chips": 422,
-        "bonus": 20,
+        "gold_cost": 3200,
+        "chips": 320,
+        "bonus": 80,
     },
     "403": {
         "name": "Bronze Bundle",
         "gold_cost": 7444,
         "chips": 744,
-        "bonus": 60,
+        "bonus": 100,
     },
     "404": {
         "name": "Silver Surge",

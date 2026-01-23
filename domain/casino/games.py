@@ -126,14 +126,14 @@ def slots_game(bet: int, choice: str) -> GameResult:
 
     if a == b or b == c or a == c:
         mult = 1.66
-        payout = int(bet * mult)
+        payout = round(bet * mult)
         delta = payout - bet
         return GameResult(
             True,
             delta,
             f"🎰 **SLOTS** 🎰\n"
             f"{spin}\n"
-            f"PAIR! **x{mult}** (bro got lucky) 😭\n"
+            f"PAIR! **x{mult}** YESSSSS LET THE CHIPS MULTIPLY!!!\n"
             f"You won **{payout}{CHIP_EMOJI}**\n"
             f"LETS GO AGAIN THIS TIME JACKPOT!!!"
         )
@@ -190,7 +190,7 @@ def dungeon_game(bet: int, choice: str) -> GameResult:
             f"Skill issue. Respawn and try again."
         )
 
-    payout = int(bet * mult)
+    payout = round(bet * mult)
     delta = payout - bet
 
     return GameResult(
