@@ -18,6 +18,7 @@ class User(Base):
     tutorial_state = Column(Integer, default=0)
     campaign_stage = Column(Integer, default=1)
     starter_loan_given = Column(Boolean, nullable=False, default=False)
+    notif = Column(Boolean, nullable=False, default=True)
 
     wallet = relationship('Wallet', back_populates='user', uselist=False, cascade='all, delete')
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
@@ -180,7 +181,7 @@ class Loan(Base):
     defaulted_at = Column(TIMESTAMP(timezone=True), nullable=True)
 
     due_reminder_sent = Column(Boolean, nullable=False, default=False)
-    
+
     __table_args__ = (
         CheckConstraint(
             'NOT (paid_at IS NOT NULL AND defaulted_at IS NOT NULL)',

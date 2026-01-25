@@ -1,0 +1,8 @@
+{
+  "ENERGY_FULL": {
+    "heading": "⚡ Energy Full",
+    "content": "Your energy has fully regenerated. Time to get back to work. Use `!work <job>` to start earning.",
+    "color": 3066993,
+    "footer": "Don’t want reminders like this? Click the button below to disable notifications."
+  }
+}

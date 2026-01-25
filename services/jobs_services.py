@@ -12,6 +12,7 @@ from services.economy_services import add_gold, check_wallet, remove_gold
 from services.inventory_services import give_item
 from services.users_services import is_user
 from services.response_services import create_response
+from services.notif_services import send_notification
 
 from utils.custom_errors import VeyraError
 
@@ -324,12 +325,27 @@ class JobsClass:
 
         return f"You explored and found something! ({item.item_name})"
 
-def regen_energy_for_all():
-    """Give +1 energy to all users who aren't capped."""
+async def regen_energy_for_all(bot):
     with Session() as session:
-        users = session.query(User).all()
-        for user in users:
-            max_energy = 35 + (15 * user.level)
-            if user.energy < max_energy:
-                user.energy = min(user.energy + 1, max_energy)
+        # Fetch only users who are NOT already at max energy
+        rows = session.execute(
+            select(User.user_id, User.energy, User.level)
+            .where(User.energy < (35 + (15 * User.level)))
+        ).all()
+
+        for user_id, energy, level in rows:
+            max_energy = 35 + (15 * level)
+            new_energy = min(energy + 1, max_energy)
+
+            # Update energy
+            session.execute(
+                User.__table__.update()
+                .where(User.user_id == user_id)
+                .values(energy=new_energy)
+            )
+
+            # Fire notification ONLY if just reached max
+            if energy < max_energy and new_energy == max_energy:
+                await send_notification(bot, user_id, "ENERGY_FULL", session)
+
         session.commit()

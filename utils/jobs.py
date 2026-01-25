@@ -10,7 +10,6 @@ from services.friendship_services import reset_all_daily_exp
 from services.jobs_services import regen_energy_for_all
 from services.loan_services import send_due_loan_reminders
 
-
 from utils.embeds.leaderboard.weeklyleaderboard import send_weekly_leaderboard
 from utils.embeds.lottery.sendlottery import send_lottery, send_result
 
@@ -39,7 +38,7 @@ def schedule_jobs(bot):
     scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="sat,sun", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 50])
     scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="mon-fri", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 10])
     scheduler.add_job(send_result, trigger=midnight_trigger, args=[bot])
-    scheduler.add_job(regen_energy_for_all, trigger=IntervalTrigger(minutes=6, start_date=None))
+    scheduler.add_job(regen_energy_for_all, trigger=IntervalTrigger(minutes=6, start_date=None), args=[bot])
     scheduler.add_job(send_due_loan_reminders, trigger=midnight_trigger, args=[bot])
 
 
