@@ -9,7 +9,7 @@
       "fields": [
         {
           "name": "Core Commands",
-          "value": "• `!checkinventory` - view your inventory\n• `!info <item>` - detailed item info\n• `/transfer_item <user> <item> <amount>` - give items to someone\n• `!use <item>` - use an item (only works if usable)\n\nExamples:\n`!checkinventory`\n`!info copper ore`\n`/transfer_item @user wooden box 2`\n`!use bread`",
+          "value": "• `!check inventory` - view your inventory\n• `!info <item>` - detailed item info\n• `/transfer_item <user> <item> <amount>` - give items to someone\n• `!use <item>` - use an item (only works if usable)\n\nExamples:\n`!checkinventory`\n`!info copper ore`\n`/transfer_item @user wooden box 2`\n`!use bread`",
           "inline": false
         },
         {

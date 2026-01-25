@@ -9,7 +9,7 @@
       "fields": [
         {
           "name": "Main Commands",
-          "value": "• `/battle @user <bet>` - Challenge a player (PvP)\n• `/campaign` - Solo campaign battles (PvE)\n• `/loadout <weapon> <spell>` - Set your gear\n\nMore info:\n• `!details campaign`\n• `!details loadout`",
+          "value": "• `/battle @user <bet>` - Challenge a player (PvP)\n• `/campaign` - Solo campaign battles (PvE)\n• `/loadout <weapon> <spell>` - Set your gear\n\nMore info:\n• `!details loadout`",
           "inline": false
         },
         {
