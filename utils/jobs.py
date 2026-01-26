@@ -47,5 +47,5 @@ async def run_at_startup(bot):
     """Runs the functions that need to fill values at bot startup"""
     update_daily_shop()
     update_daily_buyback_shop()
-    await notify_users_with_capped_or_overflow_energy(bot)
+    # await notify_users_with_capped_or_overflow_energy(bot)
     await send_lottery(bot, 10)
