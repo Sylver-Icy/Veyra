@@ -349,3 +349,18 @@ async def regen_energy_for_all(bot):
                 await send_notification(bot, user_id, "ENERGY_FULL", session)
 
         session.commit()
+
+
+async def notify_users_with_capped_or_overflow_energy(bot):
+    """
+    Loops through all users whose energy is at or above their maximum
+    and sends them an ENERGY_FULL notification.
+    """
+    with Session() as session:
+        rows = session.execute(
+            select(User.user_id, User.energy, User.level)
+            .where(User.energy >= (35 + (15 * User.level)))
+        ).all()
+
+        for user_id, energy, level in rows:
+            await send_notification(bot, user_id, "ENERGY_FULL", session)

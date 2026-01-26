@@ -7,7 +7,7 @@ from services.shop_services import update_daily_shop, update_daily_buyback_shop
 from services.delievry_minigame_services import reset_skips
 from services.guessthenumber_services import reset_all_daily
 from services.friendship_services import reset_all_daily_exp
-from services.jobs_services import regen_energy_for_all
+from services.jobs_services import regen_energy_for_all, notify_users_with_capped_or_overflow_energy
 from services.loan_services import send_due_loan_reminders
 
 from utils.embeds.leaderboard.weeklyleaderboard import send_weekly_leaderboard
@@ -47,4 +47,5 @@ async def run_at_startup(bot):
     """Runs the functions that need to fill values at bot startup"""
     update_daily_shop()
     update_daily_buyback_shop()
+    await notify_users_with_capped_or_overflow_energy(bot)
     await send_lottery(bot, 10)
