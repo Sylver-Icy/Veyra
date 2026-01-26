@@ -190,3 +190,31 @@ class Loan(Base):
     )
 
     user = relationship('User', back_populates='loans')
+
+
+# Invites model
+class Invites(Base):
+    __tablename__ = 'invites'
+    __table_args__ = (
+        PrimaryKeyConstraint('inviter_id', 'invited_id'),
+    )
+
+    inviter_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    invited_id = Column(
+        BigInteger,
+        nullable=False,
+        unique=True
+    )
+
+    rewarded = Column(Boolean, default=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+
+    inviter = relationship(
+        "User",
+        foreign_keys=[inviter_id]
+    )

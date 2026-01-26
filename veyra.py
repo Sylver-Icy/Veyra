@@ -36,6 +36,7 @@ from services.onboadingservices import greet
 from services.friendship_services import check_friendship
 from services.response_services import create_response
 from services.tutorial_services import tutorial_guard
+from services.refferal_services import create_inv_cache, handle_member_join
 
 from utils.jobs import scheduler, run_at_startup
 from utils.chatexp import chatexp
@@ -145,6 +146,9 @@ async def tutorial_check(ctx):
 @bot.event
 async def on_ready():
     """Run background jobs and log when the bot is ready."""
+    print("veyra online")
+    await create_inv_cache(bot)
+
     try:
         await run_at_startup(bot)
         schedule_jobs(bot)
@@ -156,6 +160,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+    await handle_member_join(bot, member)
     channel = discord.utils.get(member.guild.text_channels, name='welcum')
     if channel:
         embed = greet(member.display_name)

@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 import random
 
-from utils.levelup import give_exp
-
+from services.exp_services import add_exp
+from services.response_services import create_response
 on_cooldown = {}  # A dictionary to store users on cooldown
 
 async def chatexp(ctx):
@@ -16,6 +16,21 @@ async def chatexp(ctx):
         if (now - last_time).total_seconds() < 30:  # Checks if user is still in cooldown
             return
 
-    await give_exp(ctx, user_id, random.randint(6, 15))  # Grants random amount of exp from 6 to 15
+    await add_exp_with_announcement(ctx, user_id, random.randint(6,15))
 
     on_cooldown[user_id] = now  # Starts the cooldown till next exp gainp
+
+async def add_exp_with_announcement(ctx, user_id, amount):
+    leveled_up = await add_exp(user_id, amount)
+
+    if leveled_up:
+        await ctx.send(
+            create_response(
+                "level_up",
+                1,
+                user=ctx.author.mention,
+                level=leveled_up
+            )
+        )
+
+    return leveled_up

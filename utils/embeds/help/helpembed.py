@@ -3,9 +3,13 @@ from discord.ext import commands
 
 import os, json
 
+_HELP_JSON_CACHE = {}
+
 def load_json(path: str):
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    if path not in _HELP_JSON_CACHE:
+        with open(path, "r", encoding="utf-8") as f:
+            _HELP_JSON_CACHE[path] = json.load(f)
+    return _HELP_JSON_CACHE[path]
 
 class HelpView(discord.ui.View):
     def __init__(self, user: discord.User):
