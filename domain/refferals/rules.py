@@ -1,7 +1,7 @@
 INVITE_REWARDS = {
-    1:  {"type": "ironbox", "amount": 1},
-    3:  {"type": "chips", "amount": 300},
-    7:  {"type": "platbox", "amount": 1},
+    1:  {"type": "Iron Box", "amount": 1},
+    3:  {"type": "Chips", "amount": 300},
+    7:  {"type": "Platinum Box", "amount": 1},
     11: {"type": "role", "name": "Veyra Early Supporter"},
 }
 

@@ -16,9 +16,12 @@ Design Goals:
 from sqlalchemy import select, func
 
 from database.sessionmaker import Session
+
 from models.users_model import Invites
+
 from services.users_services import is_user
 
+from domain.refferals.rules import get_reward_info_for_invites, INVITE_REWARDS
 
 # ============================================================
 # DATABASE OPERATIONS
@@ -71,7 +74,7 @@ def mark_inv_successful(inviter_id: int, invited_id: int):
             return
 
         row.rewarded = True
-        
+
         session.commit()
 
 
@@ -90,32 +93,77 @@ def get_inviter(invited_id: int):
         return session.execute(stmt).scalar_one_or_none()
 
 
-def count_total_invites(user_id: int):
+def count_total_invites(user_id: int, session):
     """
     Returns total number of people user has invited.
     """
 
-    with Session() as session:
-        stmt = select(func.count()).where(
+    stmt = select(func.count()).where(
             Invites.inviter_id == user_id
         )
 
-        return session.execute(stmt).scalar_one()
+    return session.execute(stmt).scalar_one()
 
 
-def count_total_successful_invites(user_id: int):
+def count_total_successful_invites(user_id: int, session):
     """
     Returns number of successful invites
     (invited users who reached level 5).
     """
 
-    with Session() as session:
-        stmt = select(func.count()).where(
+    stmt = select(func.count()).where(
             Invites.inviter_id == user_id,
             Invites.rewarded == True
         )
 
-        return session.execute(stmt).scalar_one()
+    return session.execute(stmt).scalar_one()
+
+
+# ============================================================
+# REFERRAL CARD DATA AGGREGATION
+# ============================================================
+
+
+
+def get_referral_card_data(user_id: int):
+    """
+    Aggregates all referral-related stats into a single JSON payload
+    for referral card embeds.
+    """
+
+    with Session() as session:
+
+        total_invites = count_total_invites(user_id, session)
+        successful_invites = count_total_successful_invites(user_id, session)
+
+        reward_info = get_reward_info_for_invites(successful_invites)
+
+        current_milestone = None
+        current_reward_name = None
+        next_milestone = None
+        next_reward_name = None
+
+        if reward_info:
+            current_milestone = reward_info.get("milestone")
+            current_reward_name = reward_info.get("name") or reward_info.get("type")
+
+        milestones = sorted(INVITE_REWARDS.keys())
+
+        for m in milestones:
+            if m > successful_invites:
+                next_milestone = m
+                next_reward = INVITE_REWARDS[m]
+                next_reward_name = next_reward.get("name") or next_reward.get("type")
+                break
+
+        return {
+            "total_invites": total_invites,
+            "successful_invites": successful_invites,
+            "current_milestone": current_milestone,
+            "current_reward_name": current_reward_name,
+            "next_milestone": next_milestone,
+            "next_reward_name": next_reward_name
+        }
 
 
 # ============================================================
@@ -126,7 +174,7 @@ def count_total_successful_invites(user_id: int):
 INVITE_CACHE = {}
 
 
-async def create_inv_cache(bot, main_guild_id: int = 1275870089228320768):
+async def create_inv_cache(bot, main_guild_id: int = 1419040189782818950):
     """
     Creates initial snapshot of invite usage.
 
@@ -141,7 +189,7 @@ async def create_inv_cache(bot, main_guild_id: int = 1275870089228320768):
     INVITE_CACHE[main_guild_id] = invites
 
 
-async def handle_member_join(bot, member, main_guild_id: int = 1275870089228320768):
+async def handle_member_join(bot, member, main_guild_id: int = 1419040189782818950):
     """
     Detects which invite link was used when a member joins
     and stores inviter -> invited relationship.

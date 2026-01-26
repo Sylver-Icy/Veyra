@@ -1,7 +1,3 @@
-from services.exp_services import add_exp
-from services.economy_services import add_gold
-
-from utils.custom_errors import NotEnoughItemError
 from utils.global_sessions_registry import sessions
 
 
@@ -23,16 +19,19 @@ class UsableItemHandler:
 
 @UsableItemHandler.register("Potion of EXP")
 def use_potion_of_exp(user_id: int):
+    from services.exp_services import add_exp
     add_exp(user_id, 500)
     return "You drank a Potion of EXP and gained 500 EXP!"
 
 @UsableItemHandler.register("Jar of EXP")
 def use_jar_of_exp(user_id: int):
+    from services.exp_services import add_exp
     add_exp(user_id, 2000)
     return "You used a Jar of EXP and gained 2000 EXP!"
 
 @UsableItemHandler.register("Bag of Gold")
 def use_bag_of_gold(user_id: int):
+    from services.economy_services import add_gold
     add_gold(user_id, 100)
     return "You opened your Bag of Gold and found 100 gold :O \nUse it responsibly :>"
 

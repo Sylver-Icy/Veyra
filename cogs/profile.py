@@ -18,18 +18,24 @@ import asyncio
 
 from discord.ext import commands
 
-from domain.guild.commands_policies import non_spam_command
 from services.friendship_services import check_friendship
 from services.inventory_services import give_item
 from services.jobs_services import JobsClass
 from services.response_services import create_response
 from services.users_services import add_user, get_user_profile_new, is_user
+from services.refferal_services import get_referral_card_data
+
+from domain.guild.commands_policies import non_spam_command
+
+
 from utils.embeds.help.helpembed import (
     get_command_info_embed,
     get_help_embed,
     get_json_pages_embed,
 )
 from utils.embeds.profileembed import ProfilePagerView, build_profile_embed_page_1
+from utils.embeds.refferalembed import build_referral_card
+
 from utils.models.intromodel import create_intro_modal
 
 
@@ -173,6 +179,26 @@ class Profile(commands.Cog):
         view = ProfilePagerView(profile=profile, author_id=ctx.author.id)
         await ctx.respond(embed=build_profile_embed_page_1(profile), view=view)
 
+
+    @commands.slash_command(description="Track your invites and rewards")
+    @commands.cooldown(1, 250, commands.BucketType.user)
+    @non_spam_command()
+    async def invite(self, ctx):
+        user_id = ctx.author.id
+        username = ctx.author.name
+
+        data = get_referral_card_data(user_id)
+
+        embed = build_referral_card(
+            username=username,
+            total_invites=data["total_invites"],
+            successful_invites=data["successful_invites"],
+            current_milestone=data["current_milestone"],
+            next_milestone=data["next_milestone"],
+            next_reward_name=data["next_reward_name"],
+        )
+
+        await ctx.respond(embed=embed)
 
 def setup(bot: commands.Bot):
     """Discord.py extension entrypoint."""
