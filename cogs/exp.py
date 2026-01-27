@@ -1,4 +1,5 @@
 import time
+import random
 
 from discord.ext import commands, pages
 
@@ -10,6 +11,7 @@ from services.response_services import create_response
 from services.friendship_services import add_friendship
 
 from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
+from utils.chatexp import add_exp_with_announcement
 
 
 user_cooldowns = {}
@@ -33,6 +35,7 @@ class Exp(commands.Cog):
 
         user_cooldowns[user_id] = now
         add_friendship(user_id, 1)
+        add_exp_with_announcement(user_id, random.randint(1,20))
 
 
     @commands.command()

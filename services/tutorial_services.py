@@ -7,8 +7,8 @@ from enum import IntEnum
 from database.sessionmaker import Session
 from models.users_model import User
 
-from services.inventory_services import give_item
-from services.economy_services import check_wallet
+
+from services.economy_services import check_wallet, add_chip
 from services.guessthenumber_services import Guess
 from services.shop_services import daily_shop
 from services.jobs_services import JobsClass
@@ -138,7 +138,8 @@ async def handle_work(ctx, command, arg):
         await safe_send(ctx, result)
         await advance(ctx.author.id, TutorialState.COMPLETED)
         await asyncio.sleep(1)
-        await safe_send(ctx, "Working drains energy, you regain it over time check your current energy status with `!check energy`\nAnd with that you’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nGet rich — or get lost.")
+        await safe_send(ctx, "Working drains energy, you regain it over time check your current energy status with `!check energy`\nAnd with that you’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nAlso credited you with 50 chips ;) `!details gambling` if you don't wanna go in blind and loose it all")
+        add_chip(ctx.author.id, 50)
         return True
 
     return False

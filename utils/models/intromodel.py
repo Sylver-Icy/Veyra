@@ -6,7 +6,7 @@ from discord.ui import Modal, InputText
 # Intro channels per guild (duct-tape config)
 INTRO_CHANNELS = {
     1419040189782818950: 1419055325931376811,  # Veyra main -> Veyra intro
-    1334824535391997985: 1462405749362786324   # Lilith -> Lilith intro
+    1334824535391997985: 1351226530814103573   # Lilith -> Lilith intro
 }
 
 

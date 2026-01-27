@@ -109,7 +109,7 @@ class Profile(commands.Cog):
             if msg.content.lower() == "yes":
                 await ctx.send(
                     "Yay! Here keep these bags of gold as a gift for our new friendship ^^\n"
-                    " OH!! and also why don't you use `/introduction` and introduce yourself to everyone"
+                    " OH!! and if you wanna know more about survival in Natlade just hit me with `!ping` I'll guide you"
                 )
                 add_user(user_id, user_name)
                 give_item(user_id, 183, 2, True)
