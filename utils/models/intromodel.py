@@ -1,6 +1,13 @@
+
 import random
 import discord
 from discord.ui import Modal, InputText
+
+# Intro channels per guild (duct-tape config)
+INTRO_CHANNELS = {
+    1419040189782818950: 1419055325931376811,  # Veyra main -> Veyra intro
+    1334824535391997985: 1462405749362786324   # Lilith -> Lilith intro
+}
 
 
 def create_intro_modal(author: discord.Member):
@@ -103,7 +110,13 @@ def create_intro_modal(author: discord.Member):
             return "Common 🪨", 0x565656
 
         async def callback(self, interaction: discord.Interaction):
-            INTRO_CHANNEL_ID = 1419055325931376811
+            guild_id = interaction.guild.id
+            INTRO_CHANNEL_ID = INTRO_CHANNELS.get(guild_id)
+            if INTRO_CHANNEL_ID is None:
+                return await interaction.response.send_message(
+                    "⚠️ No intro channel configured for this realm.", ephemeral=True
+                )
+
             channel = interaction.client.get_channel(INTRO_CHANNEL_ID)
 
             if channel is None:
