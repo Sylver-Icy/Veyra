@@ -15,6 +15,7 @@ LOTTERY_TARGETS = [
 
 # store latest message per guild
 last_lottery_messages = {}
+last_result_messages = {}
 
 async def send_lottery(bot, ticket_price: int):
     for target in LOTTERY_TARGETS:
@@ -50,6 +51,9 @@ async def send_lottery(bot, ticket_price: int):
 
 
 async def send_result(bot):
+    # pick winner ONCE globally
+    embed, winner_id = create_result_embed()
+
     for target in LOTTERY_TARGETS:
         guild_id = target["guild_id"]
         channel_id = target["channel_id"]
@@ -64,10 +68,19 @@ async def send_result(bot):
             print(f"Channel {channel_id} not found.")
             continue
 
-        embed, winner_id = create_result_embed()
-        await channel.send(
+        # delete old result message if it exists
+        old_msg = last_result_messages.get(guild_id)
+        if old_msg:
+            try:
+                await old_msg.delete()
+            except Exception as e:
+                print(f"⚠️ Failed to delete old result message in {guild_id}: {e}")
+
+        msg = await channel.send(
             content=f"Results are out!!!! \n <@{winner_id}> won today!",
             embed=embed
         )
+
+        last_result_messages[guild_id] = msg
 
     reset_lottery()

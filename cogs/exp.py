@@ -35,7 +35,7 @@ class Exp(commands.Cog):
 
         user_cooldowns[user_id] = now
         add_friendship(user_id, 1)
-        add_exp_with_announcement(user_id, random.randint(1,20))
+        add_exp_with_announcement(ctx, user_id, random.randint(1,20))
 
 
     @commands.command()
