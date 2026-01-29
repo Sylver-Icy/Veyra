@@ -116,10 +116,10 @@ def decide_gold(lootbox: str):
         int: Random gold amount within defined range for the lootbox.
     """
     gold_ranges = {
-        "wooden box": (3, 12),
-        "stone box": (11, 22),
-        "iron box": (65, 110),
-        "platinum box": (200, 500)
+        "wooden box": (12, 32),
+        "stone box": (60, 122),
+        "iron box": (200, 310),
+        "platinum box": (400, 800)
     }
     min_gold, max_gold = gold_ranges.get(lootbox, (0, 0))
     return random.randint(min_gold, max_gold)

@@ -194,29 +194,29 @@ async def on_message(message):
                     return getattr(self._original, attr)
 
             modified = ModifiedMessage(message, fixed_message)
-            ctx = await bot.get_context(modified)
+            # ctx = await bot.get_context(modified)
             if random.random() < 0.24:
                 response = create_response("typo", 1, typo = raw_cmd, correct = closest)
                 await ctx.send(response)
 
             await bot.invoke(ctx)
             return
-    if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
-        async with message.channel.typing():
-            await asyncio.sleep(random.uniform(0.5, 2))
-            title, _ = check_friendship(message.author.id)
-            msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
+    # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+    #     async with message.channel.typing():
+    #         await asyncio.sleep(random.uniform(0.5, 2))
+    #         title, _ = check_friendship(message.author.id)
+    #         msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
 
-            # Generate reply
-            reply = await handle_user_message(
-                message.content,
-                title,
-                message.author.id,
-                message.author.display_name,
-                msg_history
-            )
+    #         # Generate reply
+    #         reply = await handle_user_message(
+    #             message.content,
+    #             title,
+    #             message.author.id,
+    #             message.author.display_name,
+    #             msg_history
+    #         )
 
-        await message.reply(reply)
+    #     await message.reply(reply)
 
 
     # Inline command support: check if message contains a command invocation inline
