@@ -1,0 +1,320 @@
+{
+    "knight": {
+        "1": {
+            "part1": [
+                "You walked across the streets of Natlade",
+                "You were hired as knight",
+                "You guarded the citizens of Natlade whole day",
+                "You patrolled for hours",
+                "You saved a kid from a wild fox",
+                "While guarding the town as knight you saved an old lady from bandits",
+                "You polished your armor before setting out on your daily rounds",
+                "You stood watch at the city gates, alert for any signs of trouble",
+                "You trained with your sword at dawn, preparing for the day's duties",
+                "You exchanged nods with fellow knights as you began your patrol"
+            ],
+            "part2": [
+                "On your way home you helped more citizens",
+                "Later you ate an octopus you found it surprisingly tasty",
+                "You kept a watchful eye over the village",
+                "You trained with fellow knights to improve your skills",
+                "You tended to your horse, brushing its coat until it gleamed",
+                "You shared tales of valor with villagers around the evening fire",
+                "You repaired your shield after a skirmish with local bandits",
+                "You escorted a merchant caravan safely through the forest",
+                "You reported suspicious activity to the town captain",
+                "You stood guard by the village well during the twilight hours"
+            ],
+            "part3": [
+                "In doing so you earned a total of {gold} gold",
+                "Time for your salary, you made {gold} gold",
+                "Your bravery was rewarded with {gold} gold",
+                "The town rewarded you with {gold} gold for your service",
+                "Your steadfast dedication earned you {gold} gold coins",
+                "The grateful villagers gifted you {gold} gold for your protection",
+                "Your courage in battle brought you a reward of {gold} gold",
+                "You returned to the barracks richer by {gold} gold pieces",
+                "Your name was praised and your purse filled with {gold} gold",
+                "The kingdom recognized your valor with a payment of {gold} gold"
+            ]
+        }
+    },
+
+    "digger": {
+        "1": {
+            "part1": [
+                "You were digging deep in outskirts of Natlade",
+                "You were to dig in forest with high hopes",
+                "You set out at dawn, shovel in hand, ready to unearth secrets",
+                "The soil was damp and rich as you began your excavation",
+                "You followed an old map that promised hidden treasures",
+                "Your hands grew calloused as you dug through layers of earth",
+                "You uncovered strange markings on buried stones near your dig site",
+                "The forest around you whispered ancient secrets as you worked",
+                "You felt the thrill of discovery with every shovelful of dirt",
+                "You carefully mapped your progress to avoid missing any clues"
+            ],
+            "part2": [
+                "The cave was dark you could hear scary sounds",
+                "You sneaked past bunch of wild animals",
+                "The ground was tough but you pressed on",
+                "You carefully avoided traps hidden in the forest",
+                "You uncovered a hidden tunnel leading deeper underground",
+                "Your lantern flickered as strange shadows danced on the walls",
+                "You sifted through rubble, hoping to find something valuable",
+                "You listened to the echoes of dripping water in the cavern",
+                "You narrowly escaped a collapsing tunnel as dust filled the air",
+                "You examined ancient carvings that hinted at a forgotten civilization"
+            ],
+            "part3": [
+                "After hours of digging you only found some gold -> {gold}",
+                "At the end eyes gleamed you a saw {gold} gold",
+                "You uncovered some rare artifacts along with {gold} gold",
+                "Your efforts were rewarded with a hidden stash containing {gold}",
+                "You struck a vein of precious minerals worth {gold} gold",
+                "In the depths you found {gold} gold",
+                "Your discovery included {gold} pieces of shiny coins",
+                "You emerged from the earth with pockets full of {gold} gold",
+                "The dig revealed ancient coins and a {gold} to treasure",
+                "Your perseverance uncovered a cache holding {gold} gold"
+            ]
+        },
+    "2": {
+    "part1": [
+        "You set out early with your trusty shovel, ready to dig for glory.",
+        "The morning sun rose as you started digging with determination.",
+        "You found a quiet patch of land and began your excavation.",
+        "With each swing of the shovel, your excitement grew stronger.",
+        "You followed a hunch and started digging where the ground felt different.",
+        "After hours of searching, you finally struck a promising spot.",
+        "Your hands were blistered, but your instincts told you treasure was near.",
+        "You wiped the sweat from your brow and dug deeper into the cool soil.",
+        "You hummed a little tune as you worked, dreaming of hidden riches.",
+        "The earth beneath you gave a soft echo — something was waiting down there."
+    ],
+    "part2": [
+        "The sound of metal rang out as your shovel hit something solid.",
+        "A faint glow shimmered beneath the last layer of dirt.",
+        "You brushed the dust away, revealing the edge of a buried chest.",
+        "Your heart skipped a beat as a soft sparkle caught your eye.",
+        "The soil crumbled, uncovering a glint of gold hidden below.",
+        "You dug faster, adrenaline kicking in as treasure peeked through.",
+        "The earth gave way to reveal an old chest wrapped in roots.",
+        "You heard a satisfying *clink* — a promise of treasure inside.",
+        "The ground trembled slightly, as if the treasure itself was calling.",
+        "You uncovered an ancient container covered in strange symbols."
+    ],
+    "part3": [
+        "Inside, you found a shining **{reward}** — your hard work finally paid off.",
+        "You lifted the lid carefully and smiled at the sight of a **{reward}**.",
+        "Your hands trembled as you pulled out a dazzling **{reward}**.",
+        "You dusted off your find and admired the gleam of the **{reward}**.",
+        "There it was — a perfectly preserved **{reward}** waiting just for you.",
+        "You laughed in triumph, holding your precious **{reward}** high.",
+        "The day’s effort was worth it — that **{reward}** made it all worthwhile.",
+        "You wiped the dirt from your face, grinning at your shiny **{reward}**.",
+        "You stood back, proud and exhausted, clutching the **{reward}** you’d uncovered.",
+        "As the sun set, the **{reward}** in your hands glowed warmly in the fading light."
+    ]
+}
+    },
+
+    "miner": {
+        "1": {
+            "part1": [
+                "You hated mining but picked this chore anyways to make money",
+                "You went to mines with shining hopes in eyes",
+                "You descended into the mine shaft as morning light faded",
+                "The air was thick with dust and the scent of earth",
+                "You gripped your pickaxe tightly, ready to chip away at the rock",
+                "You listened to the distant rumble of falling stones",
+                "You recalled tales of miners who found fortune in these depths",
+                "You adjusted your helmet light before starting your labor",
+                "Your breath echoed in the narrow tunnels as you worked",
+                "You marked the walls with chalk to track your progress"
+            ],
+            "part2": [
+                "You were mining in left mines of Natlade",
+                "You dug deep you tired but you continued",
+                "The mine was dark and damp but you kept going",
+                "You carefully chipped away at the rocks searching for ores",
+                "You discovered a glittering seam that promised rich ore",
+                "Your muscles ached but the thought of gold drove you onward",
+                "You avoided unstable sections to prevent cave-ins",
+                "You used a pickaxe to break through a stubborn rock face",
+                "You spotted veins of ore glinting faintly in the dim light",
+                "You shared a brief nod with fellow miners during a pause"
+            ],
+            "part3": [
+                "Then you found some minerals it was {amount} X {ores}",
+                "You struck a small vein yielding {amount} X {ores}",
+                "Your hard work paid off with {amount} pieces of {ores}",
+                "Your haul included {amount} chunks of valuable {ores}",
+                "Though tired, you gathered {amount} units of {ores} for sale",
+                "The mine gifted you {amount} pieces of {ores}",
+                "You emerged with {amount} pieces of {ores}",
+                "Your efforts yielded a modest cache of {amount} X {ores}",
+                "You collected {amount} samples of {ores}, hopeful for profit"
+            ]
+        },
+        "2": {
+    "part1": [
+        "You decide to mine today, hoping the tunnels still have some luck left for you.",
+        "The morning air was cold as you grabbed your pickaxe and headed for the mines.",
+        "You packed your lantern and tools, determined to make this mining trip count.",
+        "With steady resolve, you entered the dim tunnels ready for another day’s work.",
+        "You tightened your gloves and took a deep breath before stepping into the mine.",
+        "Another day, another chance to strike something shiny beneath the rock.",
+        "You wiped yesterday’s dust off your gear and ventured back underground.",
+        "The sound of distant picks echoed as you joined the miners deep below.",
+        "You cracked a smile — time to make the earth pay its dues again.",
+        "You felt the familiar chill of the mines as darkness swallowed the light behind you."
+    ],
+    "part2": [
+        "You reached deep into the mines where the air was thick and still.",
+        "The tunnels were narrow, and every step echoed through the stone halls.",
+        "Your pickaxe clanged against the rock, sparks flying with every swing.",
+        "You followed faint traces of ore deeper into the heart of the mountain.",
+        "A trickle of water dripped down the walls as you worked tirelessly.",
+        "You found an untouched section of rock — perfect for mining.",
+        "You kept digging, chasing the sound of metal striking stone.",
+        "The darkness pressed closer as your lantern flickered weakly.",
+        "You paused to rest, wiping sweat and dust from your brow.",
+        "You mined for hours, lost in rhythm and the echo of your own effort."
+    ],
+    "part3": [
+        "At the end of the day, you couldn’t find anything special — just a few gold coins → {gold}.",
+        "You leaned against the tunnel wall, pocketing your modest haul of {gold} gold.",
+        "Your efforts paid off only slightly — you managed to dig up {gold} gold.",
+        "The mine didn’t yield much today, but you scraped together {gold} gold.",
+        "You sighed at the small pile in your hands — just {gold} gold for all that work.",
+        "Your back ached, but at least you earned {gold} gold before heading out.",
+        "Covered in dust and sweat, you counted your {gold} gold with tired satisfaction.",
+        "You trudged home, clutching your tiny reward of {gold} gold.",
+        "The tunnels gave you no treasure today, only {gold} gold and sore arms.",
+        "Despite the fatigue, you smiled faintly — {gold} gold was better than nothing."
+    ]
+}
+    },
+
+
+    "thief": {
+        "1": {
+            "part1": [
+                "Difficult times demand difficult measures",
+                "You were tired of poverty so you decided to rob people",
+                "The shadows were your allies as you prepared for the night's work",
+                "You sharpened your dagger and checked your lockpicks",
+                "The city's alleys whispered secrets only you could hear",
+                "You blended into the darkness, unseen and unheard",
+                "Your heart raced with the thrill of the impending heist",
+                "You studied your target's routine to find the perfect moment",
+                "The moonlight guided your steps through silent streets",
+                "You silenced your breath and moved with practiced stealth"
+            ],
+            "part2": [
+                "You decided to rob {target}",
+                "You went to {target}'s house",
+                "You planned your heist carefully under the cover of night you target was {target}",
+                "You scoped out {target}'s house looking for weaknesses",
+                "You picked the lock with nimble fingers and slipped inside {target}'s house",
+                "You avoided creaky floorboards and patrolling guards and went to {target}'s house",
+                "You searched the rooms for valuables of {target} without making a sound",
+                "You found a hidden safe inside {target}'s house behind a tapestry and cracked it open ",
+                "You gathered trinkets and coins from {target}, stuffing them into your pouch",
+                "You escaped through a secret passage you discovered earlier. {target} was robbed"
+            ],
+            "part3": [
+                "You sneaked into {target}'s house and came out juggling with {gold} gold",
+                "You managed to escape with some of {target}'s valuables - {gold} gold",
+                "Your quick thinking helped you evade capture, and got you lost some loot {gold}",
+                "You vanished into the night with {gold} gold.",
+                "Your daring heist netted you {gold} gold, but left you breathless",
+                "You left behind a false trail, keeping your stolen {gold} gold safe",
+                "The thrill of the steal earned you {gold} gold and a narrow escape",
+                "You slipped away unseen, pockets heavy with {gold} gold",
+                "Though chased, you secured {gold} gold before disappearing"
+            ]
+        },
+        "2": {
+    "part1": [
+        "You put on your mask and gloves, blending into the night like a shadow.",
+        "As the moonlight hit your dagger, you tightened your gloves and grinned.",
+        "You adjusted your mask — tonight, you wouldn’t be a citizen, you’d be a ghost.",
+        "With steady hands, you slipped on your mask and gloves, ready for mischief.",
+        "You prepared silently, your reflection in the window staring back at a thief.",
+        "You checked your gear twice — no room for mistakes tonight.",
+        "You slipped into dark clothes and pulled your mask tight, adrenaline rising.",
+        "Your disguise complete, you whispered to yourself — time to make history.",
+        "The night air felt cold against your gloves as you took your first quiet step.",
+        "You pulled your hood low and vanished into the alleys, unseen and unheard."
+    ],
+    "part2": [
+        "You had decided to rob {target} today, hoping their fortune would become yours.",
+        "Your target tonight was {target}, known for their overflowing coffers.",
+        "Rumor said {target} kept a vault unguarded — how could you resist?",
+        "You made your way toward {target}'s mansion, every sound feeling louder than it should.",
+        "You crept along the rooftops toward {target}, careful not to wake the guards.",
+        "You studied {target}’s routine for days — now was the perfect time to strike.",
+        "Your heart pounded as you approached {target}’s gate, ready for a quick in and out.",
+        "You whispered a quick prayer that {target} would sleep through the whole ordeal.",
+        "You moved through the shadows, eyes fixed on {target}’s glowing windows.",
+        "The thrill of the hunt surged through you as {target}’s home came into view."
+    ],
+    "part3": [
+        "You were caught by Veyra's guards — pay 30G fine and count your blessings.",
+        "A hand gripped your shoulder — Veyra’s guards had been waiting all along.",
+        "Just as you reached for the loot, a torch flared — the guards caught you red-handed.",
+        "You tried to run, but armored footsteps closed in fast — 30G fine for your troubles.",
+        "The sound of chains greeted you before dawn — seems the guards don’t sleep either.",
+        "You froze as Veyra’s patrol appeared from the shadows — busted.",
+        "Luck wasn’t on your side tonight; the guards dragged you off for questioning.",
+        "Your grand heist ended in cuffs — you paid 30G to keep your record clean.",
+        "Caught mid-step, you sighed as the guards confiscated your spoils — and your dignity.",
+        "Next time, maybe don’t whistle while robbing people — 30G fine paid."
+    ]
+}
+    },
+    "tired": {
+        "1": {
+            "part1": [
+                "Energy check: you’re empty.",
+                "You’ve run out of energy.",
+                "Your stamina bar is at 0.",
+                "You’re too exhausted to work right now.",
+                "No energy left. Your body has logged off.",
+                "Your energy is too low to start any job.",
+                "You’re drained. Like your motivation during exams.",
+                "You tried to work, but your energy said ‘nope’.",
+                "Even heroes have limits. Yours just got reached.",
+                "Status update: tired + broke + can’t work. Lovely combo."
+            ],
+            "part2": [
+                "You can’t work until your energy regenerates.",
+                "Jobs require energy, and yours is currently missing.",
+                "The system blocks working at 0 energy (for your own safety, genius).",
+                "Your energy needs to recharge before the next shift.",
+                "Energy regenerates automatically over time, so waiting is mandatory.",
+                "Your muscles are on strike until some energy comes back.",
+                "You’re on cooldown right now. Come back after some regen.",
+                "Rest first. Grinding while exhausted isn’t allowed.",
+                "Your energy tank is empty, so no jobs for now.",
+                "You’ve hit the energy limit. Work is temporarily locked."
+            ],
+            "part3": [
+                "\nWait a bit and try again once it refills.",
+                "\nCome back in a few minutes. Your energy will regen on its own.",
+                "\nWhile you wait, you can use `/shop`, `/inventory`, or `/market`.",
+                "\nUse this downtime to plan trades or prices while energy recharges.",
+                "\nTry again later after energy regen. Don’t spam me.",
+                "\nGo do something else for now. Energy regen will handle the rest.",
+                "\nCheck back soon. Once you’ve got energy again, you can work.",
+                "\nIf you’re curious, check your stats in `/leaderboard` while waiting.",
+                "\nTake a breather. Then we go print gold again.",
+                "\nRecharge those batteries, champ. Then get back to work.",
+                "\n If you are all pumped up why don't you go `/battle` someone ",
+                "\n Not enough energy to do this job either wait or `!use bread` to gain it back"
+            ]
+        }
+    }
+}

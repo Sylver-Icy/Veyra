@@ -1,0 +1,32 @@
+{
+    "flipcoin": {
+        "1": {
+            "part1": [
+                "Alright genius, flipping your precious coin,",
+                "Yeeting this coin into the sky like your hopes,",
+                "Launching the coin higher than your GPA,",
+                "Tossing the coin real high, try not to miss it,",
+                "Flicking the coin so hard it reconsidered life,",
+                "Okay champ, here goes your coin toss,",
+                "Kay gambler here I flip the coin for ya",
+                "Trust a coin more than urself? that's only right decision you dumbass ever made. Anyways the coin.."
+            ],
+            "part2": [
+                "it's spinning like your brain trying to form a thought,",
+                "it’s flipping around faster than your excuses,",
+                "it’s doing aerial stunts mid‑air, flexing on you,",
+                "spinning like a Beyblade with depression,",
+                "twirling in the air like your last two braincells,",
+                "it’s wobbling in the air like your decisions,"
+            ],
+            "part3": [
+                "and… it landed. Drumroll… it’s **{result}**.",
+                "and now it's on the ground—surprise, it’s **{result}**.",
+                "and the universe has spoken: **{result}**.",
+                "and look at that, fate chose **{result}**.",
+                "and after all that drama, it’s **{result}**.",
+                "and boom—coin says **{result}**."
+            ]
+        }
+    }
+}

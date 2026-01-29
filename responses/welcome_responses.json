@@ -1,0 +1,62 @@
+{
+  "welcome": {
+    "1": {
+      "part1": [
+        "Hehe we are gonna be good friends.",
+        "Greetings and salutations,",
+        "Hello! I'm glad you're here,",
+        "Yo! Ready to dive in,",
+        "Make sure you behave like a good boy/girl",
+        "HMmmmmMM ngl you are kind sus anyways,"
+      ],
+      "part2": [
+        "make sure to check out #introduction to say hi,",
+        "don't forget to visit #read-me for all the essentials,",
+        "feel free to explore #bot-playground for some fun,",
+        "why don't you take a moment to introduce yourself in #introduction,",
+        "be sure to skim through #read-me before getting started,"
+      ],
+      "part3": [
+        "and let us know if you need any help!",
+        "we're here to assist you anytime.",
+        "hope you have an awesome time with us!",
+        "let's make this a great experience together.",
+        "and don't hesitate to ask questions!"
+      ]
+    }
+
+  },
+  "typo": {
+    "1": {
+      "part1": [
+        "Bruh what is {typo} supposed to mean,",
+        "You really typed {typo},",
+        "Keyboard screaming after seeing {typo},",
+        "My circuits hurt reading {typo},",
+        "You typed {typo} with full confidence,",
+        "I’m still trying to understand {typo},",
+        "Not even spellcheck can save {typo},"
+      ],
+      "part2": [
+        "your typing skills are fighting for their life,",
+        "did your fingers slip or your brain,",
+        "this is beyond a typo,",
+        "I fear for your literacy levels,",
+        "you really outdid yourself with that mistake,",
+        "this is criminal typing behavior,",
+        "your keyboard did you dirty with that one,"
+      ],
+      "part3": [
+        "so I'll run `{correct}` before you embarrass yourself further.",
+        "so let me fix it and run `{correct}`.",
+        "so here's the command you *tried* to type: `{correct}`.",
+        "so I'm auto-correcting your life choices and executing `{correct}`.",
+        "so relax, I’ll run `{correct}` properly.",
+        "so let me handle it: running `{correct}`.",
+        "so I'll run `{correct}` like a functional human would.",
+        "Executing {correct} because clearly YOU can’t."
+      ]
+    }
+  }
+
+}

@@ -1,0 +1,83 @@
+{
+    "transfer_item": {
+        "1": {
+            "part1": [
+                "Umm I think u put wrong receiver ....",
+                "Why? weirdo.",
+                "I'm not wasting my server load on this bs.",
+                "Got no friends?",
+                "Did you really think this would work?",
+                "I wasted 2 CPU cycles just to tell you this is dumb."
+            ],
+            "part2": [
+                "You remind me of that meme Obama giving medal to himself",
+                "Well ofc u dont have friends",
+                "Are you a loner, narcissist, or an idiot?",
+                 "No self transfers allowed 🚫",
+                 "Try again when you have friends."
+                ],
+            "part3": [
+                "\nTry not to embarrass yourself next time.",
+                "\nBetter luck elsewhere.",
+                "\nThis is getting awkward.",
+                "\nDon't take it personally.",
+                "\nJust saying."
+            ]
+        },
+        "2": {
+            "part1": [
+                "Awwwwwwww {user} tysm",
+                "Is this {item} for me? fr?",
+                "Ofc you want my attention",
+                "Hmmm gifting an AI are we generous or lonely?",
+                "Heyyy {user} tysm for {item}",
+                "{user}, you trying to bribe me with {item}?",
+                "Yesss feed the machine 😈"
+            ],
+            "part2": [
+                "I'll keep this gift",
+                "Gifting is a sweet way to make friends",
+                "Maybe I'll like you more now",
+                "You are such a cutie",
+                "Don’t expect me to give it back tho"
+                ],
+            "part3": [
+                "hehe",
+                 "💖",
+                 "💗",
+                 "^^",
+                 "\nHave a good day",
+                 "\nBot blushing.exe stopped responding ///"
+                ]
+        },
+        "3": {
+            "part1": [
+                "Digital courier under process.......",
+                "Delivering items ^^ \n",
+                "Done ✅ here is summary \n",
+                "Okay lemme check what are we sending to whom 📝 \n",
+                "Veyra logistics on the move 📦 \n",
+                "System online → dispatching goods ⚡"
+            ],
+
+            "part2": [
+                "{user} sent {target} {amount}x {item}",
+                "{target} just received {amount}x {item} from {user}",
+                "{target}> + {amount}x{item}\n {user} > - {amount}x{item}",
+                "On behalf of {user} I gave {target} {amount} of {item}",
+                "Inventories updated +{amount}x{item} for {target} and - {amount}x{item} for {user}",
+                "Transaction complete → {user} → {target}: {amount}x {item}"
+            ],
+
+            "part3": [
+                "\nTy for using Veyra logistics",
+                "\nI hope I moved stuff properly",
+                "\nHope to see you again",
+                "\nVeyra out",
+                "\nDelivery done fast and efficient, 0 emissions 🌱",
+                "\nDon’t forget to rate me ⭐⭐⭐⭐⭐",
+                "\nNext-day delivery? Nah, instant delivery 😎"
+                ]
+        }
+    }
+}

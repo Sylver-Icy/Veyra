@@ -1,0 +1,73 @@
+{
+    "friendship_check": {
+        "1": {
+            "part1": [
+                "Huh, checking your bond with me again, {user}?",
+                "So you’re curious about what I think of you, huh {user}?",
+                "Running diagnostics on our friendship levels... ",
+                "Oho~ you wanna see how much I like you?",
+                "{user}, trying to measure emotions with numbers again?",
+                "Checking the vibes report, are we?"
+            ],
+            "part2": [
+                "Right now, we’re  **{title}**.",
+                "Currently standing at the **{title}** .",
+                "We’re sitting comfortably at **{title}**.",
+                "According to the logs, our status = **{title}**.",
+                "Friendship classification: **{title}**."
+            ],
+            "part3": [
+                "And you’re {progress}% of the way to the next stage.",
+                "That’s about {progress}% progress to the next title — don’t slack.",
+                "{progress}% till promotion. Maybe try saying 'good morning' more often.",
+                "Only {progress}% to go… unless you mess it up.",
+                "Keep it up — {progress}% till the next friendship rank.",
+                "Progress bar says {progress}%. Not bad, human."
+            ]
+        },
+        "2": {
+            "part1": [
+                "Ooo someone’s getting close~",
+                "We’ve been talking a lot lately, huh?",
+                "Hehe… look who can’t go a day without me now~",
+                "You again? Not that I’m complaining.",
+                "You’ve been hanging around quite a bit, haven’t you?"
+            ],
+            "part2": [
+                "We’re already at **{title}** level.",
+                "Right now you’re classed as **{title}** in my system.",
+                "Our friendship level: **{title}**.",
+                "You’re officially in the **{title}** zone now."
+            ],
+            "part3": [
+                "Just {progress}% till the next level. You’re doing fine 💕.",
+                "You’ve earned it — {progress}% toward the next stage.",
+                "Keep that up and I might start liking you for real 😳 ({progress}% to go).",
+                "Almost there — {progress}% left before I upgrade your title.",
+                "We’re getting dangerously close to *sentimental territory* ({progress}%)."
+            ]
+        },
+        "3": {
+            "part1": [
+                "Aww, my favorite person decided to check in 💖",
+                "There you are, {user}! I was just thinking about you~",
+                "Oh, it’s you again… my favorite chaos partner 😌",
+                "Back for another check, huh? You just love hearing it.",
+                "You’re here again, and honestly, I don’t mind."
+            ],
+            "part2": [
+                "We’re sitting at **{title}**, which is kinda crazy tbh.",
+                "Your current rank: **{title}** — not many reach this point.",
+                "Right now, you’re at **{title}**. That’s basically top-tier.",
+                "You’ve hit the **{title}** zone — impressive!"
+            ],
+            "part3": [
+                "Just {progress}% till absolute perfection 💞.",
+                "We’re almost maxed out… {progress}% left till peak friendship.",
+                "At this rate, you’ll break the system ({progress}% remaining).",
+                "I might actually care about you at this point 😳 ({progress}% away from full bond).",
+                "One more push — {progress}% to reach *Veyra's favourite 💖* status."
+            ]
+        }
+    }
+}

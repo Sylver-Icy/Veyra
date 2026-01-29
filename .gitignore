@@ -28,9 +28,6 @@ __pycache__/
 #wordle
 wordle.txt
 
-#bot responses
-responses/
-
 #models
 nsfw_classifier/
 *.pkl

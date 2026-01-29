@@ -1,0 +1,210 @@
+{
+    "win": {
+        "1": {
+            "part1": [
+                "Hehe, let's play.",
+                "You gotta read my mind.",
+                "Let's see if you know me well.",
+                "Hmm, welcome, mind reader.",
+                "Well, well, well..."
+            ],
+            "part2": [
+                "Guess the number; hint: it's between {low} and {high}.",
+                "The number can be anywhere from {low} to {high}.",
+                "Let's start slow: {low} to {high}.",
+                "It's 50/50, lol, either {low} or {high}.",
+                "I'm thinking of {high} or {low}.",
+                "Tell me the number I've got on my mind. It's either {high} or {low}.",
+                "Set your sights between {low} and {high}."
+            ],
+            "part3": [
+                "Eh, if you guess right, we got more.",
+                "You can't fumble this, can you?",
+                "👀",
+                " ",
+                "",
+                "Hehe.",
+                ":3",
+                ":>"
+            ]
+        },
+        "2": {
+            "part1": [
+                "You’re on fire!",
+                "Another win? Impressive.",
+                "Look at you, guessing pro!",
+                "That’s how it’s done!"
+            ],
+            "part2": [
+                "Range reset: {low} to {high}.",
+                "Next up: {low} through {high}.",
+                "Your playground now: {low} - {high}.",
+                "The numbers await: {low} to {high}.",
+                "New boundaries: {low} to {high}.",
+                "Fresh range: {low} to {high}.",
+                "Brace yourself: {low} to {high}."
+            ],
+            "part3": [
+                "Can you keep the streak alive?",
+                "Feeling lucky again?",
+                "Don’t let the pressure get to you.",
+                "🤫",
+                "",
+                "😈",
+                "🎊🔥",
+                "🎊"
+            ]
+        },
+        "3": {
+            "part1": [
+                "Third time’s a charm!",
+                "Arghh, you reading my mind?",
+                "Okay, now it's getting personal.",
+                "No way... anyways.",
+                "Yay, correct!",
+                "Keep those wins coming!"
+            ],
+            "part2": [
+                "New range: {low} to {high}.",
+                "Guess between {low} and {high} now.",
+                "Ready for the next? {low} to {high}."
+            ],
+            "part3": [
+                "Ain't no way you getting this.",
+                "👀",
+                "Don’t get cocky now!",
+                "I've guessed something you can never guess."
+            ]
+        },
+        "4": {
+            "part1": [
+                "Final round!",
+                "Last one, give it your best shot!",
+                "No way we got here.",
+                "One last win? Let’s go!"
+            ],
+            "part2": [
+                "Final range: {low} to {high}.",
+                "Between {low} and {high} for the finale.",
+                "Last chance: {low} to {high}."
+            ],
+            "part3": [
+                "GG, you.",
+                "Lol lol, I know I'm winning.",
+                "Don’t choke!",
+                "Ehehehe."
+            ]
+        }
+    },
+    "loose": {
+        "1": {
+            "part1": [
+                "Nah, you couldn't even make it past the first round? {guess}?",
+                "Bruh, {guess}?",
+                "You fell in the first round?",
+                "Lol, round 1 exit already?"
+            ],
+            "part2": [
+                "It was literally between two numbers.",
+                "C'mon, it was {number}.",
+                "The number was {number}.",
+                "Spoiler: {number}. That one stung, huh?"
+            ],
+            "part3": [
+                "Ezzzzz. For me, btw.",
+                "Bro, that was pathetic, ngl.",
+                "\nNow you know why they call me Veyra: The Slayer.",
+                "We both know you can do better (maybe)."
+            ]
+        },
+        "2": {
+            "part1": [
+                "Not even close, lol.",
+                "You tried out there like it mattered. It didn't.",
+                "Hmm? Lol lol, too far off.",
+                "That was way off. {guess}?? Really?"
+            ],
+            "part2": [
+                "I had {number} in mind. Come on.",
+                "Actual was {number}.",
+                "If only you had said {number}.",
+                "Number was {number}. Missed by a mile."
+            ],
+            "part3": [
+                "🤣",
+                "😭",
+                "Not though.",
+                "",
+                "Face it, you're not on my level yet.",
+                "Back to training, noob."
+            ]
+        },
+        "3": {
+            "part1": [
+                "{guess}?",
+                "{guess}, huh?",
+                "So you guessed {guess} —",
+                "Damn, {guess},"
+            ],
+            "part2": [
+                "Hurts saying, ouch, it was {number}.",
+                "It was {number}. You were that close.",
+                "Actual number: {number}. So close I felt it.",
+                "You were within a hair's breadth ({number}).",
+                "If only you had said {number}."
+            ],
+            "part3": [
+                "Nice try, that was almost sexy.",
+                "Don’t fret — that was a good guess.",
+                "Pretty close!",
+                "T-T",
+                "Nyoooo."
+            ]
+        },
+        "4": {
+            "part1": [
+                "Damn, you made it to the last round — respect.",
+                "Your journey ends here.",
+                "Heh, of course you couldn't beat me. {guess}?",
+                "Well, I'm glad to inform you that -"
+            ],
+            "part2": [
+                "Final number was {number}. Stand proud, you fought hard.",
+                "It was {number}. You gave me a tough fight though.",
+                "Correct guess: {number}.",
+                "The final pick was {number}."
+            ],
+            "part3": [
+                "Cocky? Maybe. Impressed? Also maybe.",
+                "You made it far — salute.",
+                "Damn, you gave me a tough fight. Stand proud.",
+                "GG. Come again when you're hungry for redemption."
+            ]
+        }
+    },
+    "played_today": {
+        "1": {
+            "part1": [
+                "Again?",
+                "You serious right now?",
+                "Bruh, we just played.",
+                "Not this again...",
+                "You got no chill, huh?"
+            ],
+            "part2": [
+                "I got things to do,",
+                "Mommy’s busy,",
+                "Come tomorrow,",
+                "I ain't got time,",
+                "Take a break,"
+            ],
+            "part3": [
+                "Go touch grass.",
+                "Kid.",
+                "Maybe later.",
+                "Catch me tomorrow.",
+                "I’m done for the day."
+            ]
+        }
+    }
+ }

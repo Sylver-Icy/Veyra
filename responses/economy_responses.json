@@ -1,0 +1,109 @@
+{
+    "check_wallet": {
+        "1": {
+            "part1": [
+                "Hlw there, {user}!",
+                "Hmm, checking your stash, I see...",
+                "Welcome to Veyra’s totally legit bank of… uh… something.",
+                "{user}, let’s peek at your wallet.",
+                "Now serving {user} at the counter…",
+                "Veyra’s shady bank clerk here 👀 checking your balance…",
+                "Let me dust off the ledger… one sec, {user}!"
+            ],
+            "part2": [
+                "Right now, you got {gold}{emoji}.",
+                "The amount of gold owned by you → {gold} {emoji}.",
+                "You’re sitting on {gold}{emoji}.",
+                "My friend, you own {gold}{emoji} — more than Elon (he got none)."
+            ],
+            "part3": [
+                "Hehe.",
+                ":3",
+                ". What are you buying with all that? Check out `/shop` ",
+                ":O",
+                "Stop hoarding buy something from `/shop` or `/loadmarketplace`"
+            ]
+        }
+    },
+
+    "transfer_gold": {
+        "1": {
+            "part1": [
+                "Self love, huh?",
+                "So you wanna transfer YOUR OWN money to YOURSELF??????",
+                "Yeah, sure, let me take money from you... to give it back to you 🤦",
+                "You being fr?? Giving money to yourself—idk if that’s narcissism or stupidity...",
+                "What is this, a one-man economy?",
+                "Bro invented recycling but with coins 💀."
+            ],
+            "part2": [
+                "Well, too bad, that's not allowed.",
+                "I ain't got time for that.",
+                "Okay, done... oh wait, nah, jk.",
+                "Hmmmmmmmmmmmm NO, me not doing that.",
+                "System says: L + ratio + stop trolling.",
+                "Okay, done, check your new *Updated* balance."
+            ],
+            "part3": [
+                "",
+                ":3",
+                "🙄",
+                "",
+                "",
+                "",
+                "bruh"
+            ]
+        },
+        "2": {
+            "part1": [
+                "Awww, sweetie!",
+                "🥺 For me??",
+                "F-For M-me?? Really??",
+                "Ehh? You sure about this? Well, I’m keeping it!",
+                "Omg, {user}, you didn’t have to 🥰."
+            ],
+            "part2": [
+                "Thank youuuuuuuuuu 💖.",
+                "Tysm 💕.",
+                "Here, you get headpats.",
+                "I appreciate that a lot 💜.",
+                "You’re too kind 👉👈."
+            ],
+            "part3": [
+                "❤️",
+                "",
+                "💜",
+                "💖",
+                "✨",
+                ""
+            ]
+        },
+        "3": {
+            "part1": [
+                "We got some transactions happening!......",
+                "Taking from the rich, giving to the poor — Veyra the Robin Hood 🏹.",
+                "Click click 🤖 Transaction under process… jk, it was instant! Before you even started reading this.",
+                "Hold up, checking the names again... who’s sending and who’s receiving? 👀",
+                "Ah, time for some money maths 🤑.",
+                "Money on the moveee 🚚💨."
+            ],
+            "part2": [
+                " {user1} sent {amount} {coin_emoji} to {user2}.",
+                " {user2} just got blessed with {amount} {coin_emoji} by {user1}.",
+                " {user1} for some reason decided to send {amount} {coin_emoji} to {user2}.",
+                " Transaction complete → {user1} → {user2}: {amount} {coin_emoji}.",
+                " {user1} is now {user2}’s sugar daddy/mommy with {amount} {coin_emoji}."
+            ],
+            "part3": [
+                "\nUpdated balance: {user1} → {user1_gold}, {user2} → {user2_gold}.",
+                "\nWhat spell did {user2} cast to get paid? ✨",
+                "\nHmmm, generous mood today, {user1}? 👀",
+                "\nWho’s buying snacks now? {user1} or {user2}? 🤔",
+                "\n{user2}, don’t forget to say thank you."
+            ],
+            "emoji": [
+                "", " 👀", " :O", " 💸", " 🪙"
+            ]
+        }
+    }
+}

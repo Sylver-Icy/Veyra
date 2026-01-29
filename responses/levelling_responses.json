@@ -1,0 +1,56 @@
+{
+    "level_up": {
+        "1": {
+            "part1": [
+                "Yooooo!",
+                "Damn 🔥",
+                "Hold up...",
+                "Big news!!",
+                "No wayyyy 🤯"
+            ],
+            "part2": [
+                "{user} just leveled up!",
+                "{user} reached a new milestone →",
+                "look at {user} go, climbing higher!",
+                "{user} has ascended to",
+                "give it up for {user}, now at"
+            ],
+            "part3": [
+                "Level {level} 🚀",
+                "lvl {level} 😎",
+                "the mighty level {level} 👑",
+                "LEVEL {level} LET'S GOOO 🎉",
+                "{level} and counting 📈"
+            ],
+            "emoji": ["🤩", "🥳", "👑", "💪", "🔥"]
+        }
+    },
+
+    "check_exp": {
+        "1": {
+            "part1": [
+                "Idk about that tbh... jk",
+                "Ummm let me seeee...",
+                "So you wanna know your stats huh?",
+                "Alright, scanning your data...",
+                "Checking records real quick..."
+            ],
+            "part2": [
+                "dear {user}, you got",
+                "{user}, here’s what I found →",
+                "{user} brace yourself ta-da!",
+                "Hello {user}!!!, your stats are in:",
+                "{user}, listen up →"
+            ],
+            "part3": [
+                "{exp} EXP and currently level {level}",
+                "a total of {exp} points, at level {level}",
+                "{exp} experience points! Standing strong at level {level}",
+                "{exp} EXP | Level {level}",
+                "you’re rocking {exp} EXP and level {level}"
+            ],
+            "emoji": ["😎","🔥","🤓"]
+        }
+    }
+
+}
