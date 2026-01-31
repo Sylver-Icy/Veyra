@@ -99,6 +99,15 @@
     "examples": ["/transfer_item @Sylver Apple 3", "/transfer_item @Veyra Potion 1"],
     "notes": "You cannot transfer items you do not own. Items can also be sent to Veyra."
   },
+  "find_item": {
+    "title": "🕵️ Find Item",
+    "description": "Find where an item can be obtained, such as the daily shop, marketplace listings, or players who may own it.",
+    "usage": "/find_item <item name>",
+    "category": "Inventory",
+    "cooldown": "None",
+    "examples": ["/find_item Iron Sword", "/find_item Healing Potion"],
+    "notes": "Using this command costs gold."
+  },
 
   "transfer_gold": {
     "title": "💰 Transfer Gold",

@@ -52,7 +52,7 @@ class HelpView(discord.ui.View):
 )
             embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
             embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
-            embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
+            embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile` - Check your stats")
             embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
 
         else:
@@ -65,8 +65,13 @@ class HelpView(discord.ui.View):
                                                   "`/start_race` - Start an animal race and bet your gold to win more!!!", inline=False)
             embed.add_field(name="💸 Economy", value="`/transfer_gold` - Send your gold to your friends :O", inline=False)
             embed.add_field(name="㊗️ Wordle", value="`/wordle_hint` - Get a hint if you just can't guess the next word.", inline=False)
-            embed.add_field(name="📦 Inventory", value="`/transfer_item` - Give items from your inventory to your friends." \
-                                         "`/quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!" ,inline=False)
+            embed.add_field(
+                name="📦 Inventory",
+                value="`/transfer_item` - Give items from your inventory to your friends.\n"
+                      "`/quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!\n"
+                      "`/find_item` - I can let you know where an item can be obtained (shop, marketplace, or players).",
+                inline=False
+            )
             embed.add_field(name="🛍️ Shop and Marketplace", value="`/shop` - View the shop embed. Check what items I'm selling and buying.\n"
                                                                   "`/create_listing` - Create a marketplace listing others can buy at the price you set.\n"
                                                                   "`/load_marketplace` - See what others (and you) are selling.\n"
@@ -122,8 +127,12 @@ def get_help_embed(user: discord.User):
                                          "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
                                          "\n`!play` - We can play a number guessing game :3"
                                          "\n`!flipcoin` - Let gacha decide your fate", inline=False)
-    embed.add_field(name="🗃️ Inventory", value="`!info` - Confused? I can tell you about any item — just name it!" \
-    "\n`!use` - Use any usable item from your inventory.", inline=False)
+    embed.add_field(
+        name="🗃️ Inventory",
+        value="`!info` - Confused? I can tell you about any item — just name it!\n"
+              "`!use` - Use any usable item from your inventory.\n",
+        inline=False
+    )
     embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
     embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
                                          "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
@@ -136,7 +145,7 @@ def get_help_embed(user: discord.User):
     inline=False
 )
     embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
-    embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!")
+    embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile - check your stats`")
     embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
     return embed, view
 

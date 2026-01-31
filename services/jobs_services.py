@@ -74,7 +74,7 @@ class JobsClass:
 
 
 
-    def knight(self, energy_cost = 80):
+    def knight(self, energy_cost = 55):
         """
         Perform the 'knight' job, consuming energy and awarding gold if successful.
 

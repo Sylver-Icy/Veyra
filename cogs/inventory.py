@@ -26,6 +26,7 @@ from services.inventory_services import (
 from services.users_services import is_user
 from services.response_services import create_response
 from services.friendship_services import add_friendship
+from services.delievry_minigame_services import lookup_item_sources
 
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError
@@ -131,6 +132,15 @@ class Inventory(commands.Cog):
                 )
             except Exception as e:
                 await ctx.respond(str(e))
+
+
+    @commands.slash_command(description="Find where any item can be obtained currently for only 25G")
+    async def find_item(self, ctx, item_name: str):
+        """
+        Find possible sources of an item (shop, marketplace, or players).
+        """
+        info = lookup_item_sources(ctx.author.id, item_name)
+        await ctx.respond(info["message"], allowed_mentions=discord.AllowedMentions.none())
 
 
     @commands.command()
