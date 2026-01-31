@@ -33,6 +33,11 @@ class VeyraAI:
                 self.block_weight = 15
                 self.counter_weight = 30
                 self.recover_weight = 15
+                
+            elif self.player.frost <= 5:
+                self.attack_weight = 40
+                self.block_weight = 5
+                self.cast_weight = 55
             else:
                 return "cast"
 

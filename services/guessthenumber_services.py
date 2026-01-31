@@ -6,6 +6,7 @@ from models.users_model import Daily
 
 import asyncio
 from services.response_services import create_response
+from datetime import datetime, timedelta
 
 class Guess:
     """
@@ -84,25 +85,33 @@ class Guess:
     @staticmethod
     def fetch_or_create_daily(user_id: int):
         """
-        Retrieves the Daily record for the user or creates one if it does not exist.
-
-        Parameters:
-            user_id (int): The unique identifier of the user.
-
-        Returns:
-            bool: The current status of the 'number_game' field for the user.
+        Returns remaining cooldown (timedelta) if still on cooldown,
+        or None if user can play.
         """
+        COOLDOWN = timedelta(hours=12)
+
         with Session() as session:
             daily = session.get(Daily, user_id)
+
             if not daily:
                 new_entry = Daily(
                     user_id=user_id,
-                    number_game=False
+                    last_number_game=None
                 )
                 session.add(new_entry)
                 session.commit()
-                return False
-            return daily.number_game
+                return None
+
+            if not daily.last_number_game:
+                return None
+
+            elapsed = datetime.utcnow() - daily.last_number_game
+            remaining = COOLDOWN - elapsed
+
+            if remaining.total_seconds() <= 0:
+                return None
+
+            return remaining
 
 
     async def play_game(self, ctx, bot, sessions):
@@ -115,11 +124,13 @@ class Guess:
             await ctx.send("⚠️ You already have an active Guess game running! Finish that one first.")
             return
 
-        # Check daily limit
-        already_played = Guess.fetch_or_create_daily(ctx.author.id)
-        if already_played:
-            response = create_response("played_today",1)
-            await ctx.send(response)
+        remaining = Guess.fetch_or_create_daily(ctx.author.id)
+
+        if remaining:
+            response = create_response("played_today", 1)
+            hours = int(remaining.total_seconds() // 3600)
+            minutes = int((remaining.total_seconds() % 3600) // 60)
+            await ctx.send(f"{response}\n⏳ You can play again in {hours}h {minutes}m.")
             return
 
         sessions[ctx.author.id] = self
@@ -186,21 +197,9 @@ class Guess:
             with Session() as session:
                 daily = session.get(Daily, ctx.author.id)
                 if daily:
-                    daily.number_game = True
+                    daily.last_number_game = datetime.utcnow()
                     session.commit()
         except asyncio.TimeoutError:
             await ctx.send("I'm not gonna be waiting forever for your guess. Arghhh")
         finally:
             sessions.pop(ctx.author.id, None)
-
-
-def reset_all_daily():
-        """
-        Resets the 'number_game' field to False for all users.
-        Intended to be used for daily reset of the guessing game limit.
-        """
-        with Session() as session:
-            all_dailies = session.query(Daily).all()
-            for daily in all_dailies:
-                daily.number_game = False
-            session.commit()

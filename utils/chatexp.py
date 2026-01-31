@@ -24,6 +24,7 @@ async def add_exp_with_announcement(ctx, user_id, amount):
     leveled_up = await add_exp(user_id, amount)
 
     if leveled_up:
+        return
         await ctx.send(
             create_response(
                 "level_up",

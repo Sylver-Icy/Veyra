@@ -94,7 +94,7 @@ class Daily(Base):
     __tablename__ = 'daily'
 
     user_id = Column(BigInteger, primary_key=True)
-    number_game = Column(Boolean, default=False)
+    last_number_game = Column(TIMESTAMP, nullable=True)
 
 class LotteryEntries(Base):
     __tablename__ = 'lottery_entries'

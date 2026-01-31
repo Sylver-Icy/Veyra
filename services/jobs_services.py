@@ -262,11 +262,11 @@ class JobsClass:
         target_id = target.id
         target_name = target.display_name
 
-        if not is_user(target_id):
-            return "They are not resident of Natlade"
-
         if target_id == 1355171756624580772:
             return "I hire you idiot."
+
+        if not is_user(target_id):
+            return "They are not resident of Natlade"
 
         if target_id == self.user_id:
             return "Why do you wanna waste energy? try go robbing someone else"

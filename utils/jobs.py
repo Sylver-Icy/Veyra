@@ -5,7 +5,6 @@ from pytz import timezone
 
 from services.shop_services import update_daily_shop, update_daily_buyback_shop
 from services.delievry_minigame_services import reset_skips
-from services.guessthenumber_services import reset_all_daily
 from services.friendship_services import reset_all_daily_exp
 from services.jobs_services import regen_energy_for_all, notify_users_with_capped_or_overflow_energy
 from services.loan_services import send_due_loan_reminders
@@ -32,7 +31,6 @@ def schedule_jobs(bot):
     scheduler.add_job(update_daily_shop, trigger=midnight_trigger)
     scheduler.add_job(update_daily_buyback_shop, trigger=midnight_trigger)
     scheduler.add_job(reset_skips, trigger=midnight_trigger)
-    scheduler.add_job(reset_all_daily, trigger=midnight_trigger)
     scheduler.add_job(reset_all_daily_exp, trigger=midnight_trigger)
     scheduler.add_job(send_weekly_leaderboard, trigger=weekly_trigger, args=[bot])
     scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="sat,sun", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 50])
