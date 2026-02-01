@@ -36,16 +36,24 @@ def upgrade_building(user_id: int, building_name: str):
         session.commit()
         return f"Congratulations {building_name} has been upgraded to {next_level}"
 
-def building_lvl(user_id: int, building_name: str):
+def building_lvl(user_id: int, building_name: str, session=None):
     building_name = building_name.lower()
     if not building_exist(building_name):
         return "Incorrect name"
 
-    with Session() as session:
+    owns_session = False
+    if session is None:
+        session = Session()
+        owns_session = True
+
+    try:
         user = session.get(Upgrades, (user_id, building_name))
         if not user:
             return 0
         return user.level
+    finally:
+        if owns_session:
+            session.close()
 
 
 def building_exist(building_name: str):

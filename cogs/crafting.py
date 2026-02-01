@@ -13,6 +13,7 @@ from discord.ext import commands
 
 from services.crafting_services import smelt
 from services.upgrade_services import building_lvl
+from services.alchemy_services import craft_potion
 
 
 class Crafting(commands.Cog):
@@ -75,6 +76,11 @@ class Crafting(commands.Cog):
         # Delegate actual smelting logic to services.
         result = smelt(ctx.author.id, bar_name, amount, coal_cost)
         await ctx.respond(result)
+
+    @commands.slash_command(description="Brew potions using your brewing stand")
+    async def brew(self, ctx, potion_name):
+        response = craft_potion(ctx.author.id, potion_name)
+        await ctx.respond(response)
 
 
 def setup(bot: commands.Bot):

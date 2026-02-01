@@ -20,11 +20,11 @@ INVENTORY_SLOTS = {
 
 # Maximum number of items allowed per stack, by pockets level and item rarity.
 ALLOWED_ITEM_STACK = {
-    1: {"Common": 10, "Rare": 5, "Epic": 1, "Legendary": 1, "Minerals": 20, "Lootbox":2},
-    2: {"Common": 20, "Rare": 10, "Epic": 3, "Legendary": 1, "Minerals": 30, "Lootbox":5},
-    3: {"Common": 40, "Rare": 15, "Epic": 5, "Legendary": 1, "Minerals": 35, "Lootbox":10},
-    4: {"Common": 50, "Rare": 20, "Epic": 7, "Legendary": 1, "Minerals": 40, "Lootbox":12},
-    5: {"Common": 100, "Rare": 25, "Epic": 10, "Legendary": 2, "Minerals": 50, "Lootbox":15}
+    1: {"Common": 10, "Rare": 5, "Potion": 1, "Epic": 1, "Legendary": 1, "Minerals": 20, "Lootbox":2},
+    2: {"Common": 20, "Rare": 10, "Potion": 2, "Epic": 3, "Legendary": 1, "Minerals": 30, "Lootbox":5},
+    3: {"Common": 40, "Rare": 15, "Potion": 3, "Epic": 5, "Legendary": 1, "Minerals": 35, "Lootbox":10},
+    4: {"Common": 50, "Rare": 20, "Potion": 4, "Epic": 7, "Legendary": 1, "Minerals": 40, "Lootbox":12},
+    5: {"Common": 100, "Rare": 25, "Potion": 5, "Epic": 10, "Legendary": 2, "Minerals": 50, "Lootbox":15}
 }
 
 def available_inventory_slots_for_user(inventory_lvl: int) -> int:

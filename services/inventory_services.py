@@ -22,13 +22,18 @@ from utils.usable_items import UsableItemHandler
 logger = logging.getLogger('__name__')
 
 
-def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False):
+def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False, session=None):
     """Gives any item to any user"""
 
     if amount < 1:
         raise InvalidItemAmountError
 
-    with Session() as session:
+    owns_session = False
+    if session is None:
+        session = Session()
+        owns_session = True
+
+    try:
         if not is_user(target_id, session):
             raise UserNotFoundError(target_id)
 
@@ -43,13 +48,11 @@ def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False)
                 raise FullInventoryError()
 
             if allowed < amount:
-                item = session.get(Items, item_id)
-                item_name = item.item_name if item else None
-                raise PartialInventoryError(requested=amount, allowed=allowed, item_name=item_name)
+                raise PartialInventoryError(requested=amount, allowed=allowed)
 
         entry = session.get(Inventory, (target_id, item_id))
 
-        if entry: #If user already have the item
+        if entry:  # If user already have the item
             entry.item_quantity += amount
         else:
             new_entry = Inventory(
@@ -58,15 +61,20 @@ def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False)
                 item_quantity=amount,
             )
             session.add(new_entry)
+
         if overflow:
             logger.warning(
                 "SYSTEM GRANT (overflow=True): user=%s item=%s amount=%s",
                 target_id, item_id, amount
             )
 
-        session.commit()
+        if owns_session:
+            session.commit()
+    finally:
+        if owns_session:
+            session.close()
 
-def take_item(target_id: int, item_id: int, amount: int):
+def take_item(target_id: int, item_id: int, amount: int, session=None):
     """
     Removes specified amount of item from target
     """
@@ -74,22 +82,83 @@ def take_item(target_id: int, item_id: int, amount: int):
     if amount < 1:
         raise InvalidItemAmountError
 
-    with Session() as session:
+    owns_session = False
+    if session is None:
+        session = Session()
+        owns_session = True
+
+    try:
         if not is_user(target_id, session):
             raise UserNotFoundError(target_id)
 
-        entry = session.get(Inventory, (target_id,item_id))
+        entry = session.get(Inventory, (target_id, item_id))
 
         if not entry or entry.item_quantity < amount:
             raise NotEnoughItemError
 
         entry.item_quantity -= amount
 
-        #delete row is it reaches 0
+        # delete row if it reaches 0
         if entry.item_quantity == 0:
             session.delete(entry)
 
-        session.commit()
+        if owns_session:
+            session.commit()
+    finally:
+        if owns_session:
+            session.close()
+
+
+# Bulk removal of multiple items atomically
+def take_items_bulk(target_id: int, items: dict, session):
+    """
+    Removes multiple items atomically from target.
+
+    items format:
+    {
+        item_id: amount,
+        item_id2: amount2,
+        ...
+    }
+
+    Requires an external session (will NOT create or commit its own).
+    """
+
+    if session is None:
+        raise ValueError("take_items_bulk requires an external session")
+
+
+    # Fetch all relevant inventory rows in one query
+    rows = (
+        session.query(Inventory)
+        .filter(
+            Inventory.user_id == target_id,
+            Inventory.item_id.in_(items.keys())
+        )
+        .all()
+    )
+
+    inventory_map = {row.item_id: row for row in rows}
+
+    # Validation pass
+    for item_id, amount in items.items():
+        if amount < 1:
+            raise InvalidItemAmountError
+
+        entry = inventory_map.get(item_id)
+
+        if not entry or entry.item_quantity < amount:
+            raise NotEnoughItemError
+
+    # Mutation pass (only runs if validation succeeded)
+    for item_id, amount in items.items():
+        entry = inventory_map[item_id]
+        entry.item_quantity -= amount
+
+        if entry.item_quantity == 0:
+            session.delete(entry)
+
+
 
 def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
     """
@@ -132,40 +201,50 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
             session.add(new_entry)
         session.commit()
 
-def fetch_inventory(user_id: int) -> List[dict]:
-    """Returns a list of items in user's inventory (excluding zero quantity)."""
-    with Session() as session:
+def fetch_inventory(user_id: int, session=None) -> List[dict]:
+    """Returns a list of items in user's inventory (excluding zero quantity).
+    If session is provided, it will be reused. Otherwise, a new session is created.
+    """
+
+    owns_session = False
+
+    if session is None:
+        session = Session()
+        owns_session = True
+
+    try:
         inventory = (
             session.query(Inventory, Items)
             .join(Items, Inventory.item_id == Items.item_id)
-            .filter(Inventory.user_id == user_id)
+            .filter(
+                Inventory.user_id == user_id,
+                Inventory.item_quantity > 0
+            )
             .order_by(Items.item_name.asc())
             .all()
-            )
+        )
 
-    result = []
-    for entry, item in inventory:
-        if entry.item_quantity < 1:
-            continue
-        result.append({
-            "item_id": entry.item_id,
-            "item_name": item.item_name,
-            "item_quantity": entry.item_quantity,
-            "item_rarity": item.item_rarity,
-            "item_description": item.item_description
-        })
+        result = []
+        for entry, item in inventory:
+            result.append({
+                "item_id": entry.item_id,
+                "item_name": item.item_name,
+                "item_quantity": entry.item_quantity,
+                "item_rarity": item.item_rarity,
+                "item_description": item.item_description,
+                "item_icon": item.item_icon
+            })
 
-    return result
+        return result
+
+    finally:
+        if owns_session:
+            session.close()
 
 def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
-    """
-    Returns an embed of items owned by user
-    If user has no items it triggers the starter event
-    If starter event already done then skip
-    """
     with Session() as session:
         user = session.get(User, user_id)
-        result = fetch_inventory(user_id)
+        result = fetch_inventory(user_id, session=session)
 
         if not result:
             if user.starter_given:
