@@ -12,7 +12,7 @@ class Upgrades(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 20, commands.BucketType.user)
-    async def unlock(self, ctx, building_name):
+    async def unlock(self, ctx, *, building_name):
         info = get_building_info(building_name, 1)
 
         description, cost = info.get("description"), info.get("cost")
@@ -40,7 +40,7 @@ class Upgrades(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 20, commands.BucketType.user)
-    async def upgrade(self, ctx, building_name):
+    async def upgrade(self, ctx, *, building_name):
         next_upgrade = get_next_upgrade_info(ctx.author.id, building_name)
         if isinstance(next_upgrade, str):
             await ctx.send(next_upgrade)

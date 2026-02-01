@@ -100,6 +100,6 @@ class VeilOfDarkness(Spell):
             return ok, msg
 
         duration = 4
-        target.status_effect["veilofdarkness"] = duration
+        caster.status_effect["veilofdarkness"] = duration
 
         return True, f"{caster.name} Created a very dense veil Of darkness"

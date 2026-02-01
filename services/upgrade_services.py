@@ -56,9 +56,10 @@ def building_exist(building_name: str):
 
 
 def get_next_upgrade_info(user_id: int, building_name: str):
+    print(building_name)
     building_name = building_name.lower()
     if not building_exist(building_name):
-        return "There is no such building try from \n Smelter, Inventory, Pockets"
+        return "There is no such building try from \n Smelter, Inventory, Pockets, Brewing Stand"
 
     with Session() as session:
         current = session.get(Upgrades, (user_id, building_name))

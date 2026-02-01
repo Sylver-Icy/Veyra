@@ -100,7 +100,7 @@
         },
         {
           "name": "Possible Rewards",
-          "value": "You get **one** of these:\n\n• **25 gold** (rare)\n• **Coal**\n• **Copper Ore**\n• **Iron Ore**\n• **Silver Ore**",
+          "value": "You get **one** of these:\n\n• **25 gold**\n• **Coal**\n• **Copper Ore**\n• **Iron Ore**\n• **Silver Ore**",
           "inline": false
         },
         {

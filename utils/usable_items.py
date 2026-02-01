@@ -1,4 +1,5 @@
 from utils.global_sessions_registry import sessions
+from utils.emotes import GOLD_EMOJI
 
 
 class UsableItemHandler:
@@ -33,7 +34,7 @@ def use_jar_of_exp(user_id: int):
 def use_bag_of_gold(user_id: int):
     from services.economy_services import add_gold
     add_gold(user_id, 100)
-    return "You opened your Bag of Gold and found 100 gold :O \nUse it responsibly :>"
+    return f"You opened your Bag of Gold and found 100 {GOLD_EMOJI} :O \nUse it responsibly :>"
 
 @UsableItemHandler.register("Bread")
 def use_bread(user_id: int):

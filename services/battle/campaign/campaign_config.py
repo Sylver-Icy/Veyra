@@ -56,14 +56,14 @@ CAMPAIGN_LEVELS = {
         # Final exam: frost + denial + pressure
         "weapon": "moonslasher",
         "spell": "frostbite",
-        "bonus_hp": 15,
-        "bonus_mana": 10
+        "bonus_hp": 22,
+        "bonus_mana": 8
     },
     10: {
         "weapon": "veyrasgrimoire",
         "spell": "veilofdarkness",
-        "bonus_hp": 10,
-        "bonus_mana": 5
+        "bonus_hp": 25,
+        "bonus_mana": 10
     }
 }
 
@@ -73,7 +73,7 @@ REWARD_CHART = {
     3: {"Gold": 100},
     4: {"Gold": 250},
     5: {177: 2},
-    6: {183: 4},
+    6: {170: 4},
     7: {180: 5},
     8:{178: 2},
     9: {179: 1},
