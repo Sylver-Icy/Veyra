@@ -4,7 +4,8 @@ from collections import deque
 from services.battle.weapon_class import ElephantHammer, MoonSlasher
 from services.battle.spell_class import FrostBite
 
-spell_effects = ["nightfall","veilofdarkness"]
+spell_effects_on_player = ["nightfall"]
+spell_effects_on_veyra = ["veilofdarkness"]
 class VeyraAI:
     def __init__(self, difficulty="normal", veyra = None, player = None):
         self.difficulty = difficulty
@@ -28,12 +29,18 @@ class VeyraAI:
 
         # --- SPELL PRIORITY ---
         if self.veyra.mana >= self.veyra.spell.mana_cost:
-            if any(effect in self.player.status_effect for effect in spell_effects):
+            if any(effect in self.player.status_effect for effect in spell_effects_on_player):
                 self.attack_weight = 40
                 self.block_weight = 15
                 self.counter_weight = 30
                 self.recover_weight = 15
-                
+
+            if any(effect in self.veyra.status_effect for effect in spell_effects_on_veyra):
+                self.attack_weight = 40
+                self.block_weight = 15
+                self.counter_weight = 30
+                self.recover_weight = 15
+
             elif self.player.frost <= 5:
                 self.attack_weight = 40
                 self.block_weight = 5
