@@ -141,23 +141,23 @@ def apply_user_effect(session, user_id: int, effect_name: str, strain: int, expi
     return True
 
 
-def reduce_user_strain(session, user_id: int, amount: int):
-    effect = (
-        session.query(UserEffects)
-        .filter(UserEffects.user_id == user_id)
-        .first()
-    )
+def decay_all_strain():
+    """
+    Reduces strain by 1 for all users who currently have strain > 0.
+    Uses a single bulk UPDATE for performance.
+    """
+    with Session() as session:
+        rows_affected = (
+            session.query(UserEffects)
+            .filter(UserEffects.strain > 0)
+            .update(
+                {UserEffects.strain: UserEffects.strain - 1},
+                synchronize_session=False
+            )
+        )
 
-    if not effect:
-        return False
-
-    effect.strain -= amount
-
-    if effect.strain < 0:
-        effect.strain = 0
-
-    session.commit()
-    return True
+        session.commit()
+        return rows_affected  # number of users updated
 
 def get_strain_status(session, user_id: int):
     """
