@@ -44,20 +44,37 @@ def allowed_rarities_for_level(level: int) -> list[str]:
         return ["Common"]
     elif level < 10:
         return ["Common", "Rare"]
-    elif level < 15:
+    elif level < 18:
         return ["Common", "Rare", "Epic"]
     else:
         return ["Common", "Rare", "Epic", "Legendary"]
 
 
-def number_of_items_for_quest() -> int:
+def number_of_items_for_quest(slots_used: int) -> int:
     """
-    Decide how many items a delivery quest should request.
+    Decide how many items a delivery quest should request
+    based on how many inventory slots the player is currently using.
+
+    Args:
+        slots_used (int): Number of inventory slots currently occupied
 
     Returns:
-        int: Randomly chosen number of items (1 or 2)
+        int: Number of items the quest should request
     """
-    return random.randint(1, 2)
+    if slots_used < 20:
+        return 1
+    elif 20 <= slots_used < 40:
+        return 2
+    elif 40 <= slots_used < 50:
+        return 3
+    elif 50 <= slots_used < 55:
+        return 4
+    elif 55 <= slots_used < 60:
+        return 5
+    elif 60 <= slots_used < 65:
+        return 6
+    else:
+        return 7
 
 
 # ---------------------------------------------------------------------------
@@ -142,3 +159,28 @@ def can_skip(skips: int) -> bool:
         bool: True if skipping is allowed, False otherwise
     """
     return skips < MAX_SKIPS
+
+def quantity_for_level(level: int) -> int:
+    """
+    Decide how many of each item is required for a quest
+    based on player level.
+
+    <10  -> 1
+    10-14 -> 2
+    15-17 -> 3
+    18-20 -> 4
+    21-23 -> 6
+    24-25+ -> 10
+    """
+    if level < 10:
+        return 1
+    elif level < 15:
+        return 2
+    elif level < 18:
+        return 3
+    elif level < 21:
+        return 4
+    elif level < 24:
+        return 6
+    else:
+        return 10

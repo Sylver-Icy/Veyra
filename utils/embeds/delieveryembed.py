@@ -3,7 +3,7 @@ from utils.emotes import GOLD_EMOJI
 from services.economy_services import add_gold
 # 1. Define a custom View that stores the original user's ID
 class DeliveryView(discord.ui.View):
-    def __init__(self, user_id: int, items: list, reward: int, reroll_cost: int):
+    def __init__(self, user_id: int, items: dict, reward: int, reroll_cost: int):
         super().__init__(timeout=100)
         self.user_id = user_id
         self.items = items
@@ -74,16 +74,16 @@ class DeliveryView(discord.ui.View):
 
 
 
-def delievery_embed(user_name: str, items: list, reward: int, user_id: int, streak: int, reroll_cost: int):
+def delievery_embed(user_name: str, items: dict, reward: int, user_id: int, streak: int, reroll_cost: int):
     embed = discord.Embed(
         title=f"Hii! {user_name},        🔥STREAK  **{streak}**",
         description="People in town need some items, do you have them? You will be rewarded!",
         color=discord.Colour.dark_blue()
     )
 
-    for item in items:
+    for item_name, amount in items.items():
         embed.add_field(
-            name=f"1X {item}",
+            name=f"{amount}X {item_name}",
             value=" ",
             inline=False
         )

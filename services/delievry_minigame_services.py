@@ -7,6 +7,7 @@ from database.sessionmaker import Session
 from domain.quest.rules import (
     allowed_rarities_for_level,
     number_of_items_for_quest,
+    quantity_for_level,
     final_delivery_reward,
     can_skip,
     REROLL_COST
@@ -18,7 +19,7 @@ from models.marketplace_model import ShopDaily,Marketplace
 
 
 from services.exp_services import current_exp
-from services.inventory_services import fetch_inventory, take_item
+from services.inventory_services import fetch_inventory, take_item, calculate_slots_used
 from services.users_services import update_longest_quest_streak
 from services.economy_services import remove_gold
 
@@ -84,7 +85,8 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
 
     with Session() as session:
         rarity_pool = allowed_rarities_for_level(user_lvl)
-        num_items = number_of_items_for_quest()
+        invenotry_slots_used_by_user = calculate_slots_used(user_id, session)
+        num_items = number_of_items_for_quest(invenotry_slots_used_by_user)
 
         delivery_items = (
             session.execute(
@@ -98,21 +100,29 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
         )
 
         reward = calculate_reward(delivery_items, user_id)
-        delivery_items_name_list = [item.item_name for item in delivery_items]
+
+        # decide max quantity per item based on user level
+        max_qty = quantity_for_level(user_lvl)
+
+        # gacha roll per item: 1 -> max_qty
+        delivery_items_dict = {
+            item.item_name: random.randint(1, max_qty)
+            for item in delivery_items
+        }
 
         existing_quest = session.execute(
             select(Quests).where(Quests.user_id == user_id)
         ).scalar_one_or_none()
 
         if existing_quest:
-            existing_quest.delivery_items = delivery_items_name_list
+            existing_quest.delivery_items = delivery_items_dict
             existing_quest.reward = reward
             existing_quest.limit += 1
         else:
             session.add(
                 Quests(
                     user_id=user_id,
-                    delivery_items=delivery_items_name_list,
+                    delivery_items=delivery_items_dict,
                     reward=reward,
                     limit=0,
                     skips=0,
@@ -129,11 +139,11 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
         "Quest created",
         extra={
             "user": user_id,
-            "flex": f"Items requested -> {delivery_items_name_list}, Reward -> {reward}",
+            "flex": f"Items requested -> {delivery_items_dict}, Reward -> {reward}",
         },
     )
 
-    return delivery_items_name_list, reward
+    return delivery_items_dict, reward
 
 
 def delete_quest(user_id: int, streak: bool = False, skip: bool = True):
@@ -213,27 +223,28 @@ def fetch_quest(user_id: int):
 
 def calculate_reward(items: list, user_id: int):
     """
-    Calculate delivery reward based on item rarities and streak.
-
-    Args:
-        items (list[Items]): Items required for the quest
-        user_id (int): User identifier
-
-    Returns:
-        int: Final calculated reward
+    Calculate delivery reward based on item rarities, quantities, and streak.
     """
-    rarities_list = [item.item_rarity for item in items]
 
+    # fetch quest to read quantities
     with Session() as session:
         quest = session.execute(
             select(Quests).where(Quests.user_id == user_id)
         ).scalar_one_or_none()
         streak = quest.streak if quest else 0
+        quantities = quest.delivery_items if quest and quest.delivery_items else {}
+
+    rarities_list = []
+
+    # expand rarities by quantity
+    for item in items:
+        qty = quantities.get(item.item_name, 1)
+        rarities_list.extend([item.item_rarity] * qty)
 
     return final_delivery_reward(rarities_list, streak)
 
 
-def items_check(user_id: int, items: list):
+def items_check(user_id: int, items: dict):
     """
     Validate and complete a delivery quest.
 
@@ -251,13 +262,19 @@ def items_check(user_id: int, items: list):
         if item["item_quantity"] > 0
     }
 
-    for item in items:
-        if item not in owned_items:
+    # items is expected to be dict{name: amount}
+    for item_name, amount in items.items():
+        if item_name not in owned_items:
             return False
 
-    for item in items:
-        item_id, _ = get_item_id_safe(item)
-        take_item(user_id, item_id, 1)
+        for inv_item in inventory:
+            if inv_item["item_name"] == item_name and inv_item["item_quantity"] < amount:
+                return False
+
+    # removal
+    for item_name, amount in items.items():
+        item_id, _ = get_item_id_safe(item_name)
+        take_item(user_id, item_id, amount)
 
     logger.info(
         "Quest completed",
@@ -314,7 +331,7 @@ def lookup_item_sources(user_id: int, item_name: str):
         with Session() as session:
             remove_gold(user_id, SPY_COST, session)
             session.commit()
-            
+
     except NotEnoughGoldError:
         return {
             "shop": False,
@@ -352,7 +369,8 @@ def lookup_item_sources(user_id: int, item_name: str):
             select(ShopDaily)
             .where(
                 ShopDaily.item_id == item_id,
-                ShopDaily.date == latest_date
+                ShopDaily.date == latest_date,
+                ShopDaily.shop_type == "sell"
             )
         ).scalars().first()
 
