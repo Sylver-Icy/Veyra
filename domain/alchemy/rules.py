@@ -69,7 +69,7 @@ def resolve_potion(user_input):
 
         return False, (
             f"Potion not found. Closest match: **{real_name}** (ID: {pid})\n"
-            f"You can use the id instead of name as well {pid}`"
+            f"You can brew using the id instead of name as well `/brew {pid}`"
         )
 
     return False, "Potion not found."
@@ -88,7 +88,7 @@ def roll_strain_risk(current_strain: int):
 
     if current_strain <= 0:
         return True
-    
+
     if current_strain >= 100:
         return False
 

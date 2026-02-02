@@ -16,7 +16,6 @@ from services.users_services import is_user
 
 from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidItemAmountError, FullInventoryError, PartialInventoryError
 from utils.embeds.inventoryembed import build_inventory, build_item_info_embed
-from utils.usable_items import UsableItemHandler
 
 
 logger = logging.getLogger('__name__')
@@ -273,6 +272,8 @@ def get_item_details(user_id, item_id: int):
     return build_item_info_embed(item_details)
 
 def use_item(user_id: int, item_id: str):
+    from utils.usable_items import UsableItemHandler
+
     with Session() as session:
         item = session.get(Items, item_id)
         if not item:
@@ -291,7 +292,7 @@ def use_item(user_id: int, item_id: str):
             result = handler(user_id)
 
         except NotEnoughItemError:
-            return(f"You don't have any {item.item_name} left. Buy or trade some to use it.")
+            return(f"You don't have any {item.item_name} left....")
         return result
 
 

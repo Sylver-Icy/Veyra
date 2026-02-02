@@ -191,10 +191,10 @@ class Inventory(commands.Cog):
                 return
 
         if sugestions != []:
-            await ctx.send(f"Tf is {item_name}? You prolly meant {sugestions[0]}.")
+            await ctx.send(f"Hmmm there is no such item as {item_name}? Ig you meant {sugestions[0]}?")
             return
 
-        await ctx.send(f"Hmm how can one use something which doesn't even exist?" )
+        await ctx.send("Hmm how can one use something which doesn't even exist?" )
 
 def setup(bot):
     bot.add_cog(Inventory(bot))

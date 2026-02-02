@@ -103,13 +103,21 @@ def check_ingredients(session, user_id: int, ingredients: dict):
     return True
 
 
-def apply_user_effect(session, user_id: int, effect_name: str, strain: int, expire_at=None):
+def apply_user_effect(session, user_id: int, effect_name: str, strain: int, expire_hours=None):
     """
     Applies or updates a user effect.
     - Strain is ALWAYS added
     - Effect name is overwritten
     - Only one effect row per user
+    - expire_hours: number of hours from now the effect should last
     """
+
+    from datetime import datetime, timedelta
+
+    # Convert hours -> timestamp
+    expire_at = None
+    if expire_hours is not None:
+        expire_at = datetime.utcnow() + timedelta(hours=expire_hours)
 
     existing = (
         session.query(UserEffects)
@@ -225,7 +233,7 @@ def use_potion(user_id: int, potion_name: str):
             user_id=user_id,
             effect_name=effect_name,
             strain=strain_amount,
-            expire_at=recipe.get("expire_at")
+            expire_hours=recipe.get("expire_at")
         )
 
         session.commit()

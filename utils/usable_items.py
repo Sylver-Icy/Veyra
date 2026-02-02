@@ -1,5 +1,11 @@
+import random
+
 from utils.global_sessions_registry import sessions
 from utils.emotes import GOLD_EMOJI
+from utils.custom_errors import NotEnoughItemError
+
+from services.alchemy_services import use_potion
+
 
 
 class UsableItemHandler:
@@ -47,12 +53,65 @@ def use_bread(user_id: int):
 @UsableItemHandler.register("Hint Key")
 def use_hint_key(user_id: int):
     guess_sessions = sessions["guess"]
-    print("Current guess sessions:", guess_sessions)
-    print("Session type for user:", type(guess_sessions.get(user_id)))
 
     if user_id in guess_sessions:
         guess_sessions[user_id].key_used = True
         return "🔑 You activated your Hint Key! Your next wrong guess will give a hint instead of ending the game.\n**Valid only for current stage**."
 
-
     return "You’re not currently playing a guessing game."
+
+# =========================
+# Potion Recipe Usables
+# =========================
+
+@UsableItemHandler.register("Potion Of Faster Recovery I")
+def use_potion_faster_recovery_1(user_id: int):
+    return use_potion(user_id, "Potion Of Faster Recovery I")
+
+@UsableItemHandler.register("Potion Of Faster Recovery II")
+def use_potion_faster_recovery_2(user_id: int):
+    return use_potion(user_id, "Potion Of Faster Recovery II")
+
+@UsableItemHandler.register("Potion Of Faster Recovery III")
+def use_potion_faster_recovery_3(user_id: int):
+    from services.jobs_services import JobsClass  # lazy import
+
+    user = JobsClass(user_id)
+    gained = random.randint(150, 200)
+    user.gain_energy(gained)
+    return f"You drank a Potion Of Faster Recovery III and gained {gained} Energy!"
+
+@UsableItemHandler.register("Potion Of Luck I")
+def use_potion_luck_1(user_id: int):
+    return use_potion(user_id, "Potion Of Luck I")
+
+@UsableItemHandler.register("Potion Of Luck II")
+def use_potion_luck_2(user_id: int):
+    return use_potion(user_id, "Potion Of Luck II")
+
+@UsableItemHandler.register("Potion Of Luck III")
+def use_potion_luck_3(user_id: int):
+    from services.inventory_services import take_item, give_item
+    try:
+        take_item(user_id, 178, 1)
+    except NotEnoughItemError:
+        return "You don't have an Iron Box to spray the potion upon."
+
+    roll = random.random() < 0.60
+
+    if roll:
+        give_item(user_id, 179, 1)
+        return "The potion succeeds. Your Iron Box turned into a Platinum Box."
+
+    give_item(user_id, 177, 1)
+    return "The potion fizzles... Your Iron Box turned into a Stone Box"
+
+
+@UsableItemHandler.register("Potion Of Love I")
+def use_potion_love_1(user_id: int):
+    return "This Potion can't be used gift it to others to express love xd"
+
+
+@UsableItemHandler.register("Potion Of Hatred I")
+def use_potion_hatred_1(user_id: int):
+    return "This Potion can't be used gift it to others to express hate xd"
