@@ -80,7 +80,7 @@ def update_daily_shop():
             session.add(ShopDaily(
                 shop_type="sell",
                 item_id=item.item_id,
-                price=calculate_buy_price(item.item_rarity, False)
+                price = item.item_price if item.item_price is not None else calculate_buy_price(item.item_rarity, False)
             ))
 
         session.commit()
