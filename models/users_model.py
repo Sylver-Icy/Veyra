@@ -27,6 +27,12 @@ class User(Base):
     quests = relationship("Quests", back_populates="user", uselist=False, cascade="all, delete")
     user_stats = relationship("UserStats", back_populates="user", uselist=False, cascade="all, delete")
 
+    effects = relationship(
+        "UserEffects",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
     friendship = relationship(
         "Friendship",
         back_populates="user",
@@ -236,4 +242,7 @@ class UserEffects(Base):
     strain = Column(Integer, nullable=False)
     expire_at = Column(TIMESTAMP, nullable=True)
 
-    user = relationship("User")
+    user = relationship(
+        "User",
+        back_populates="effects"
+    )

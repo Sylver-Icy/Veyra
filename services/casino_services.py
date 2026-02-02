@@ -29,8 +29,24 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str):
         try:
             result = game.play(bet, choice)
 
+            # Check for GAMBLER'S FATE effect
+            from services.alchemy_services import get_active_user_effect, expire_user_effect
+
+            active_effect = get_active_user_effect(session, user_id)
+
             if result.delta < 0:
-                remove_chips(user_id, -result.delta, session)
+                loss = -result.delta
+
+                # If Gambler's Fate active -> only deduct 90% and remove effect
+                if active_effect == "GAMBLER'S FATE":
+                    reduced_loss = int(loss * 0.9)
+                    remove_chips(user_id, reduced_loss, session)
+                    expire_user_effect(session, user_id, "GAMBLER'S FATE")
+                    session.commit()
+                    return f"{result.message}\nYour chips were partially refunded by **GAMBLER'S FATE**. The aura fades away."
+
+                remove_chips(user_id, loss, session)
+
             elif result.delta > 0:
                 add_chip(user_id, result.delta, session)
 

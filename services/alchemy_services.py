@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from database.sessionmaker import Session
 
 from models.inventory_model import Inventory
@@ -111,8 +113,6 @@ def apply_user_effect(session, user_id: int, effect_name: str, strain: int, expi
     - Only one effect row per user
     - expire_hours: number of hours from now the effect should last
     """
-
-    from datetime import datetime, timedelta
 
     # Convert hours -> timestamp
     expire_at = None
@@ -238,3 +238,47 @@ def use_potion(user_id: int, potion_name: str):
 
         session.commit()
         return f"You drink the potion and feel its effects: {effect_name}"
+
+
+def get_active_user_effect(session, user_id: int):
+    """
+    Returns active effect name.
+    If expired or missing -> None.
+    """
+    effect = (
+        session.query(UserEffects)
+        .filter(UserEffects.user_id == user_id)
+        .first()
+    )
+
+    if not effect:
+        return None
+
+    if effect.expire_at is not None and effect.expire_at <= datetime.utcnow():
+        return None
+
+    return effect.effect_name
+
+
+
+def expire_user_effect(session, user_id: int, effect_name: str | None = None):
+    """
+    Forces the user's current effect to expire by setting expire_at to a past timestamp.
+    """
+
+    effect = (
+        session.query(UserEffects)
+        .filter(UserEffects.user_id == user_id)
+        .first()
+    )
+
+    if not effect:
+        return False
+
+    # If a specific effect name is provided and it doesn't match -> do nothing
+    if effect_name is not None and effect.effect_name != effect_name:
+        return False
+
+    effect.expire_at = datetime.utcnow() - timedelta(seconds=1)
+    session.commit()
+    return True

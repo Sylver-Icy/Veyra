@@ -103,6 +103,25 @@ class Exp(commands.Cog):
             )
             return await ctx.send(response)
 
+        # ──────────────────────────────
+        # STATUS (EFFECT + STRAIN)
+        # ──────────────────────────────
+        if val.startswith(("stat", "status")):
+
+            from database.sessionmaker import Session
+            from services.alchemy_services import get_active_user_effect, get_strain_status
+
+            with Session() as session:
+                effect = get_active_user_effect(session, ctx.author.id)
+                strain_msg = get_strain_status(session, ctx.author.id)
+
+            effect_display = effect if effect else "None"
+
+            return await ctx.send(
+                f"**Active Effect:** {effect_display}\n"
+                f"**Strain:** {strain_msg}"
+            )
+
 
 def setup(bot):
     bot.add_cog(Exp(bot))

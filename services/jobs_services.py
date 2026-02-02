@@ -13,6 +13,8 @@ from services.inventory_services import give_item
 from services.users_services import is_user
 from services.response_services import create_response
 from services.notif_services import send_notification
+from services.alchemy_services import get_active_user_effect, expire_user_effect
+
 
 from utils.custom_errors import VeyraError
 
@@ -280,16 +282,32 @@ class JobsClass:
         if target_wealth < 50:
             return f"{target_name} was broke. You wasted your effort for nothing."
 
-        if random.randint(0, 1) == 0:
+        # Check luck effect
+        effect = get_active_user_effect(Session(), self.user_id)
+
+        success_chance = 0.5
+        max_steal_cap = 150
+
+        if effect == "LUCK OF THE ABYSS":
+            success_chance = 0.9
+            max_steal_cap = 500
+
+        if random.random() > success_chance:
+            # Consume luck buff even on failed robbery
+            expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
+
             remove_gold(self.user_id, 30)
             response = create_response("thief", 2, target=target_name, gold=0)
             return response
 
-        stolen = int(min(target_wealth * 0.10, 150))
+        stolen = int(min(target_wealth * 0.10, max_steal_cap))
         fine = int(min(target_wealth * 0.01, 50))
 
         add_gold(self.user_id, stolen)
         remove_gold(target_id, fine)
+
+        # Consume luck buff after successful robbery
+        expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
 
         response = create_response("thief", 1, target=target_name, gold=stolen)
 
@@ -335,7 +353,17 @@ async def regen_energy_for_all(bot):
 
         for user_id, energy, level in rows:
             max_energy = 35 + (15 * level)
-            new_energy = min(energy + 1, max_energy)
+            # Check active energy regen effect
+            effect = get_active_user_effect(session, user_id)
+
+            regen_amount = 1
+
+            if effect == "ENERGY REGEN ELITE":
+                regen_amount = 2
+            elif effect == "ENERGY REGEN DEMON":
+                regen_amount = 5
+
+            new_energy = min(energy + regen_amount, max_energy)
 
             # Update energy
             session.execute(
