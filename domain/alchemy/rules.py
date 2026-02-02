@@ -1,3 +1,5 @@
+import random
+
 from difflib import get_close_matches
 
 from services.upgrade_services import building_lvl
@@ -67,7 +69,30 @@ def resolve_potion(user_input):
 
         return False, (
             f"Potion not found. Closest match: **{real_name}** (ID: {pid})\n"
-            f"You can brew using: `/brew {pid}`"
+            f"You can use the id instead of name as well {pid}`"
         )
 
     return False, "Potion not found."
+
+
+# Strain risk roll function
+def roll_strain_risk(current_strain: int):
+    """
+    Rolls strain risk.
+    Strain value (0-100) == % chance potion use fails.
+
+    Returns:
+        True  -> potion use allowed
+        False -> potion use fails
+    """
+
+    if current_strain <= 0:
+        return True
+    
+    if current_strain >= 100:
+        return False
+
+    chance = min(max(current_strain, 0), 100)
+    roll = random.randint(1, 100)
+
+    return roll > chance

@@ -218,3 +218,22 @@ class Invites(Base):
         "User",
         foreign_keys=[inviter_id]
     )
+
+class UserEffects(Base):
+    __tablename__ = 'user_effects'
+    __table_args__ = (
+        PrimaryKeyConstraint('user_id', 'effect_name'),
+    )
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
+
+    effect_name = Column(Text, nullable=False)
+    strain = Column(Integer, nullable=False)
+    expire_at = Column(TIMESTAMP, nullable=True)
+
+    user = relationship("User")

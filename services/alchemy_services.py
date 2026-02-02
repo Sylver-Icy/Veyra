@@ -1,9 +1,10 @@
 from database.sessionmaker import Session
 
 from models.inventory_model import Inventory
+from models.users_model import UserEffects
 
 from domain.alchemy.potion_recipes import POTION_RECIPES
-from domain.alchemy.rules import can_craft_potion_tier, resolve_potion
+from domain.alchemy.rules import can_craft_potion_tier, resolve_potion, roll_strain_risk
 
 from services.inventory_services import take_items_bulk, give_item
 
@@ -100,3 +101,132 @@ def check_ingredients(session, user_id: int, ingredients: dict):
         return missing
 
     return True
+
+
+def apply_user_effect(session, user_id: int, effect_name: str, strain: int, expire_at=None):
+    """
+    Applies or updates a user effect.
+    - Strain is ALWAYS added
+    - Effect name is overwritten
+    - Only one effect row per user
+    """
+
+    existing = (
+        session.query(UserEffects)
+        .filter(UserEffects.user_id == user_id)
+        .first()
+    )
+
+    if existing:
+        existing.strain += strain
+        existing.effect_name = effect_name
+        existing.expire_at = expire_at
+    else:
+        new_effect = UserEffects(
+            user_id=user_id,
+            effect_name=effect_name,
+            strain=strain,
+            expire_at=expire_at
+        )
+        session.add(new_effect)
+
+    return True
+
+
+def reduce_user_strain(session, user_id: int, amount: int):
+    effect = (
+        session.query(UserEffects)
+        .filter(UserEffects.user_id == user_id)
+        .first()
+    )
+
+    if not effect:
+        return False
+
+    effect.strain -= amount
+
+    if effect.strain < 0:
+        effect.strain = 0
+
+    session.commit()
+    return True
+
+def get_strain_status(session, user_id: int):
+    """
+    Returns a descriptive sentence about the user's current strain level.
+    """
+
+    effect = (
+        session.query(UserEffects)
+        .filter(UserEffects.user_id == user_id)
+        .first()
+    )
+
+    if not effect or effect.strain <= 0:
+        return "Your body feels normal. No lingering side effects remain."
+
+    strain = effect.strain
+
+    if 0 < strain <= 10:
+        return "You feel mostly fine. A slight dizziness lingers, but another potion should be safe."
+
+    if 11 <= strain <= 30:
+        return "Your head feels light and your body is warm. Drinking more might start to feel uncomfortable."
+
+    if 31 <= strain <= 60:
+        return "Your stomach churns and your vision blurs slightly. Another potion could make things worse."
+
+    if 61 <= strain <= 89:
+        return "You feel nauseous, weak, and unsteady. Drinking another potion is risky."
+
+    return "You are extremely sick. Your body is rejecting the toxins. Drinking another potion could make you faint."
+
+
+# New function: use_potion
+def use_potion(user_id: int, potion_name: str):
+    """
+    Uses a potion:
+    - Resolves potion
+    - Fetches effect + strain from recipe
+    - Rolls strain risk
+    - Applies effect if successful
+    """
+
+    ok, result = resolve_potion(potion_name)
+    if not ok:
+        return result
+
+    potion_key = result
+    recipe = POTION_RECIPES.get(potion_key)
+
+    effect_name = recipe.get("effect")
+    strain_amount = recipe.get("strain")
+
+    if effect_name is None or strain_amount is None:
+        return "This potion has no effect."
+
+    with Session() as session:
+        # Get current strain
+        effect_row = (
+            session.query(UserEffects)
+            .filter(UserEffects.user_id == user_id)
+            .first()
+        )
+
+        current_strain = effect_row.strain if effect_row else 0
+
+        # Roll risk
+        if not roll_strain_risk(current_strain):
+            return "You attempt to drink the potion, but your body violently rejects it. You collapse to the ground as darkness takes you. The potion is wasted."
+
+        # Apply effect
+        apply_user_effect(
+            session=session,
+            user_id=user_id,
+            effect_name=effect_name,
+            strain=strain_amount,
+            expire_at=recipe.get("expire_at")
+        )
+
+        session.commit()
+        return f"You drink the potion and feel its effects: {effect_name}"
