@@ -1,0 +1,88 @@
+{
+  "title": "🔮 Alchemy System Guide",
+  "color": "purple",
+  "footer": "Veyra • Alchemy Help • Tip: Use !details potions",
+  "pages": [
+    {
+      "title": "🔮 Alchemy Overview",
+      "description": "Alchemy lets you brew potions that grant powerful status effects.\n\nPotions provide strong buffs but increase **Strain**, which raises the chance future potions fail.\n\nFor exact potion recipes and effects, use:\n`!details potions`",
+      "fields": [
+        {
+          "name": "Core Idea",
+          "value": "• Brew potions using ingredients\n• Drink potions to gain effects\n• Manage Strain so your body doesn’t reject potions",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⚗️ Brewing Stand",
+      "description": "You must own a **Brewing Stand** to brew potions.\n\nYour Brewing Stand level limits what tier of potion you can craft.",
+      "fields": [
+        {
+          "name": "Stand Tiers",
+          "value": "Level 1 → Tier 1 potions\nLevel 2 → Tier 1-2 potions\nLevel 3 → Tier 1-3 potions",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧪 Brewing Commands",
+      "description": "Use the brewing command:",
+      "fields": [
+        {
+          "name": "Brew Potion",
+          "value": "`/brew <potion name or id>`",
+          "inline": false
+        },
+        {
+          "name": "Unlock Brewing Stand",
+          "value": "`!unlock Brewing Stand`",
+          "inline": false
+        },
+        {
+          "name": "Check your status",
+          "value": "`!check status`",
+          "inline": false
+        },
+        {
+          "name": "Using your potions",
+          "value": "`!use <potion name>`\neg: !use Potion Of Faster Recovery I",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "✨ Effects System",
+      "description": "Potions apply status effects to you.",
+      "fields": [
+        {
+          "name": "Rules",
+          "value": "• Only one active effect at a time\n• New effect overwrites old effect\n• Effects may expire\n• Some effects are infinite",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "☣️ Strain System",
+      "description": "Strain represents how poisoned your body is from potion usage.",
+      "fields": [
+        {
+          "name": "How It Works",
+          "value": "• Strain range: 0 - 100\n• Strain value = % chance potion fails\n• At 100 strain → potion always fails\n• Strain slowly decreases over time",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📌 Important Notes",
+      "description": "Things players should remember:",
+      "fields": [
+        {
+          "name": "Notes",
+          "value": "• Failed strain roll wastes the potion\n• Expired effects automatically deactivate\n• Stronger potions usually add more strain",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}

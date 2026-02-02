@@ -1,0 +1,88 @@
+{
+  "title": "🧪 Potion Guide",
+  "color": "purple",
+  "footer": "Veyra • Alchemy & Brewing • Tip: Strong potions win economies and wars",
+  "pages": [
+
+    {
+      "title": "⚡ Potion Of Faster Recovery I",
+      "description": "**Effect:** ENERGY REGEN ELITE\n\nYour body surges with unstable vitality, doubling your natural energy regeneration.",
+      "fields": [
+        { "name": "Expire", "value": "18 Hours", "inline": true },
+        { "name": "Strain", "value": "35", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nCoal x4\nCopper Ore x6\nDeer Horn x2", "inline": false }
+      ]
+    },
+
+    {
+      "title": "⚡ Potion Of Faster Recovery II",
+      "description": "**Effect:** ENERGY REGEN DEMON\n\nA violent flow of power floods your veins, granting **5x energy regeneration**.",
+      "fields": [
+        { "name": "Expire", "value": "10 Hours", "inline": true },
+        { "name": "Strain", "value": "52", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nCoal x5\nCopper Bar x2\nIron Ore x6\nMana Berrries x2", "inline": false }
+      ]
+    },
+
+    {
+      "title": "⚡ Potion Of Faster Recovery III",
+      "description": "**Effect:** ENERGY SURGE DIVINE\n\nDivine energy erupts instantly, restoring **150–200 random energy** on use.",
+      "fields": [
+        { "name": "Expire", "value": "Permanent", "inline": true },
+        { "name": "Strain", "value": "75", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nCoal x11\nIron Bar x1\nSilver Ore x6\nDragon Egg x1", "inline": false }
+      ]
+    },
+
+    {
+      "title": "🍀 Potion Of Luck I",
+      "description": "**Effect:** LUCK OF THE ABYSS\n\nThe next time you perform a **Thief job**, success chance becomes **90%**, and max steal cap increases to **500g**.",
+      "fields": [
+        { "name": "Expire", "value": "24 Hours", "inline": true },
+        { "name": "Strain", "value": "32", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nRabbit Foot x1\nScraps x4", "inline": false }
+      ]
+    },
+
+    {
+      "title": "🍀 Potion Of Luck II",
+      "description": "**Effect:** GAMBLER'S FATE\n\nWhen you next **lose a gamble**, **10% of your chips are refunded**.",
+      "fields": [
+        { "name": "Expire", "value": "24 Hours", "inline": true },
+        { "name": "Strain", "value": "62", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nRabbit Foot x4\nSlime in jar x2\nApples x7", "inline": false }
+      ]
+    },
+
+    {
+      "title": "🍀 Potion Of Luck III",
+      "description": "**Effect:** TREASURE LORD AURA\n\nYour **Iron Box** transforms into either:\n• Platinum Box (60%)\n• Stone Box (40%)",
+      "fields": [
+        { "name": "Expire", "value": "24 Hours", "inline": true },
+        { "name": "Strain", "value": "70", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nRabbit Foot x8\nShiny Rugs x5\nAncient Cheese x10\nAbyssal Feather x3", "inline": false }
+      ]
+    },
+
+    {
+      "title": "💖 Potion Of Love I",
+      "description": "**Effect:** HEARTBOUND DOMINION\n\nA symbolic potion used to express affection, devotion, or obsession toward another player.",
+      "fields": [
+        { "name": "Expire", "value": "1 Hour", "inline": true },
+        { "name": "Strain", "value": "12", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nApples x20\nRare Candy x9\nLanter x5", "inline": false }
+      ]
+    },
+
+    {
+      "title": "💀 Potion Of Hatred I",
+      "description": "**Effect:** MALEVOLENT STRAIN\n\nA symbolic potion used to express hatred, spite, or declaration of enmity.",
+      "fields": [
+        { "name": "Expire", "value": "Permanent", "inline": true },
+        { "name": "Strain", "value": "42", "inline": true },
+        { "name": "Recipe", "value": "Empty Flask x1\nCoal x9\nIron Ore x16\nSilver Ore x20", "inline": false }
+      ]
+    }
+
+  ]
+}
