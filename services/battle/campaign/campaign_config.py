@@ -70,35 +70,40 @@ CAMPAIGN_LEVELS = {
         "weapon": "bardoksclaymore",
         "spell": "nightfall",
         "bonus_hp": 10,
-        "bonus_mana": 5
+        "bonus_mana": 5,
+        "lore": "Veyra watches in silence... then steps forward. She places her Grimoire and forbidden spell into your hands. \"You have proven your strength.\" The guard snaps. You do not deserve her favor. Rage burns in his eyes as he steps into the arena to prove her wrong."
     },
     12: {
         # Earthquake control phase
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
         "bonus_hp": 5,
-        "bonus_mana": 15
+        "bonus_mana": 15,
+        "lore": "The guard slams his weapon into the ground. The earth itself answers his fury. Cracks spread beneath your feet as he learns the art of Earthquake."
     },
     13: {
         # Sustained earthquake pressure
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
         "bonus_hp": 10,
-        "bonus_mana": 5
+        "bonus_mana": 5,
+        "lore": "His fury sharpens into hatred. Every repeated move irritates him. If you use the same stance twice in a row, his attack will rise."
     },
     14: {
         # Peak Bardok rage
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
         "bonus_hp": 20,
-        "bonus_mana": 10
+        "bonus_mana": 10,
+        "lore": "His rage reaches its peak. Flames erupt across the battlefield. The arena becomes living lava. Heat and fire surround you."
     },
     15: {
         # Frozen judgment
         "weapon": "moonslasher",
         "spell": "fireball",
         "bonus_hp": 30,
-        "bonus_mana": 15
+        "bonus_mana": 15,
+        "lore": "Suddenly... silence. The flames vanish. Ice spreads across the arena. The guard exhales slowly. He is calm now. The cold will not be merciful."
     }
 }
 

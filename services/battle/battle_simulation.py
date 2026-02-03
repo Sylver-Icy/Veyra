@@ -12,7 +12,7 @@ from services.battle.loadout_services import fetch_loadout
 from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
 from services.battle.campaign.bardok_ai import BardokAI
-from services.battle.arena_class import LavaArena, FrozenArena, NullArena
+from services.battle.arena_class import LavaArena, FrozenArena, NullArena, IrritationArena
 from services.economy_services import add_gold
 from services.users_services import inc_battles_won
 
@@ -208,7 +208,9 @@ async def start_campaign_battle(ctx, player: discord.User):
     bm = BattleManager(p1, p2)
 
     # Assign arena based on campaign stage
-    if stage == 14:
+    if stage == 13:
+        bm.arena = IrritationArena()
+    elif stage == 14:
         bm.arena = LavaArena()
     elif stage == 15:
         bm.arena = FrozenArena()

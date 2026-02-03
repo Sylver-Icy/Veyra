@@ -24,6 +24,7 @@ from services.battle.campaign.campaign_services import (
     fetch_veyra_loadout,
     get_campaign_stage,
 )
+from services.battle.campaign.campaign_config import CAMPAIGN_LEVELS
 
 
 class Battle(commands.Cog):
@@ -109,10 +110,14 @@ class Battle(commands.Cog):
     async def campaign(self, ctx):
         """Start a campaign (PvE) fight against Veyra."""
         stage = get_campaign_stage(ctx.author.id)
-        if stage >=10:
-            npc_name = "Veyra"
-        else:
-            npc_name = "Bardok"
+
+        npc_name = "Veyra" if stage <= 10 else "Bardok"
+
+        level_data = CAMPAIGN_LEVELS.get(stage, {})
+        weapon_name = level_data.get("weapon", "Unknown")
+        spell_name = level_data.get("spell", "Unknown")
+        lore = level_data.get("lore", "")
+
         # Stage 11 is treated as campaign completion.
         if stage == 16:
             await ctx.respond(
@@ -121,12 +126,12 @@ class Battle(commands.Cog):
             )
             return
 
-        loadout = fetch_veyra_loadout(ctx.author.id)
         await ctx.respond(
-            "⚔️ Campaign battle starting... "
+            "⚔️ Campaign battle starting...\n"
             f"Stage {stage}\n"
-            f"{npc_name}'s Weapon: {loadout['weapon']}\n"
-            f"{npc_name}'s Spell: {loadout['spell']}"
+            f"{npc_name}'s Weapon: {weapon_name}\n"
+            f"{npc_name}'s Spell: {spell_name}\n"
+            + (f"\n📜 {lore}" if lore else "")
         )
 
         await start_campaign_battle(ctx, ctx.author)

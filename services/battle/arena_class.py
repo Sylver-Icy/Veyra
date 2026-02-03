@@ -29,7 +29,8 @@ class LavaArena(BattleArea):
     def on_round_start(self, battle_manager):
         player = battle_manager.p1
         player.hp -= 3
-        return "🔥 The lava scorches you for 3 HP."
+        return "The lava scorches you for 3 HP 🔥"
+
 
 
 class FrozenArena(BattleArea):
@@ -41,6 +42,26 @@ class FrozenArena(BattleArea):
         player = battle_manager.p1
         player.frost += 1
         return "❄ Freezing wind adds 1 Frost stack."
+
+
+# New Arena: IrritationArena
+class IrritationArena(BattleArea):
+    """
+    If the player uses the same stance twice in a row,
+    Bardok gains +5 attack.
+    """
+
+    def on_round_start(self, battle_manager):
+        player = battle_manager.p1
+        enemy = battle_manager.p2
+
+        history = list(player.move_history)
+
+        if len(history) >= 2 and history[-1] == history[-2]:
+            enemy.attack += 5
+            return "Bardok grows irritated by your predictability and gains +5 Attack."
+
+        return None
 
 
 class NullArena(BattleArea):
