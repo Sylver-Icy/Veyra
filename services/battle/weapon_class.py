@@ -31,7 +31,7 @@ class MoonSlasher(Weapon):
         super().__init__(name, attack_bonus=attack_bonus, hp_bonus=hp_bonus, defense_bonus=defense_bonus, speed_bonus=speed_bonus, mana_bonus=mana_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
-        defender.frost += 3
+        defender.frost += 4
         return f"The Moon Slasher passive: {defender.name} started feeling chills.. Frost building up!"
 
 class EternalTome(Weapon):
@@ -76,3 +76,18 @@ class VeyrasGrimoire(Weapon):
         caster.hp -= 5
         caster.mana += 4
         return "Veyra's Grimoire passive: +4 mana, -5 HP"
+
+class BardoksClaymore(Weapon):
+    def __init__(self, name="Bardok's Claymore", attack_bonus=10, defense_bonus=-10, speed_bonus=-2):
+        super().__init__(
+            name,
+            attack_bonus=attack_bonus,
+            defense_bonus=defense_bonus,
+            speed_bonus=speed_bonus
+        )
+
+    def on_attack_success(self, attacker, defender, damage):
+        if attacker.origin == "bardok":
+            attacker.hp += 4
+            return "Bardok's Claymore passive: Bardok siphons vitality and heals 4 HP"
+        return "Bardok's Claymore trembles in your hands... it refuses to awaken."

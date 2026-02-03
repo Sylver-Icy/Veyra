@@ -1,5 +1,3 @@
-
-
 {
   "title": "🧰 Loadout Guide (Weapons + Spells)",
   "color": "blurple",
@@ -32,7 +30,7 @@
       "fields": [
         {
           "name": "Available Weapons",
-          "value": "• Training Blade\n• The Moon Slasher\n• Dark Blade\n• Elephant Hammer\n• Eternal Tome\n• Veyra’s Grimoire ⭐\n\n⭐ Some gear may be campaign/unlock gated.",
+          "value": "• Training Blade\n• The Moon Slasher\n• Dark Blade\n• Elephant Hammer\n• Eternal Tome\n• Veyra’s Grimoire ⭐\n• Bardok’s Claymore ⭐",
           "inline": false
         },
         {
@@ -169,12 +167,33 @@
       ]
     },
     {
+      "title": "🪓 Bardok’s Claymore ⭐",
+      "description": "**Type:** Brutal lifesteal / glass cannon\n\nBardok’s Claymore is a cursed greatsword that feeds on violence. It only reveals its true power in Bardok’s hands.",
+      "fields": [
+        {
+          "name": "Stat Bonuses",
+          "value": "• Attack Bonus: **+10**\n• HP Bonus: +0\n• Defense Bonus: **-10**\n• Speed Bonus: **-2**\n• Mana Bonus: +0",
+          "inline": false
+        },
+        {
+          "name": "Passive",
+          "value": "✅ **On Attack success (Bardok only):** Bardok heals **4 HP**.\n\nIf a player equips this weapon, the blade refuses to awaken.",
+          "inline": false
+        },
+        {
+          "name": "Playstyle",
+          "value": "All-in aggression. Bardok trades survivability for raw damage and lifesteal.",
+          "inline": false
+        }
+      ]
+    },
+    {
       "title": "🔮 Spells Overview",
       "description": "Spells are used with the **Cast** stance and cost Mana.\nIf you cast without thinking, you’ll run out of mana and become a sitting duck.",
       "fields": [
         {
           "name": "Available Spells",
-          "value": "• Fireball\n• Nightfall\n• Heavyshot\n• Erdtree Blessing\n• Frostbite\n• Veil of Darkness ⭐",
+          "value": "• Fireball\n• Nightfall\n• Heavyshot\n• Erdtree Blessing\n• Frostbite\n• Veil of Darkness ⭐\n• Earthquake ⭐",
           "inline": false
         },
         {
@@ -306,6 +325,27 @@
         {
           "name": "Pairs Well With",
           "value": "Elephant Hammer, Training Blade, Veyra’s Grimoire",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🌍 Earthquake ⭐",
+      "description": "**Mana Cost:** 13\n\nEarthquake is a control spell that shatters defenses and slows the enemy.",
+      "fields": [
+        {
+          "name": "Effect",
+          "value": "• Deals **5 damage**\n• Sets target **Defense to 0**\n• Reduces target **Speed by 3**",
+          "inline": false
+        },
+        {
+          "name": "How to use",
+          "value": "Cast early to cripple tanky opponents.",
+          "inline": false
+        },
+        {
+          "name": "Pairs Well With",
+          "value": "Bardok’s Claymore, Dark Blade",
           "inline": false
         }
       ]

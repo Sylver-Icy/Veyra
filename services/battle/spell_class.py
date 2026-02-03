@@ -84,7 +84,7 @@ class FrostBite(Spell):
         if not ok:
             return ok, msg
 
-        target.frost += 6
+        target.frost += 5
         target.speed -= 1
 
         return True, f"{caster.name} blew a chilly wind of ice {target.name} speed lowered coz of shivering cold and frost is building up"
@@ -103,3 +103,21 @@ class VeilOfDarkness(Spell):
         caster.status_effect["veilofdarkness"] = duration
 
         return True, f"{caster.name} Created a very dense veil Of darkness"
+
+class Earthquake(Spell):
+    def __init__(self):
+        super().__init__("Earthquake", 13)
+
+    def cast(self, caster, target):
+        ok, msg = super().cast(caster, target)
+
+        if not ok:
+            return ok, msg
+
+        dmg = 5
+        target.hp -= dmg
+
+        target.defense = 0
+        target.speed -= 3
+
+        return True, f"{caster.name} smashes the ground causing an Earthquake! {target.name} takes {dmg} damage, defense shattered and speed reduced"

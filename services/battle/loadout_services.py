@@ -8,14 +8,14 @@ from database.sessionmaker import Session
 
 from models.users_model import BattleLoadout
 
-from services.battle.campaign.campaign_services import allow_campaign_weapons
+from services.battle.campaign.campaign_services import get_campaign_stage
 
 
 # Allowed weapons players can equip (alpha set)
-allowed_weapons = ("elephanthammer", "moonslasher", "trainingblade", "eternaltome", "veyrasgrimoire", "darkblade")
+allowed_weapons = ("elephanthammer", "moonslasher", "trainingblade", "eternaltome", "veyrasgrimoire", "darkblade", "bardoksclaymore")
 
 # Allowed spells players can equip (alpha set)
-allowed_spells = ("fireball", "nightfall", "heavyshot", "erdtreeblessing", "frostbite", "veilofdarkness")
+allowed_spells = ("fireball", "nightfall", "heavyshot", "erdtreeblessing", "frostbite", "veilofdarkness", "earthquake")
 
 def _normalize_input(value: str) -> str:
     """
@@ -26,8 +26,6 @@ def _normalize_input(value: str) -> str:
     return value.lower().replace(" ", "").replace("_", "")
 
 def update_loadout(user_id: int, weapon: str, spell: str):
-    weapon_key = _normalize_input(weapon)
-    spell_key = _normalize_input(spell)
     """
     Update or create a player's battle loadout.
 
@@ -36,6 +34,9 @@ def update_loadout(user_id: int, weapon: str, spell: str):
     - Creates a new loadout row if user has none
     Returns a status message for the user.
     """
+    weapon_key = _normalize_input(weapon)
+    spell_key = _normalize_input(spell)
+    
     # Validate user input before touching the database
     if weapon_key not in allowed_weapons:
         return f"{weapon} is incorrect pick among {allowed_weapons}"
@@ -44,14 +45,16 @@ def update_loadout(user_id: int, weapon: str, spell: str):
         return f"{spell} bruh what kinda incantations you tryna do ?? pick from {allowed_spells}"
 
     if spell_key == "veilofdarkness":
-        # Check if user has access to campaign weapons/spells
-        if not allow_campaign_weapons(user_id):
-            return "*Veil of Darkness* is a campaign spell. Complete the `/campaign` to unlock it!"
+        if get_campaign_stage(user_id) < 10:
+            return "*Veil of Darkness* is a campaign spell. Reach campaign stage 10 to unlock it!"
 
     if weapon_key == "veyrasgrimoire":
-        # Check if user has access to campaign weapons/spells
-        if not allow_campaign_weapons(user_id):
-            return "*Veyra's Grimoire* is a campaign weapon. Complete the `/campaign` to unlock it!"
+        if get_campaign_stage(user_id) < 10:
+            return "*Veyra's Grimoire* is a campaign weapon. Reach campaign stage 10 to unlock it!"
+
+    if weapon_key == "bardoksclaymore":
+        if get_campaign_stage(user_id) < 15:
+            return "*Bardok's Claymore* is unlocked at campaign stage 15!"
 
     # Open DB session and fetch existing loadout
     with Session() as session:

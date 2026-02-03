@@ -64,6 +64,41 @@ CAMPAIGN_LEVELS = {
         "spell": "veilofdarkness",
         "bonus_hp": 25,
         "bonus_mana": 10
+    },
+    11: {
+        # Bardok introduction – curse & pressure
+        "weapon": "bardoksclaymore",
+        "spell": "nightfall",
+        "bonus_hp": 10,
+        "bonus_mana": 5
+    },
+    12: {
+        # Earthquake control phase
+        "weapon": "bardoksclaymore",
+        "spell": "earthquake",
+        "bonus_hp": 5,
+        "bonus_mana": 15
+    },
+    13: {
+        # Sustained earthquake pressure
+        "weapon": "bardoksclaymore",
+        "spell": "earthquake",
+        "bonus_hp": 10,
+        "bonus_mana": 5
+    },
+    14: {
+        # Peak Bardok rage
+        "weapon": "bardoksclaymore",
+        "spell": "earthquake",
+        "bonus_hp": 20,
+        "bonus_mana": 10
+    },
+    15: {
+        # Frozen judgment
+        "weapon": "moonslasher",
+        "spell": "fireball",
+        "bonus_hp": 30,
+        "bonus_mana": 15
     }
 }
 
@@ -77,5 +112,10 @@ REWARD_CHART = {
     7: {180: 5},
     8:{178: 2},
     9: {179: 1},
-    10: {"Unlock": 0} #Unlocks Veyra's sig weapon and spell
+    10: {"Unlock": 0}, #Unlocks Veyra's sig weapon and spell
+    11: {193: 1}, #Potion of energy regen II
+    12: {157: 5}, #Flasks
+    13: {180: 3}, #Hint Key
+    14: {197: 2}, #Potion of luck III
+    15: {199: 1}, #Potion of hatred
 }

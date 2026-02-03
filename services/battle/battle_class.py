@@ -19,7 +19,7 @@ class Battle:
 
     def __init__(self, name, spell: Spell, weapon: Weapon):
         self.attack = 5 + weapon.attack_bonus
-        self.defense = 0 + weapon.defense_bonus
+        self.defense = 10 + weapon.defense_bonus
         self.speed = 10 + weapon.speed_bonus
         self.hp = 40 + weapon.hp_bonus
         self.mana = 10 + weapon.mana_bonus
@@ -32,6 +32,7 @@ class Battle:
         self.can_heal = True
         self.log = []
         self.regen_state = 'hp'
+        self.origin = "player"
         # Track recent moves for AI pattern analysis
         self.move_history = deque(maxlen=5)
 

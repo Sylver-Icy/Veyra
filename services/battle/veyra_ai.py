@@ -1,18 +1,15 @@
-import random
-from collections import deque
-
 from services.battle.weapon_class import ElephantHammer, MoonSlasher
-from services.battle.spell_class import FrostBite
+from services.battle.campaign.npcai import BaseAI
 
 spell_effects_on_player = ["nightfall"]
 spell_effects_on_veyra = ["veilofdarkness"]
-class VeyraAI:
-    def __init__(self, difficulty="normal", veyra = None, player = None):
+class VeyraAI(BaseAI):
+    def __init__(self, difficulty="normal", veyra=None, player=None):
+        super().__init__(fighter=veyra, opponent=player)
         self.difficulty = difficulty
         self.veyra = veyra
         self.player = player
-        if not hasattr(self.player, "move_history"):
-            self.player.move_history = deque(maxlen=5)
+
         self.attack_weight = 0
         self.block_weight = 0
         self.counter_weight = 0
@@ -103,13 +100,10 @@ class VeyraAI:
 
 
         # --- FINAL DECISION ---
-        return random.choices(
-            ["attack", "block", "counter", "recover", "cast"],
-            weights=[
-                self.attack_weight,
-                self.block_weight,
-                self.counter_weight,
-                self.recover_weight,
-                self.cast_weight
-            ]
-        )[0]
+        return self.weighted_choice([
+            self.attack_weight,
+            self.block_weight,
+            self.counter_weight,
+            self.recover_weight,
+            self.cast_weight
+        ])

@@ -190,17 +190,16 @@ async def start_campaign_battle(ctx, player: discord.User):
     p1 = Battle(player.name, spell_map[spell](), weapon_map[weapon]())
 
     veyra_loadout = fetch_veyra_loadout(player.id)
-    print(veyra_loadout)
     weapon_cls = weapon_map[veyra_loadout["weapon"]]
     spell_cls = spell_map[veyra_loadout["spell"]]
 
-    print(weapon_cls, spell_cls)
 
     p2 = Battle("Veyra", spell_cls(), weapon_cls())
 
     p2.hp += veyra_loadout.get("bonus_hp", 0)
     p2.mana += veyra_loadout.get("bonus_mana", 0)
-    print(p2.hp, p2.mana)
+
+
     bm = BattleManager(p1, p2)
 
     ai = VeyraAI(
