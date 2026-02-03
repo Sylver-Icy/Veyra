@@ -77,7 +77,7 @@ CAMPAIGN_LEVELS = {
         # Earthquake control phase
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
-        "bonus_hp": 5,
+        "bonus_hp": 15,
         "bonus_mana": 15,
         "lore": "The guard slams his weapon into the ground. The earth itself answers his fury. Cracks spread beneath your feet as he learns the art of Earthquake."
     },
@@ -85,7 +85,7 @@ CAMPAIGN_LEVELS = {
         # Sustained earthquake pressure
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
-        "bonus_hp": 10,
+        "bonus_hp": 15,
         "bonus_mana": 5,
         "lore": "His fury sharpens into hatred. Every repeated move irritates him. If you use the same stance twice in a row, his attack will rise."
     },
@@ -93,7 +93,7 @@ CAMPAIGN_LEVELS = {
         # Peak Bardok rage
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
-        "bonus_hp": 20,
+        "bonus_hp": 15,
         "bonus_mana": 10,
         "lore": "His rage reaches its peak. Flames erupt across the battlefield. The arena becomes living lava. Heat and fire surround you."
     },
@@ -117,7 +117,7 @@ REWARD_CHART = {
     7: {180: 5},
     8:{178: 2},
     9: {179: 1},
-    10: {"Unlock": 0}, #Unlocks Veyra's sig weapon and spell
+    10: {"Unlock 1": 0}, #Unlocks Veyra's sig weapon and spell
     11: {193: 1}, #Potion of energy regen II
     12: {157: 5}, #Flasks
     13: {180: 3}, #Hint Key

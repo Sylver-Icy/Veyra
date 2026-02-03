@@ -54,13 +54,13 @@ def advance_campaign_stage(user_id: int) -> None:
     Advance the user's campaign stage by one.
 
     Notes:
-        - Campaign stages are capped at stage 10.
+        - Campaign stages are capped at stage 15.
         - This function must only be called after a confirmed campaign victory.
     """
     with Session() as session:
         user = session.get(User, user_id)
         if user:
-            if user.campaign_stage < 11:
+            if user.campaign_stage < 16:
                 user.campaign_stage += 1
             session.commit()
 
@@ -107,15 +107,23 @@ def stage_reward_details(user_id: int):
     if key == "Gold":
         return f"You won {value}× {GOLD_EMOJI}!"
 
-    if key == "Unlock":
+    if key == "Unlock 1":
         return (
             "You have proven yourself a warrior beyond doubt.\n"
             "As acknowledgment of your strength, I grant you my signature grimoire "
             "and the spell bound within it."
         )
+    if key == 199:
+        return (
+            "Bardok stands frozen in silence. The fire in his eyes fades.\n"
+            "He turns away in shame, his pride shattered for ever doubting your strength.\n\n"
+            "His massive claymore falls to the ground with a heavy clang.\n"
+            "Beside it rests a swirling vial — a Potion of Hatred I.\n\n"
+            "You claim the relics of a defeated legend."
+        )
+
     with Session() as session:
         item = session.get(Items, key)
-
     return f"You received {value}× {item.item_name}!"
 
 
