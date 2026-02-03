@@ -1,6 +1,10 @@
 from services.battle.campaign.npcai import BaseAI
 
+from services.battle.weapon_class import BardoksClaymore, MoonSlasher
+from services.battle.spell_class import Earthquake, FrostBite
 
+
+spell_effects_on_player = ["nightfall"]
 class BardokAI(BaseAI):
     """
     Aggressive, pressure-focused AI.
@@ -12,40 +16,107 @@ class BardokAI(BaseAI):
         self.bardok = bardok
         self.player = player
         self.stage = stage
-        self.origin = "bardok"
+        self.bardok.origin = "bardok"
+        self.attack_weight = 0
+        self.block_weight = 0
+        self.counter_weight = 0
+        self.recover_weight = 0
+        self.cast_weight = 0
 
     def choose_move(self):
-        attack = 40
-        block = 35
-        counter = 10
-        recover = 15
-        cast = 0
+        # --- BASELINE (ALWAYS NON-ZERO) ---
+        self.attack_weight = 35
+        self.block_weight = 25
+        self.counter_weight = 15
+        self.recover_weight = 25
+        self.cast_weight = 0
 
+        # --- SPELL PRIORITY ---
+        if self.bardok.mana >= self.bardok.spell.mana_cost:
+            if any(effect in self.player.status_effect for effect in spell_effects_on_player):
+                self.attack_weight = 35
+                self.block_weight = 25
+                self.counter_weight = 15
+                self.recover_weight = 25
 
-        # If player is low HP -> finish them
-        if self.player.hp <= 25:
-            attack += 20
+            elif isinstance(self.bardok.spell, FrostBite) and self.player.frost <= 5:
+                self.attack_weight = 40
+                self.block_weight = 10
+                self.recover_weight = 5
+                self.cast_weight = 45
 
-        # If Bardok is low HP -> slight defensive bias
-        if self.bardok.hp <= 25:
-            block += 10
-            counter += 10
+            elif isinstance(self.bardok.spell, Earthquake):
+                if self.player.hp <=5:
+                    return "cast"
+                if self.player.defense >= 10:
+                    return "cast"
 
-        # Punish repeated player stances
+                self.attack_weight = 35
+                self.block_weight = 25
+                self.counter_weight = 15
+                self.recover_weight = 25
+
+            else:
+                return "cast"
+
+        # --- WEAPON-BASED BEHAVIOR ---
+        elif isinstance(self.bardok.weapon, MoonSlasher):
+            self.attack_weight = 60
+            self.block_weight = 25
+            self.counter_weight = 5
+            self.recover_weight = 20
+
+        elif isinstance(self.bardok.weapon, BardoksClaymore):
+            self.attack_weight = 60
+            self.block_weight = 20
+            self.counter_weight = 10
+            self.recover_weight = 10
+
+        # --- HP / STATE-BASED FALLBACKS ---
+        elif self.player.hp < 10:
+            self.attack_weight = 50
+            self.block_weight = 30
+            self.counter_weight = 10
+            self.recover_weight = 10
+
+        elif self.bardok.hp < 10:
+            self.attack_weight = 40
+            self.block_weight = 15
+            self.counter_weight = 30
+            self.recover_weight = 15
+
+        # --- PLAYER PATTERN BIAS (SPRINKLES ONLY) ---
         history = list(self.player.move_history)
-        if len(history) >= 2 and history[-1] == history[-2]:
-            counter += 25
-            attack += 10
 
-        # Stage-based tuning
+        if history:
+            attack_rate = history.count("attack") / len(history)
+            block_rate = history.count("block") / len(history)
+            counter_rate = history.count("counter") / len(history)
 
-        if self.stage >= 14:
-            attack += 15
+            if attack_rate > 0.6:
+                self.counter_weight += 20
+                self.block_weight += 10
+                self.recover_weight -= 10
 
+            if block_rate > 0.5:
+                self.recover_weight += 15
+
+            if counter_rate > 0.5:
+                self.attack_weight -= 15
+                self.recover_weight += 20
+
+        # --- IF ALL FAILS GACHA GO BRRRRR ---
+        else:
+            self.attack_weight = 25
+            self.block_weight = 25
+            self.counter_weight = 25
+            self.recover_weight = 25
+
+        # --- FINAL DECISION ---
         return self.weighted_choice([
-            attack,
-            block,
-            counter,
-            recover,
-            cast
+            self.attack_weight,
+            self.block_weight,
+            self.counter_weight,
+            self.recover_weight,
+            self.cast_weight
         ])

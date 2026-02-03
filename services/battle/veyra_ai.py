@@ -1,4 +1,5 @@
 from services.battle.weapon_class import ElephantHammer, MoonSlasher
+from services.battle.spell_class import FrostBite
 from services.battle.campaign.npcai import BaseAI
 
 spell_effects_on_player = ["nightfall"]
@@ -38,7 +39,7 @@ class VeyraAI(BaseAI):
                 self.counter_weight = 30
                 self.recover_weight = 15
 
-            elif self.player.frost <= 5:
+            elif isinstance(self.veyra.spell, FrostBite) and self.player.frost <= 5:
                 self.attack_weight = 40
                 self.block_weight = 5
                 self.cast_weight = 55

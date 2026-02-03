@@ -1,4 +1,4 @@
- # ---- Battle lock registry (prevents concurrent battles per user) ----
+# ---- Battle lock registry (prevents concurrent battles per user) ----
 ACTIVE_BATTLES = {}
 # services/discord_battle/battle_simulation.py
 import asyncio
@@ -6,15 +6,17 @@ import discord
 
 from services.battle.battle_class import Battle
 from services.battle.battlemanager_class import BattleManager
-from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite, VeilOfDarkness
-from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome, VeyrasGrimoire
+from services.battle.spell_class import Fireball, Heavyshot, ErdtreeBlessing, Nightfall, FrostBite, VeilOfDarkness, Earthquake
+from services.battle.weapon_class import TrainingBlade, MoonSlasher, DarkBlade, ElephantHammer, EternalTome, VeyrasGrimoire, BardoksClaymore
 from services.battle.loadout_services import fetch_loadout
 from services.battle.battle_view import BattleRoundView, PvEBattleRoundView
 from services.battle.veyra_ai import VeyraAI
+from services.battle.campaign.bardok_ai import BardokAI
+from services.battle.arena_class import LavaArena, FrozenArena, NullArena
 from services.economy_services import add_gold
 from services.users_services import inc_battles_won
 
-from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards, stage_reward_details
+from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards, stage_reward_details, get_campaign_stage
 
 from utils.embeds.battleembed import (
     build_round_embed,
@@ -31,7 +33,8 @@ weapon_map = {
     "darkblade": DarkBlade,
     "elephanthammer": ElephantHammer,
     "eternaltome": EternalTome,
-    "veyrasgrimoire": VeyrasGrimoire
+    "veyrasgrimoire": VeyrasGrimoire,
+    "bardoksclaymore": BardoksClaymore
 }
 
 spell_map = {
@@ -40,7 +43,8 @@ spell_map = {
     "erdtreeblessing": ErdtreeBlessing,
     "nightfall": Nightfall,
     "frostbite": FrostBite,
-    "veilofdarkness": VeilOfDarkness
+    "veilofdarkness": VeilOfDarkness,
+    "earthquake": Earthquake
 }
 async def start_battle_simulation(ctx, challenger: discord.User, target: discord.User, bet: int):
     """
@@ -193,23 +197,39 @@ async def start_campaign_battle(ctx, player: discord.User):
     weapon_cls = weapon_map[veyra_loadout["weapon"]]
     spell_cls = spell_map[veyra_loadout["spell"]]
 
+    stage = get_campaign_stage(player.id)
 
-    p2 = Battle("Veyra", spell_cls(), weapon_cls())
+    enemy_name = "Veyra" if stage <= 10 else "Bardok"
+    p2 = Battle(enemy_name, spell_cls(), weapon_cls())
 
     p2.hp += veyra_loadout.get("bonus_hp", 0)
     p2.mana += veyra_loadout.get("bonus_mana", 0)
 
-
     bm = BattleManager(p1, p2)
 
-    ai = VeyraAI(
-        difficulty="normal",
-        veyra=p2,
-        player=p1
-    ) # pass in battle participants to VeyraAI
+    # Assign arena based on campaign stage
+    if stage == 14:
+        bm.arena = LavaArena()
+    elif stage == 15:
+        bm.arena = FrozenArena()
+    else:
+        bm.arena = NullArena()
+
+    if stage <= 10:
+        ai = VeyraAI(
+            difficulty="normal",
+            veyra=p2,
+            player=p1
+        )
+    else:
+        ai = BardokAI(
+            bardok=p2,
+            player=p1,
+            stage=stage
+        )
 
     round_num = 1
-    round_embed = build_round_embed(round_num, p1, p2, player.name, "Veyra")
+    round_embed = build_round_embed(round_num, p1, p2, player.name, enemy_name)
 
     view = PvEBattleRoundView(
         player_id=player.id,
@@ -255,7 +275,7 @@ async def start_campaign_battle(ctx, player: discord.User):
             result_embed = build_result_embed(
                 round_num,
                 player.name,
-                "Veyra",
+                enemy_name,
                 p1_move,
                 p2_move,
                 result_text + (("\n" + "\n".join(penalty_notes)) if penalty_notes else ""),
@@ -271,11 +291,11 @@ async def start_campaign_battle(ctx, player: discord.User):
             await asyncio.sleep(RESULT_DISPLAY_TIME)
 
             if p1.hp <= 0:
-                final_embed = build_final_embed("Veyra", player.name, 0)
+                final_embed = build_final_embed(enemy_name, player.name, 0)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
-                final_embed = build_final_embed(player.name, "Veyra", 0)
+                final_embed = build_final_embed(player.name, enemy_name, 0)
                 await ctx.channel.send(embed=final_embed)
                 reward_string = stage_reward_details(player.id)
                 await ctx.followup.send(f"🏆 {player.name} advanced to the next campaign stage!\n{reward_string}")
@@ -284,7 +304,7 @@ async def start_campaign_battle(ctx, player: discord.User):
                 return
 
             round_num += 1
-            next_round_embed = build_round_embed(round_num, p1, p2, player.name, "Veyra")
+            next_round_embed = build_round_embed(round_num, p1, p2, player.name, enemy_name)
 
             view = PvEBattleRoundView(
             player_id=player.id,

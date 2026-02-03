@@ -109,9 +109,12 @@ class Battle(commands.Cog):
     async def campaign(self, ctx):
         """Start a campaign (PvE) fight against Veyra."""
         stage = get_campaign_stage(ctx.author.id)
-
+        if stage >=10:
+            npc_name = "Veyra"
+        else:
+            npc_name = "Bardok"
         # Stage 11 is treated as campaign completion.
-        if stage == 11:
+        if stage == 16:
             await ctx.respond(
                 "You have already completed the campaign. Well done, warrior!\n"
                 "Here some tea for ya 🍵 while you wait for new levels"
@@ -122,8 +125,8 @@ class Battle(commands.Cog):
         await ctx.respond(
             "⚔️ Campaign battle starting... "
             f"Stage {stage}\n"
-            f"Veyra's Weapon: {loadout['weapon']}\n"
-            f"Veyra's Spell: {loadout['spell']}"
+            f"{npc_name}'s Weapon: {loadout['weapon']}\n"
+            f"{npc_name}'s Spell: {loadout['spell']}"
         )
 
         await start_campaign_battle(ctx, ctx.author)

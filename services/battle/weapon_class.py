@@ -19,11 +19,11 @@ class Weapon():
 
 
 class TrainingBlade(Weapon):
-    def __init__(self, name = "Training Blade", attack_bonus=5):
+    def __init__(self, name = "Training Blade", attack_bonus=15):
         super().__init__(name, attack_bonus=attack_bonus)
 
     def on_attack_success(self, attacker, defender, damage):
-        attacker.attack += 1
+        attacker.attack += 11
         return f"Training Blade passive: {attacker.name}'s attack increased by 1"
 
 class MoonSlasher(Weapon):
