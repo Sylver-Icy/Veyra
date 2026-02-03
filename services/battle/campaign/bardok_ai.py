@@ -59,6 +59,29 @@ class BardokAI(BaseAI):
             else:
                 return "cast"
 
+        elif self.stage == 13:
+            # Player cannot repeat moves -> anticipate forced rotation
+            history = list(self.player.move_history)
+
+            if history:
+                last_move = history[-1]
+
+                # If player attacked last round -> likely forced to recover
+                if last_move == "attack":
+                    self.recover_weight += 80
+
+                # If player recovered last round -> likely forced to counter
+                elif last_move == "recover":
+                    self.counter_weight += 50
+
+                # If player blocked or countered last round -> likely forced to attack
+                elif last_move in ("block", "counter"):
+                    self.attack_weight += 30
+
+            # HARD PUNISH: if player same stance twice in a row
+            if len(history) >= 2 and history[-1] == "attack" and history[-2] == "attack":
+                self.attack_weight += 60
+            
         # --- WEAPON-BASED BEHAVIOR ---
         elif isinstance(self.bardok.weapon, MoonSlasher):
             self.attack_weight = 60

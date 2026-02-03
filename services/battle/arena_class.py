@@ -58,8 +58,8 @@ class IrritationArena(BattleArea):
         history = list(player.move_history)
 
         if len(history) >= 2 and history[-1] == history[-2]:
-            enemy.attack += 5
-            return "Bardok grows irritated by your predictability and gains +5 Attack."
+            enemy.attack += 20
+            return "Bardok grows irritated by your predictability and gains +20 Attack."
 
         return None
 
