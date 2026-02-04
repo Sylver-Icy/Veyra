@@ -225,7 +225,8 @@ class Battle:
     def proc_effect(self):
         expired = []
 
-        for effect, duration in list(self.status_effect.items()):
+        for effect, data in list(self.status_effect.items()):
+            duration = data["duration"]
 
             if effect == "largeheal":
                 if not self.can_heal:
@@ -252,8 +253,9 @@ class Battle:
                     setattr(self, chosen, new_val)
                     self.log.append(f"{self.name}'s {chosen} drops by {drop}")
 
-            self.status_effect[effect] -= 1
-            if self.status_effect[effect] <= 0:
+            self.status_effect[effect]["duration"] -= 1
+
+            if self.status_effect[effect]["duration"] <= 0:
                 expired.append(effect)
 
         for e in expired:

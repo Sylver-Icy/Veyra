@@ -85,7 +85,7 @@ CAMPAIGN_LEVELS = {
         # Sustained earthquake pressure
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
-        "bonus_hp": 15,
+        "bonus_hp": 5,
         "bonus_mana": 5,
         "lore": "His fury sharpens into hatred. Every repeated move irritates him. If you use the same stance twice in a row, his attack will rise."
     },
@@ -93,7 +93,7 @@ CAMPAIGN_LEVELS = {
         # Peak Bardok rage
         "weapon": "bardoksclaymore",
         "spell": "earthquake",
-        "bonus_hp": 15,
+        "bonus_hp": 5,
         "bonus_mana": 10,
         "lore": "His rage reaches its peak. Flames erupt across the battlefield. The arena becomes living lava. Heat and fire surround you."
     },
@@ -101,7 +101,7 @@ CAMPAIGN_LEVELS = {
         # Frozen judgment
         "weapon": "moonslasher",
         "spell": "fireball",
-        "bonus_hp": 30,
+        "bonus_hp": 10,
         "bonus_mana": 15,
         "lore": "Suddenly... silence. The flames vanish. Ice spreads across the arena. The guard exhales slowly. He is calm now. The cold will not be merciful."
     }

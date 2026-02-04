@@ -91,7 +91,10 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
         delivery_items = (
             session.execute(
                 select(Items)
-                .where(Items.item_rarity.in_(rarity_pool))
+                .where(
+                    Items.item_rarity.in_(rarity_pool),
+                    Items.item_usable.is_(False)
+                )
                 .order_by(func.random())
                 .limit(num_items)
             )

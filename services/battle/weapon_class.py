@@ -40,13 +40,26 @@ class EternalTome(Weapon):
 
     def on_spell_cast(self, caster, spell, target, result):
         if not result:
-            return
+            return None
 
-        # Increase duration of all active status effects on target by 2
-        if hasattr(target, "status_effect") and isinstance(target.status_effect, dict) and target.status_effect:
-            for eff in target.status_effect:
-                target.status_effect[eff] += 3
-            return f"Eternal Tome passive: All effect durations on {target.name} increased by 3"
+        extended = False
+
+        effect_containers = []
+
+        if hasattr(target, "status_effect") and target.status_effect:
+            effect_containers.append(target.status_effect)
+
+        if target != caster and hasattr(caster, "status_effect") and caster.status_effect:
+            effect_containers.append(caster.status_effect)
+
+        for container in effect_containers:
+            for eff, data in container.items():
+                if data.get("source") == caster:
+                    data["duration"] += 3
+                    extended = True
+
+        if extended:
+            return "Eternal Tome passive: Your spell effects last longer!"
         return None
 
 class ElephantHammer(Weapon):

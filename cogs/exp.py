@@ -9,6 +9,8 @@ from services.inventory_services import get_inventory
 from services.jobs_services import JobsClass
 from services.response_services import create_response
 from services.friendship_services import add_friendship
+from services.upgrade_services import building_lvl
+from domain.buildings.building_descriptions import get_building_description
 
 from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
 from utils.chatexp import add_exp_with_announcement
@@ -47,6 +49,30 @@ class Exp(commands.Cog):
         """
 
         val = value.lower()
+
+        # ──────────────────────────────
+        # BUILDINGS
+        # ──────────────────────────────
+        if val.startswith(("sme", "smelter")):
+            lvl = building_lvl(ctx.author.id, "smelter")
+            desc = get_building_description("smelter", lvl)
+            return await ctx.send(desc)
+
+        if val.startswith(("brew", "brewing")):
+            lvl = building_lvl(ctx.author.id, "brewing stand")
+            desc = get_building_description("brewing stand", lvl)
+            return await ctx.send(desc)
+
+        if val.startswith(("pock", "pockets")):
+            inv_lvl = building_lvl(ctx.author.id, "inventory")
+            pocket_lvl = building_lvl(ctx.author.id, "pockets")
+
+            inv_desc = get_building_description("inventory", inv_lvl)
+            pocket_desc = get_building_description("pockets", pocket_lvl)
+
+            return await ctx.send(
+                f"{inv_desc}\n{pocket_desc}"
+            )
 
         # ──────────────────────────────
         # WALLET

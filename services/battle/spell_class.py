@@ -39,7 +39,10 @@ class Nightfall(Spell):
             return ok, msg
 
         duration = 5
-        target.status_effect["nightfall"] = duration
+        target.status_effect["nightfall"] = {
+            "duration": duration,
+            "source": caster
+        }
 
 
         return True, f"{caster.name} curses {target.name} with Nightfall!"
@@ -70,7 +73,10 @@ class ErdtreeBlessing(Spell):
             return ok, msg
 
         duration = 4
-        caster.status_effect["largeheal"] = duration
+        caster.status_effect["largeheal"] = {
+            "duration": duration,
+            "source": caster
+        }
 
         return True, f"{caster.name} casted The Blessing of Erdtree"
 
@@ -100,9 +106,12 @@ class VeilOfDarkness(Spell):
             return ok, msg
 
         duration = 4
-        caster.status_effect["veilofdarkness"] = duration
+        caster.status_effect["veilofdarkness"] = {
+            "duration": duration,
+            "source": caster
+        }
 
-        return True, f"{caster.name} Created a very dense veil Of darkness"
+        return True, f"{caster.name} Created a very dense Veil Of Darkness"
 
 class Earthquake(Spell):
     def __init__(self):

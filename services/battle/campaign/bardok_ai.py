@@ -39,6 +39,11 @@ class BardokAI(BaseAI):
                 self.counter_weight = 15
                 self.recover_weight = 25
 
+            elif self.bardok.speed <= self.player.speed:
+                self.attack_weight = 40
+                self.block_weight = 15
+                self.cast_weight = 45
+
             elif isinstance(self.bardok.spell, FrostBite) and self.player.frost <= 5:
                 self.attack_weight = 40
                 self.block_weight = 10
@@ -81,7 +86,7 @@ class BardokAI(BaseAI):
             # HARD PUNISH: if player same stance twice in a row
             if len(history) >= 2 and history[-1] == "attack" and history[-2] == "attack":
                 self.attack_weight += 60
-            
+
         # --- WEAPON-BASED BEHAVIOR ---
         elif isinstance(self.bardok.weapon, MoonSlasher):
             self.attack_weight = 60
