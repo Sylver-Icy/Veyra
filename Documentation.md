@@ -236,11 +236,11 @@ Defined in `utils/usable_items.py`:
 | Bag of Gold | +100 Gold |
 | Bread | +100 Energy |
 | Hint Key | Activates hint in number guessing game |
-| Potion Of Faster Recovery I | Applies energy regeneration effect (via alchemy system) |
-| Potion Of Faster Recovery II | Applies energy regeneration effect (via alchemy system) |
+| Potion Of Faster Recovery I | Applies energy regeneration effect (+2 energy per regen tick for 18 hours) |
+| Potion Of Faster Recovery II | Applies energy regeneration effect (+5 energy per regen tick for 10 hours) |
 | Potion Of Faster Recovery III | +150-200 Energy instantly |
-| Potion Of Luck I | Applies luck effect (via alchemy system) |
-| Potion Of Luck II | Applies luck effect (via alchemy system) |
+| Potion Of Luck I | Applies luck effect (enhanced thief job: 90% success rate, 500g max steal for 24 hours) |
+| Potion Of Luck II | Applies luck effect (reduces casino losses by 10% for 24 hours) |
 | Potion Of Luck III | 60% chance to upgrade Iron Box → Platinum Box, 40% to downgrade to Stone Box |
 | Potion Of Love I | Cannot be used; gift to others to express love |
 | Potion Of Hatred I | Cannot be used; gift to others to express hate | |
@@ -576,7 +576,7 @@ Using potions accumulates **strain** on your body:
 - Each potion adds strain when consumed
 - Strain value (0-100) equals % chance next potion use fails
 - If a potion fails, it is wasted and has no effect
-- Strain decays by 1 point over time (scheduled decay)
+- Strain decays by 1 point every 25 minutes (scheduled decay)
 
 **Strain Status Messages:**
 - 0: "Your body feels normal. No lingering side effects remain."
@@ -885,7 +885,7 @@ Chips are a separate currency used exclusively in the casino:
 | Imperial Blast | 26,778g | 2,678 | +820 |
 | Dragon Jackpot | 30,000g | 3,000 | +1,285 |
 
-*Note: Only 5 packs are available per day via daily rotation.*
+*Note: Only 5 of the 10 packs are available each day. The selection rotates daily at midnight UTC.*
 
 #### Cashout Options (Examples)
 
@@ -902,7 +902,7 @@ Chips are a separate currency used exclusively in the casino:
 | Imperial Cashout | 8,000 | 40,000g | +13,600 |
 | Dragon Payday | 10,000 | 50,000g | +18,000 |
 
-*Note: Only 5 cashout options are available per day via daily rotation.*
+*Note: Only 5 of the 10 cashout options are available each day. The selection rotates daily at midnight UTC.*
 
 #### Casino Games
 
