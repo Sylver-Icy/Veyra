@@ -10,7 +10,7 @@ RARITY_REWARDS = {
     "Common": (10, 15),
     "Rare": (25, 32),
     "Epic": (71, 93),
-    "Legendary": (181, 321),
+    "Legendary": (781, 1321),
     "Paragon": (799, 1211),
 }
 

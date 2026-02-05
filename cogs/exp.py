@@ -132,7 +132,7 @@ class Exp(commands.Cog):
         # ──────────────────────────────
         # STATUS (EFFECT + STRAIN)
         # ──────────────────────────────
-        if val.startswith(("stat", "status")):
+        if val.startswith(("stat", "status", "str")):
 
             from database.sessionmaker import Session
             from services.alchemy_services import get_active_user_effect, get_strain_status

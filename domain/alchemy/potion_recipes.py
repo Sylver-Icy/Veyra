@@ -27,9 +27,9 @@ POTION_RECIPES = {
         "ingredients": {
             "Empty Flask": 1,
             "Coal": 5,
-            "Copper Bar": 2,
+            "Copper Ore": 30,
             "Iron Ore": 6,
-            "Mana Berries": 2
+            "Mana Berries": 4
         }
     },
 

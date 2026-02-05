@@ -323,7 +323,7 @@ Each round, players choose one of five stances:
 
 | Stance | Description |
 |--------|-------------|
-| **Attack** | Deal damage based on Attack stat.  Increases Attack by 1 on hit. |
+| **Attack** | Deal damage based on Attack stat.|
 | **Block** | Reduce incoming damage by 70%. Gain defense on success.  Fails if too slow.  |
 | **Counter** | Reflect 50% of damage if opponent attacks. Penalties if wrong guess. |
 | **Recover** | Regenerate HP or Mana (alternates). Only works if opponent is defensive. |
