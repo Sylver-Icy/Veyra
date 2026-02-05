@@ -23,6 +23,7 @@
    - [Combat System](#combat-system)
    - [Jobs System](#jobs-system)
    - [Crafting & Upgrades](#crafting--upgrades)
+   - [Alchemy System](#alchemy-system)
    - [Lootbox System](#lootbox-system)
    - [Quest System](#quest-system)
    - [Experience & Leveling](#experience--leveling)
@@ -176,6 +177,24 @@ The economy is gold-based with multiple sources and sinks to maintain balance.
 
 A `/leaderboard` command shows the top 10 richest users. Weekly leaderboards are posted automatically every Sunday at midnight UTC.
 
+#### Loan System
+
+Players can take loans to get quick gold, with repayment required within a set term.
+
+**Starter Loan:**
+- One-time loan available to all players
+- Amount: 2,000 gold
+- Repayment: 2,000 gold (no interest)
+- Term: 7 days
+- Use `/loan` to take, `!repayloan` to repay
+
+**Failure to Repay:**
+- Hurts your credit score
+- Locks you out of future loans
+- DM reminders sent 2 days before due date
+
+*Note: Additional loan types exist (Squire's Advance, Baron's Favor, etc.) with varying principal amounts, interest rates, and credit score requirements.*
+
 ---
 
 ### Inventory System
@@ -217,6 +236,14 @@ Defined in `utils/usable_items.py`:
 | Bag of Gold | +100 Gold |
 | Bread | +100 Energy |
 | Hint Key | Activates hint in number guessing game |
+| Potion Of Faster Recovery I | Applies energy regeneration effect (via alchemy system) |
+| Potion Of Faster Recovery II | Applies energy regeneration effect (via alchemy system) |
+| Potion Of Faster Recovery III | +150-200 Energy instantly |
+| Potion Of Luck I | Applies luck effect (via alchemy system) |
+| Potion Of Luck II | Applies luck effect (via alchemy system) |
+| Potion Of Luck III | 60% chance to upgrade Iron Box → Platinum Box, 40% to downgrade to Stone Box |
+| Potion Of Love I | Cannot be used; gift to others to express love |
+| Potion Of Hatred I | Cannot be used; gift to others to express hate | |
 
 #### Item Name Resolution
 
@@ -285,7 +312,7 @@ Veyra features a sophisticated turn-based combat system with PvP (1v1 battles) a
 |------|------------|-------------|
 | HP | 40 + weapon bonus | Health points; 0 = defeat |
 | Attack | 5 + weapon bonus | Damage output |
-| Defense | 0 + weapon bonus | Damage reduction percentage |
+| Defense | 10 + weapon bonus | Damage reduction percentage |
 | Speed | 10 + weapon bonus | Turn order; affects block/counter success |
 | Mana | 10 + weapon bonus | Required for casting spells |
 | Frost | 0 | Accumulates; at 10, triggers 50% HP damage |
@@ -346,7 +373,7 @@ Players can customize their weapon and spell:
 
 #### PvE Campaign
 
-Campaign Mode is a solo progression system where players fight against Veyra AI across 10 stages of increasing difficulty.  Each stage requires defeating Veyra to advance, with unique rewards granted upon completion.
+Campaign Mode is a solo progression system where players fight against AI opponents across 15 stages of increasing difficulty. Stages 1-10 feature Veyra as the opponent, while stages 11-15 introduce Bardok, a new challenging enemy. Each stage requires defeating the opponent to advance, with unique rewards granted upon completion.
 
 **Starting a Campaign Battle:**
 ```
@@ -354,14 +381,14 @@ Campaign Mode is a solo progression system where players fight against Veyra AI 
 ```
 
 **How Campaign Mode Works:**
-- Players fight Veyra using their own loadout (weapon + spell)
-- Veyra's loadout and stats are determined by your current campaign stage
+- Players fight using their own loadout (weapon + spell)
+- The opponent's loadout and stats are determined by your current campaign stage
 - Combat uses the same turn-based mechanics as PvP battles
-- Veyra is controlled by an AI that adapts its strategy based on its equipped weapon and your play patterns
-- Defeat Veyra to advance to the next stage and claim rewards
+- Veyra (stages 1-10) and Bardok (stages 11-15) are controlled by AI that adapts strategy based on equipped weapons and your play patterns
+- Defeat the opponent to advance to the next stage and claim rewards
 - You cannot start a new campaign battle while already in an active battle
 
-**Campaign Stages & Veyra's Loadout:**
+**Campaign Stages 1-10 (Veyra):**
 
 | Stage | Veyra's Weapon | Veyra's Spell | Bonus HP | Bonus Mana |
 |-------|----------------|---------------|----------|------------|
@@ -373,8 +400,18 @@ Campaign Mode is a solo progression system where players fight against Veyra AI 
 | 6 | Eternal Tome | Nightfall | +10 | +5 |
 | 7 | Training Blade | Heavyshot | +15 | +5 |
 | 8 | Dark Blade | Fireball | +15 | 0 |
-| 9 | Moon Slasher | Frostbite | +15 | +10 |
-| 10 | Veyra's Grimoire | Veil of Darkness | +10 | +5 |
+| 9 | Moon Slasher | Frostbite | +22 | +8 |
+| 10 | Veyra's Grimoire | Veil of Darkness | +25 | +10 |
+
+**Campaign Stages 11-15 (Bardok):**
+
+| Stage | Bardok's Weapon | Bardok's Spell | Bonus HP | Bonus Mana | Special Mechanic |
+|-------|-----------------|----------------|----------|------------|------------------|
+| 11 | Bardok's Claymore | Nightfall | +10 | +5 | - |
+| 12 | Bardok's Claymore | Earthquake | +15 | +15 | - |
+| 13 | Bardok's Claymore | Earthquake | +5 | +5 | Gains attack if you repeat the same stance |
+| 14 | Bardok's Claymore | Earthquake | +5 | +10 | Lava Arena: periodic fire damage |
+| 15 | Moon Slasher | Fireball | +10 | +15 | Frozen Arena: ice effects |
 
 **Campaign Rewards:**
 
@@ -390,17 +427,23 @@ Campaign Mode is a solo progression system where players fight against Veyra AI 
 | 8 | 2× Iron Box |
 | 9 | 1× Platinum Box |
 | 10 | **Unlocks Veyra's Grimoire & Veil of Darkness** |
+| 11 | 1× Potion of Energy Regen II |
+| 12 | 5× Flasks |
+| 13 | 3× Hint Key |
+| 14 | 2× Potion of Luck III |
+| 15 | **Unlocks Bardok's Claymore & Earthquake**, 1× Potion of Hatred |
 
 **Campaign Completion:**
 - Upon completing Stage 10, you unlock access to Veyra's signature weapon and spell for use in PvP battles
-- Once completed, attempting `/campaign` will display a completion message
+- Upon completing Stage 15, you unlock Bardok's Claymore weapon and Earthquake spell
+- Once Stage 15 is completed, attempting `/campaign` will display a completion message
 - Campaign progress is saved per-user in the database
 
 **Tips for Campaign:**
-- Early stages are easier with weaker Veyra stats (negative bonuses)
-- Stage difficulty ramps up with Veyra gaining HP/Mana bonuses
-- Study Veyra's weapon effects to anticipate her strategy (e.g., Moon Slasher builds Frost)
-- The final stage (10) introduces campaign-exclusive equipment you'll earn upon victory
+- Early stages are easier with weaker opponent stats (negative bonuses)
+- Stage difficulty ramps up with opponents gaining HP/Mana bonuses
+- Study opponent weapon effects to anticipate their strategy (e.g., Moon Slasher builds Frost)
+- Bardok stages (11-15) introduce new mechanics like arena effects and stance penalties
 
 ---
 
@@ -418,11 +461,11 @@ Jobs are energy-based activities that generate resources.
 
 | Job | Energy Cost | Rewards | Notes |
 |-----|-------------|---------|-------|
-| **Knight** | 80 | 40-90 gold | Reliable gold income |
+| **Knight** | 55 | 40-90 gold | Reliable gold income |
 | **Digger** | 70 | Lootboxes or 20 gold | See drop rates below |
 | **Miner** | 50 | Ores or 25 gold | See drop rates below |
-| **Thief** | 60 | Steal 10% of target's gold (max 150g) | 50% success rate; -30g fine on fail |
-| **Explorer** | 20 | Random Common/Rare item | 85% Common, 15% Rare |
+| **Thief** | 60 | Steal 10% of target's gold (max 150g) | 50% success rate; -30g fine on fail; target loses 1% fine (max 50g) |
+| **Explorer** | 20 | Random Common/Rare item | 85% Rare, 15% Common |
 
 **Digger Drop Rates:**
 - Gold: 27%
@@ -487,7 +530,7 @@ Convert raw ores into bars using the `/smelt` command.
 
 #### Building System
 
-Players can unlock and upgrade buildings (currently:  Smelter).
+Players can unlock and upgrade buildings (currently:  Smelter, Inventory, Pockets, Brewing Stand).
 
 **Commands:**
 ```
@@ -502,6 +545,55 @@ Players can unlock and upgrade buildings (currently:  Smelter).
 
 ---
 
+### Alchemy System
+
+The alchemy system allows players to craft potions with various effects using a Brewing Stand.
+
+#### Requirements
+
+- Players must own a **Brewing Stand** building (`!unlock brewing stand`)
+- Brewing Stand level determines which potion tiers can be crafted:
+  - Level 1: Tier 1 potions
+  - Level 2: Tier 1-2 potions
+  - Level 3: Tier 1-3 potions
+
+#### Available Potions
+
+| Potion | Tier | Effect | Duration | Strain | Key Ingredients |
+|--------|------|--------|----------|--------|-----------------|
+| Potion Of Faster Recovery I | 1 | +2 energy per regen tick | 18 hours | 35 | Flask, Coal, Copper Ore, Deer Horn |
+| Potion Of Faster Recovery II | 2 | +5 energy per regen tick | 10 hours | 52 | Flask, Coal, Copper Bar, Iron Ore, Mana Berries |
+| Potion Of Faster Recovery III | 3 | +150-200 energy instantly | Instant | 75 | Flask, Coal, Iron Bar, Silver Ore, Dragon Egg |
+| Potion Of Luck I | 1 | Enhanced thief job success (90% rate, 500g max) | 24 hours | 32 | Flask, Rabbit Foot, Scraps |
+| Potion Of Luck II | 2 | Reduces casino losses by 10% | 24 hours | 62 | Flask, Rabbit Foot, Slime in jar, Apples |
+| Potion Of Luck III | 3 | 60% chance to upgrade Iron Box → Platinum Box | Instant | 70 | Flask, Rabbit Foot, Shiny Rugs, Ancient Cheese, Abyssal Feather |
+| Potion Of Love I | 1 | Gift item (cannot be used by self) | 1 hour | 12 | Flask, Apples, Rare Candy, Lanter |
+| Potion Of Hatred I | 2 | Gift item (cannot be used by self) | - | 42 | Flask, Coal, Iron Ore, Silver Ore |
+
+#### Strain System
+
+Using potions accumulates **strain** on your body:
+- Each potion adds strain when consumed
+- Strain value (0-100) equals % chance next potion use fails
+- If a potion fails, it is wasted and has no effect
+- Strain decays by 1 point over time (scheduled decay)
+
+**Strain Status Messages:**
+- 0: "Your body feels normal. No lingering side effects remain."
+- 1-10: "You feel mostly fine. A slight dizziness lingers, but another potion should be safe."
+- 11-30: "Your head feels light and your body is warm. Drinking more might start to feel uncomfortable."
+- 31-60: "Your stomach churns and your vision blurs slightly. Another potion could make things worse."
+- 61-89: "You feel nauseous, weak, and unsteady. Drinking another potion is risky."
+- 90+: "You are extremely sick. Your body is rejecting the toxins. Drinking another potion could make you faint."
+
+**Commands:**
+```
+/brew <potion_name_or_id>   # Craft a potion
+!use <potion_name>          # Use a potion
+```
+
+---
+
 ### Lootbox System
 
 Lootboxes contain gold and random items based on rarity tiers.
@@ -510,10 +602,10 @@ Lootboxes contain gold and random items based on rarity tiers.
 
 | Box | Gold Range | Rolls | Drop Rates |
 |-----|------------|-------|------------|
-| **Wooden** | 3-12g | 1-2 (85%/15%) | Common: 88%, Rare: 10%, Epic: 2% |
-| **Stone** | 11-22g | 1-2 (60%/40%) | Common: 67%, Rare: 28%, Epic: 5% |
-| **Iron** | 65-110g | 1-3 (13%/70%/17%) | Common: 48%, Rare: 37%, Epic: 15% |
-| **Platinum** | 200-500g | 3-6 (33%/38%/20%/9%) | Common: 21%, Rare: 50%, Epic: 25%, Legendary: 4% |
+| **Wooden** | 12-32g | 1-2 (85%/15%) | Common: 88%, Rare: 10%, Epic: 2% |
+| **Stone** | 60-122g | 1-2 (60%/40%) | Common: 67%, Rare: 28%, Epic: 5% |
+| **Iron** | 200-310g | 1-3 (13%/70%/17%) | Common: 48%, Rare: 37%, Epic: 15% |
+| **Platinum** | 400-800g | 3-6 (33%/38%/20%/9%) | Common: 21%, Rare: 50%, Epic: 25%, Legendary: 4% |
 
 #### Item Quantities per Box/Rarity
 
@@ -545,8 +637,16 @@ The quest system provides delivery missions with gold rewards.
 - **Item rarity pool:** Based on player level
   - Level 1-4: Common only
   - Level 5-9: Common, Rare
-  - Level 10-14: Common, Rare, Epic
-  - Level 15+: Common, Rare, Epic, Legendary
+  - Level 10-17: Common, Rare, Epic
+  - Level 18+: Common, Rare, Epic, Legendary
+- **Number of items:** Based on inventory slots used
+  - <20 slots: 1 item
+  - 20-39 slots: 2 items
+  - 40-49 slots: 3 items
+  - 50-54 slots: 4 items
+  - 55-59 slots: 5 items
+  - 60-64 slots: 6 items
+  - 65+ slots: 7 items
 
 **Reward Calculation:**
 
@@ -591,8 +691,7 @@ Players gain EXP through various activities and level up to unlock benefits.
 
 | Activity | EXP Gained |
 |----------|------------|
-| Chatting | 6-15 (30-second cooldown) |
-| Command completion | +1 friendship (indirectly) |
+| Chatting | 1-2 (30-second cooldown) |
 | Potion of EXP | 500 |
 | Jar of EXP | 2000 |
 
@@ -678,7 +777,7 @@ Players build friendship with Veyra through interactions.
 **Command:** `!play`
 
 **How It Works:**
-1. Daily game (one attempt per day)
+1. Game available every 12 hours (cooldown-based)
 2. Progress through 4 stages with increasing difficulty
 3. Guess the correct number within a range
 4. Wrong guess = game over (or use Hint Key)
@@ -777,9 +876,16 @@ Chips are a separate currency used exclusively in the casino:
 |------|-----------|-------|-------|
 | Starter Stack | 1,000g | 100 | 0 |
 | Copper Kick | 3,200g | 320 | +80 |
-| Bronze Bundle | 7,444g | 744 | +100 |
-| Silver Surge | 10,667g | 1,067 | +120 |
+| Bronze Bundle | 7,444g | 744 | +200 |
+| Silver Surge | 10,667g | 1,067 | +320 |
+| Goblin Investment | 13,889g | 1,389 | +380 |
+| Merchant Madness | 17,111g | 1,711 | +400 |
+| Noble Boost | 20,333g | 2,033 | +470 |
+| Duke's Deal | 23,556g | 2,356 | +580 |
+| Imperial Blast | 26,778g | 2,678 | +820 |
 | Dragon Jackpot | 30,000g | 3,000 | +1,285 |
+
+*Note: Only 5 packs are available per day via daily rotation.*
 
 #### Cashout Options (Examples)
 
@@ -787,8 +893,16 @@ Chips are a separate currency used exclusively in the casino:
 |--------|------------|------|------------|
 | Quick Cash | 100 | 500g | 0 |
 | Snack Refund | 250 | 1,250g | +150 |
+| Halfback | 500 | 2,500g | +450 |
 | Full Refund | 1,000 | 5,000g | +1,000 |
+| Trader Payout | 1,500 | 7,500g | +1,800 |
+| Guild Payday | 2,500 | 12,500g | +3,600 |
+| Noble Cashout | 4,000 | 20,000g | +6,400 |
+| Royal Withdrawal | 6,000 | 30,000g | +10,200 |
+| Imperial Cashout | 8,000 | 40,000g | +13,600 |
 | Dragon Payday | 10,000 | 50,000g | +18,000 |
+
+*Note: Only 5 cashout options are available per day via daily rotation.*
 
 #### Casino Games
 
@@ -866,13 +980,15 @@ Chips are a separate currency used exclusively in the casino:
 | Weapon | Attack | HP | Defense | Speed | Mana | Special Effect |
 |--------|--------|-----|---------|-------|------|----------------|
 | **Training Blade** | +5 | - | - | - | - | +1 Attack on each hit |
-| **Moon Slasher** | +2 | +5 | +8 | +3 | +1 | +3 Frost on hit |
+| **Moon Slasher** | +2 | +5 | +8 | +3 | +1 | +4 Frost on hit |
 | **Dark Blade** | +8 | - | - | - | - | Disables healing for both players |
 | **Elephant Hammer** | +3 | +10 | +15 | -1 | - | Full block (no damage taken) |
 | **Eternal Tome** | +3 | - | - | - | +5 | +3 duration to all status effects |
 | **Veyra's Grimoire** ⭐ | +2 | - | - | - | +2 | On spell cast:  +4 Mana, -5 HP |
+| **Bardok's Claymore** ⭐⭐ | +10 | - | -10 | -2 | - | Heals Bardok 4 HP on hit (player effect dormant) |
 
 ⭐ *Campaign-exclusive:  Unlocked by completing Stage 10*
+⭐⭐ *Campaign-exclusive: Unlocked by completing Stage 15*
 
 ### Available Spells
 
@@ -882,10 +998,12 @@ Chips are a separate currency used exclusively in the casino:
 | **Nightfall** | 9 | Apply Nightfall status (5 rounds) |
 | **Heavyshot** | 16 | Set opponent's HP equal to your HP |
 | **Erdtree Blessing** | 14 | Apply Large Heal status to self (4 rounds) |
-| **Frostbite** | 6 | +6 Frost to target, -1 Speed |
+| **Frostbite** | 6 | +5 Frost to target, -1 Speed |
 | **Veil of Darkness** ⭐ | 10 | Apply Veil of Darkness status (4 rounds): reduces incoming attack damage by 60% |
+| **Earthquake** ⭐⭐ | 13 | Deal 5 damage, shatter defense (set to 0), -3 Speed |
 
 ⭐ *Campaign-exclusive: Unlocked by completing Stage 10*
+⭐⭐ *Campaign-exclusive: Unlocked by completing Stage 15*
 
 ### Default Loadout
 
@@ -921,6 +1039,7 @@ New players start with:
 | `!gamble <game> <bet> <choice>` | Play casino game | - |
 | `!buychips <pack_id>` | Buy casino chip pack | - |
 | `!cashout <pack_id>` | Cash out chips for gold | - |
+| `!repayloan` | Repay active loan | - |
 
 ### Slash Commands (`/`)
 
@@ -931,7 +1050,7 @@ New players start with:
 | `/casino` | View casino chip packs and cashout options | 155s |
 | `/quest` | View/start delivery quest | - |
 | `/battle @user <bet>` | Challenge to PvP | - |
-| `/campaign` | Fight Veyra (PvE) | - |
+| `/campaign` | Fight AI in campaign mode (PvE) | - |
 | `/loadout <weapon> <spell>` | Set battle loadout | - |
 | `/transfer_gold @user <amount>` | Send gold (5% fee) | - |
 | `/transfer_item @user <item> <qty>` | Give items | - |
@@ -940,11 +1059,13 @@ New players start with:
 | `/loadmarketplace` | Browse marketplace | 15s |
 | `/buy_from_marketplace <id> <qty>` | Buy from listing | 5s |
 | `/smelt <bar> <amount>` | Smelt ores into bars | - |
+| `/brew <potion>` | Brew potions using brewing stand | - |
 | `/leaderboard` | View richest players | 120s |
 | `/wordle_hint` | Get Wordle hint | - |
 | `/start_race` | Start animal race | 900s (15min) |
 | `/introduction` | Create intro modal | - |
 | `/profile` | View your profile | 250s |
+| `/loan` | Take one-time starter loan (2000g, 7-day term) | - |
 
 ---
 
@@ -978,10 +1099,13 @@ Veyra/
 │   │   ├── spell_class.py        # Spell definitions
 │   │   ├── weapon_class.py       # Weapon definitions
 │   │   ├── loadout_services.py   # Equipment management
-│   │   ├── veyra_ai.py           # AI opponent
+│   │   ├── veyra_ai.py           # AI opponent (Veyra)
+│   │   ├── arena_class.py        # Arena effects (Lava, Frozen, etc.)
+│   │   ├── battle_view.py        # Battle UI views
 │   │   └── campaign/             # Campaign mode
 │   │       ├── campaign_config.py    # Stage definitions & rewards
-│   │       └── campaign_services.py  # Progression logic
+│   │       ├── campaign_services.py  # Progression logic
+│   │       └── bardok_ai.py          # AI opponent (Bardok)
 │   ├── economy_services.py       # Gold operations
 │   ├── inventory_services.py     # Item operations
 │   ├── exp_services.py           # Leveling
@@ -993,11 +1117,15 @@ Veyra/
 │   ├── casino_services.py        # Casino games
 │   ├── crafting_services.py      # Smelting
 │   ├── upgrade_services.py       # Buildings
+│   ├── alchemy_services.py       # Potion crafting & effects
 │   ├── delievry_minigame_services.py # Quests
 │   ├── guessthenumber_services.py    # Number game
 │   ├── race_services.py          # Animal racing
 │   ├── lottery_services.py       # Lottery system
 │   ├── tutorial_services.py      # Onboarding
+│   ├── notif_services.py         # Notification system
+│   ├── refferal_services.py      # Referral system
+│   ├── users_services.py         # User management
 │   └── response_services.py      # Procedural responses
 ├── models/               # SQLAlchemy ORM models
 │   ├── users_model.py    # User, Wallet, Friendship, etc.
@@ -1013,14 +1141,20 @@ Veyra/
 │   ├── itemname_to_id.py # Fuzzy item matching
 │   ├── jobs.py           # APScheduler setup
 │   ├── chatexp.py        # Chat EXP logic
-│   └── levelup.py        # Level-up handling
+│   ├── time_utils.py     # Time utilities
+│   ├── emotes.py         # Emoji definitions
+│   ├── fuzzy.py          # Fuzzy matching helpers
+│   └── global_sessions_registry.py # Session tracking
 ├── domain/               # Domain logic
+│   ├── alchemy/          # Potion recipes & rules
 │   ├── casino/           # Casino game logic
 │   ├── crafting/         # Smelting rules
 │   ├── economy/          # Transfer rules
 │   ├── friendship/       # Friendship tiers
+│   ├── guild/            # Guild policies
 │   ├── progression/      # EXP thresholds
-│   └── quest/            # Quest rules
+│   ├── quest/            # Quest rules
+│   └── shared/           # Shared types & errors
 └── responses/            # Procedural dialogue templates
 ```
 
@@ -1032,6 +1166,7 @@ Veyra/
 - `inventory` - User items (user_id FK, item_id FK, quantity)
 - `items` - Item definitions (id, name, description, rarity, price, usable)
 - `user_stats` - Player statistics (battles_won, races_won, longest_quest_streak, weekly_rank1_count, biggest_lottery_win)
+- `user_effects` - Active potion effects (user_id, effect_name, strain, expire_at)
 
 **Trading Tables:**
 - `marketplace` - Active listings (listing_id, user_id, item_id, quantity, price)
@@ -1205,8 +1340,10 @@ New Player ──► Tutorial ──► Jobs & Quests ──► Shop & Marketpla
 3. Claim stage rewards upon victory
 4. Advance to harder stages with stronger Veyra
 5. Complete Stage 10 to unlock Veyra's Grimoire and Veil of Darkness
-6. Use exclusive gear in PvP battles for an edge
+6. Continue to Stages 11-15 to face Bardok, a new challenging opponent
+7. Complete Stage 15 to unlock Bardok's Claymore and Earthquake
+8. Use exclusive gear in PvP battles for an edge
 
 ---
 
-*Last updated: January 2026*
+*Last updated: February 2026*
