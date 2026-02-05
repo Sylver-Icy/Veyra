@@ -29,7 +29,7 @@ POTION_RECIPES = {
             "Coal": 5,
             "Copper Bar": 2,
             "Iron Ore": 6,
-            "Mana Berrries": 2
+            "Mana Berries": 2
         }
     },
 

@@ -16,7 +16,7 @@ async def chatexp(ctx):
         if (now - last_time).total_seconds() < 30:  # Checks if user is still in cooldown
             return
 
-    await add_exp_with_announcement(ctx, user_id, random.randint(6,15))
+    await add_exp_with_announcement(ctx, user_id, random.randint(1,2))
 
     on_cooldown[user_id] = now  # Starts the cooldown till next exp gainp
 

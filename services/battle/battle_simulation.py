@@ -180,7 +180,9 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
             pass
 
 
-async def start_campaign_battle(ctx, player: discord.User):
+async def start_campaign_battle(ctx, player: discord.User, result_display_time: int = 12):
+    if result_display_time is None:
+        result_display_time = 12
     # ---- battle lock check (Campaign) ----
     if player.id in ACTIVE_BATTLES:
         await ctx.respond("❌ You are already in a battle. Finish it before starting another.")
@@ -290,7 +292,7 @@ async def start_campaign_battle(ctx, player: discord.User):
             with contextlib_silent():
                 await cur_message.delete()
 
-            await asyncio.sleep(RESULT_DISPLAY_TIME)
+            await asyncio.sleep(result_display_time)
 
             if p1.hp <= 0:
                 final_embed = build_final_embed(enemy_name, player.name, 0)

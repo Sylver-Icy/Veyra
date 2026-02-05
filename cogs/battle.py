@@ -10,6 +10,7 @@ NOTE: Per project convention, keep this file focused on command handling only.
 
 import discord
 from discord.ext import commands
+from discord import Option
 
 from utils.embeds.battleembed import send_battle_challenge
 
@@ -59,7 +60,7 @@ class Battle(commands.Cog):
             await ctx.respond("You ain't gonna win so lets save ourselves some hassle.")
             return
 
-        if not is_user:
+        if not is_user(target.id):
             await ctx.respond(
                 f"I can't initiate a battle with {target.display_name} they're not frnds with me."
             )
@@ -107,8 +108,19 @@ class Battle(commands.Cog):
         await ctx.respond(result)
 
     @commands.slash_command(description="Fight me in campaign mode.")
-    async def campaign(self, ctx):
+    async def campaign(
+        self,
+        ctx,
+        delay: int = Option(
+            int,
+            description="Seconds between rounds (3-30). Leave empty for default.",
+            min_value=3,
+            max_value=30,
+            required=False
+        )
+    ):
         """Start a campaign (PvE) fight against Veyra."""
+
         stage = get_campaign_stage(ctx.author.id)
 
         npc_name = "Veyra" if stage <= 10 else "Bardok"
@@ -134,9 +146,8 @@ class Battle(commands.Cog):
             + (f"\n📜 {lore}" if lore else "")
         )
 
-        await start_campaign_battle(ctx, ctx.author)
+        await start_campaign_battle(ctx, ctx.author, delay)
 
 
 def setup(bot: commands.Bot):
-    """Discord.py extension entrypoint."""
     bot.add_cog(Battle(bot))

@@ -69,6 +69,11 @@ def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False,
 
         if owns_session:
             session.commit()
+
+        logger.info(
+            "ITEM GIVEN: user_id=%s item_id=%s amount=%s overflow=%s",
+            target_id, item_id, amount, overflow
+        )
     finally:
         if owns_session:
             session.close()
@@ -103,6 +108,11 @@ def take_item(target_id: int, item_id: int, amount: int, session=None):
 
         if owns_session:
             session.commit()
+
+        logger.info(
+            "ITEM TAKEN: user_id=%s item_id=%s amount=%s",
+            target_id, item_id, amount
+        )
     finally:
         if owns_session:
             session.close()

@@ -1,6 +1,7 @@
 import discord
 from utils.emotes import GOLD_EMOJI
 from services.economy_services import add_gold
+from services.exp_services import add_exp
 # 1. Define a custom View that stores the original user's ID
 class DeliveryView(discord.ui.View):
     def __init__(self, user_id: int, items: dict, reward: int, reroll_cost: int):
@@ -30,6 +31,7 @@ class DeliveryView(discord.ui.View):
             add_gold(self.user_id, self.reward) #gives the gold for quest
             delete_quest(self.user_id, True, False) #delete the current
             create_quest(self.user_id,True) #create a new quest
+            add_exp(self.user_id, 50)
             await interaction.response.edit_message(content="✅ You delivered the items!", embed=None, view=None)
 
         else:
