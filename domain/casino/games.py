@@ -1,39 +1,45 @@
 """
-Casino games module providing various gambling games with a delta-based payout model.
+Casino games module.
 
-Each game function accepts a bet amount and a choice parameter, and returns a GameResult.
-The delta in GameResult represents net change to player's chips:
-- Positive delta means player won chips (including original bet).
-- Negative delta means player lost chips (bet lost).
-- Zero delta means no chips won or lost.
+Each game follows a delta-based payout model:
+- delta > 0  -> player won chips (net gain)
+- delta < 0  -> player lost chips
+- delta == 0 -> no change
 
-Available games include: flip coin, roulette, slots, and dungeon raid.
+All games return a GameResult with:
+(success: bool, delta: int, message: str)
 """
 
 import random
 
-from domain.casino.entities import GameResult, CasinoGame
-
+from domain.casino.entities import CasinoGame, GameResult
 from utils.emotes import CHIP_EMOJI
 
 
+# ------------------------
+# Flip Coin
+# ------------------------
 def flipcoin_game(bet: int, choice: str) -> GameResult:
     """
-    Flip Coin game:
-    - bet: amount wagered
-    - choice: 'heads' or 'tails' (case insensitive, accepts singular/plural)
-    Returns GameResult with delta representing net chip change.
+    Flip Coin:
+    - Choice: heads / tails
+    - Win: 2x payout
     """
     c = str(choice).strip().lower()
+
     if c in ("heads", "head"):
         choice_norm = "heads"
     elif c in ("tails", "tail"):
         choice_norm = "tails"
     else:
-        return GameResult(False, 0, "PICK BETWEEN HEADS OR TAILS\nThis is coin flip not circus.")
+        return GameResult(
+            False,
+            0,
+            "Pick **heads** or **tails**. This is a coin flip, not circus."
+        )
 
     coin = random.choice(["heads", "tails"])
-    won = (choice_norm == coin)
+    won = choice_norm == coin
 
     if won:
         payout = bet * 2
@@ -41,58 +47,75 @@ def flipcoin_game(bet: int, choice: str) -> GameResult:
         return GameResult(
             True,
             delta,
-            f"🪙 It landed **{coin}**! You made your chips double!!!! **Payout {payout}{CHIP_EMOJI}**\nYOU ARE SLAYING!!! Flip againnnnnnn"
-        )
-
-    return GameResult(False, -bet, f"🪙 It landed **{coin}**. You lost all your chips.\nCry about it")
-
-
-def roulette_game(bet: int, choice: str) -> GameResult:
-    """
-    Roulette game (0-9):
-    - bet: amount wagered
-    - choice: number as string between 0 and 9 inclusive
-    Returns GameResult with 10x payout on hit, loss otherwise.
-    """
-    choice_str = str(choice).strip()
-
-    if not choice_str.isdigit():
-        return GameResult(False, 0, "Pick a number from **0 to 9**. Example: `!gamble roulette 50 7`")
-
-    picked = int(choice_str)
-    if picked < 0 or picked > 9:
-        return GameResult(False, 0, "Pick a number from **0 to 9**. Not rocket science.")
-
-    rolled = random.randint(0, 9)
-    won = (picked == rolled)
-
-    if won:
-        payout = bet * 10
-        delta = payout - bet
-        return GameResult(
-            True,
-            delta,
-            f"🎡 The wheel stopped at **{rolled}**!\n"
-            f"YOU ABSOLUTE MENACE 😭🔥 **10x** payout!\n"
-            f"You made **{payout}{CHIP_EMOJI} just like that**"
+            f"🪙 It landed **{coin}**!\n"
+            f"YAY!!. **Payout: {payout}{CHIP_EMOJI}**\n"
+            "Flip Again!!!."
         )
 
     return GameResult(
         False,
         -bet,
-        f"🎡 The wheel stopped at **{rolled}**.\n"
-        f"You picked **{picked}**.\n"
-        f"We know what that means right?\n"
-        "Sad...."
+        f"🪙 It landed **{coin}**.\n"
+        f"Lost **-{bet}{CHIP_EMOJI}**. Cry about it."
     )
 
 
+# ------------------------
+# Roulette
+# ------------------------
+def roulette_game(bet: int, choice: str) -> GameResult:
+    """
+    Roulette (0–9):
+    - Choice: number between 0 and 9
+    - Win: 10x payout
+    """
+    choice_str = str(choice).strip()
+
+    if not choice_str.isdigit():
+        return GameResult(
+            False,
+            0,
+            "Pick a number from **0–9**. Example: `roulette 50 7`"
+        )
+
+    picked = int(choice_str)
+    if not 0 <= picked <= 9:
+        return GameResult(
+            False,
+            0,
+            "Number must be between **0 and 9**. The wheel is small."
+        )
+
+    rolled = random.randint(0, 9)
+
+    if picked == rolled:
+        payout = bet * 10
+        delta = payout - bet
+        return GameResult(
+            True,
+            delta,
+            f"🎡 Wheel landed on **{rolled}**!\n"
+            f"Unhinged accuracy. **10x payout** 💀🔥\n"
+            f"You walk away with **{payout}{CHIP_EMOJI}**"
+        )
+
+    return GameResult(
+        False,
+        -bet,
+        f"🎡 Wheel landed on **{rolled}**.\n"
+        f"You picked **{picked}**.\n"
+        "Rip your chips."
+    )
+
+
+# ------------------------
+# Slots
+# ------------------------
 def slots_game(bet: int, choice: str) -> GameResult:
     """
-    Slots game:
-    - bet: amount wagered
-    - choice: unused, present for consistency
-    Returns GameResult with payouts for triples, pairs, or loss.
+    Slots:
+    - Triple match: high multiplier
+    - Pair: partial win
     """
     symbols = ["🍒", "🍒", "🍒", "🍋", "🍋", "🍇", "🍇", "🔔", "⭐", "💎"]
 
@@ -108,7 +131,7 @@ def slots_game(bet: int, choice: str) -> GameResult:
         "🍇": 4,
         "🔔": 8,
         "⭐": 12,
-        "💎": 25
+        "💎": 25,
     }
 
     if a == b == c:
@@ -120,8 +143,8 @@ def slots_game(bet: int, choice: str) -> GameResult:
             delta,
             f"🎰 **SLOTS** 🎰\n"
             f"{spin}\n"
-            f"TRIPLE HIT 😭🔥 **x{mult}**\n"
-            f"Crediting... **{payout}{CHIP_EMOJI}**"
+            f"TRIPLE HIT DAMNN🔥😭 **x{mult}**\n"
+            f"Paid out **{payout}{CHIP_EMOJI}**"
         )
 
     if a == b or b == c or a == c:
@@ -133,9 +156,8 @@ def slots_game(bet: int, choice: str) -> GameResult:
             delta,
             f"🎰 **SLOTS** 🎰\n"
             f"{spin}\n"
-            f"PAIR! **x{mult}** YESSSSS LET THE CHIPS MULTIPLY!!!\n"
-            f"You won **{payout}{CHIP_EMOJI}**\n"
-            f"LET'S GO AGAIN THIS TIME JACKPOT!!!"
+            f"PAIR HIT ✨ **x{mult}**\n"
+            f"You won **{payout}{CHIP_EMOJI}**"
         )
 
     return GameResult(
@@ -143,26 +165,20 @@ def slots_game(bet: int, choice: str) -> GameResult:
         -bet,
         f"🎰 **SLOTS** 🎰\n"
         f"{spin}\n"
-        f"You lost **-{bet}{CHIP_EMOJI}**.\n"
-        f"Skill issue. Spin again."
+        f"Lost **-{bet}{CHIP_EMOJI}**.\n"
+        "Machine remains unimpressed."
     )
 
 
+# ------------------------
+# Dungeon Raid
+# ------------------------
 def dungeon_game(bet: int, choice: str) -> GameResult:
     """
-    Dungeon Raid game:
-    - bet: amount wagered
-    - choice: dungeon area string (caves, tunnels, ruins, lair, abyss)
-    Returns GameResult with risk/reward based on area chosen.
+    Dungeon Raid:
+    Risk increases with deeper areas, but so do rewards.
     """
     choice_norm = str(choice).strip().lower()
-
-    if choice_norm not in ["caves", "tunnels", "ruins", "lair", "abyss"]:
-        return GameResult(
-            False,
-            0,
-            "Pick a dungeon area: `caves`, `tunnels`, `ruins`, `lair`, `abyss` \nCheck `!details gambling` for more info."
-        )
 
     DUNGEON_AREAS = {
         "caves": {"death": 0.20, "mult": 1.20, "name": "Safe Caves"},
@@ -172,73 +188,70 @@ def dungeon_game(bet: int, choice: str) -> GameResult:
         "abyss": {"death": 0.85, "mult": 6.66, "name": "Abyss Gate"},
     }
 
-    area = DUNGEON_AREAS[choice_norm]
-    death = area["death"]
-    mult = area["mult"]
-    name = area["name"]
+    if choice_norm not in DUNGEON_AREAS:
+        return GameResult(
+            False,
+            0,
+            "Pick a dungeon: `caves`, `tunnels`, `ruins`, `lair`, `abyss`"
+        )
 
+    area = DUNGEON_AREAS[choice_norm]
     roll = random.random()
 
-    if roll < death:
+    if roll < area["death"]:
         return GameResult(
             False,
             -bet,
             f"🗡️ **DUNGEON RAID**\n"
-            f"Area: **{name}**\n"
-            f"You triggered a trap and got deleted from existence 💀\n"
-            f"Lost **-{bet}{CHIP_EMOJI}**\n"
-            f"Skill issue. Respawn and try again."
+            f"Area: **{area['name']}**\n"
+            f"You triggered a trap and died 💀\n"
+            f"Lost **-{bet}{CHIP_EMOJI}**"
         )
 
-    payout = round(bet * mult)
+    payout = round(bet * area["mult"])
     delta = payout - bet
 
     return GameResult(
         True,
         delta,
         f"🗡️ **DUNGEON RAID**\n"
-        f"Area: **{name}**\n"
-        f"You found a treasure chest!! 🎁✨\n"
-        f"Multiplier: **x{mult}**\n"
-        f"Loot inside is worth **{payout}{CHIP_EMOJI}**"
+        f"Area: **{area['name']}**\n"
+        f"Treasure secured 🎁✨\n"
+        f"Multiplier: **x{area['mult']}**\n"
+        f"Loot worth **{payout}{CHIP_EMOJI}**"
     )
 
 
-# Dictionary of available games keyed by game id
+# ------------------------
+# Game Registry
+# ------------------------
 GAMES: dict[str, CasinoGame] = {
-    # Flip Coin game registration
     "flipcoin": CasinoGame(
         id="flipcoin",
         name="Flip Coin",
         min_bet=1,
         max_bet=5000,
-        play=flipcoin_game
+        play=flipcoin_game,
     ),
-
-    # Roulette (0-9) game registration
     "roulette": CasinoGame(
         id="roulette",
         name="Roulette",
         min_bet=10,
         max_bet=2500,
-        play=roulette_game
+        play=roulette_game,
     ),
-
-    # Slots game registration
     "slots": CasinoGame(
         id="slots",
         name="Slots",
         min_bet=10,
         max_bet=2000,
-        play=slots_game
+        play=slots_game,
     ),
-
-    # Dungeon Raid game registration
     "dungeon": CasinoGame(
         id="dungeon",
         name="Dungeon",
         min_bet=10,
         max_bet=3000,
-        play=dungeon_game
-    )
+        play=dungeon_game,
+    ),
 }

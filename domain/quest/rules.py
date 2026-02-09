@@ -116,8 +116,10 @@ def streak_multiplier(streak: int) -> float:
         return 1.0
     elif streak < 6:
         return 1.2
-    elif streak < 10:
+    elif streak < 13:
         return 1.5
+    elif streak < 25:
+        return 1.75
     else:
         return 2.0
 

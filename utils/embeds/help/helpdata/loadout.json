@@ -72,7 +72,7 @@
         },
         {
           "name": "Passive",
-          "value": "✅ **On Attack success:** target gains **+3 Frost**.\n\nThis pairs insanely well with Frostbite spell.",
+          "value": "✅ **On Attack success:** target gains **+4 Frost**.\n\nThis pairs insanely well with Frostbite spell.",
           "inline": false
         },
         {
@@ -293,7 +293,7 @@
       "fields": [
         {
           "name": "Effect",
-          "value": "• target gains **+6 Frost**\n• target loses **-1 Speed**",
+          "value": "• target gains **+5 Frost**\n• target loses **-1 Speed**",
           "inline": false
         },
         {

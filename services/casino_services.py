@@ -1,52 +1,93 @@
+"""
+Casino service logic for handling casino game plays.
+
+Responsibilities:
+- Validate game and bet inputs
+- Check user wallet state
+- Apply game results (win/loss)
+- Handle special effects like GAMBLER'S FATE
+- Ensure DB consistency with proper commit/rollback
+"""
+
 from domain.casino.games import GAMES
-
 from database.sessionmaker import Session
-
-from services.economy_services import remove_chips, add_chip, check_wallet_full
-
+from services.economy_services import (
+    remove_chips,
+    add_chip,
+    check_wallet_full,
+)
+from services.alchemy_services import (
+    get_active_user_effect,
+    expire_user_effect,
+)
 from utils.custom_errors import VeyraError
 from utils.emotes import CHIP_EMOJI
 
 
-def play_casino_game(user_id: int, game_id: str, bet: int, choice: str):
+def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> str:
+    """
+    Plays a casino game for a user.
+
+    Args:
+        user_id (int): Discord/user ID
+        game_id (str): Casino game identifier
+        bet (int): Amount of chips wagered
+        choice (str): Player's game-specific choice
+
+    Returns:
+        str: Result message to display to the user
+    """
     game = GAMES.get(game_id)
     if not game:
-        return "Invalid game."
+        return "That game doesn't exist. Even the casino is confused."
 
-    # bet validation
+    # ---- Bet validation ----
     if bet < game.min_bet:
-        return f"Min bet is {game.min_bet} chips. Come onnnnn BET BIG TO WIN BIG."
-    if bet > game.max_bet:
-        return f"Max bet is {game.max_bet} chips. Since I'd not be issuing refund coz someone lost entire entire net worth in a single gamble."
+        return (
+            f"Minimum bet is **{game.min_bet}**{CHIP_EMOJI}. "
+            "COME ON!! Bet Big to WIN BIG!"
+        )
 
+    if bet > game.max_bet:
+        return (
+            f"Maximum bet is **{game.max_bet}**{CHIP_EMOJI}. "
+            "We're reckless, not irresponsible."
+        )
 
     with Session() as session:
-        gold, chips = check_wallet_full(user_id, session)
+        _, chips = check_wallet_full(user_id, session)
 
         if chips < bet:
-            return f"You have {chips}{CHIP_EMOJI} and you need at least {bet} chips to cover possible losses. You can buy more chips from `/casino`"
+            return (
+                f"You have **{chips}**{CHIP_EMOJI} but tried to bet **{bet}**. "
+                "Bold move. Unfortunately, math exists."
+            )
 
         try:
+            # Play the game (pure logic, no DB side effects inside)
             result = game.play(bet, choice)
-
-            # Check for GAMBLER'S FATE effect
-            from services.alchemy_services import get_active_user_effect, expire_user_effect
 
             active_effect = get_active_user_effect(session, user_id)
 
+            # ---- Loss handling ----
             if result.delta < 0:
                 loss = -result.delta
 
-                # If Gambler's Fate active -> only deduct 90% and remove effect
+                # GAMBLER'S FATE reduces loss once, then expires
                 if active_effect == "GAMBLER'S FATE":
                     reduced_loss = int(loss * 0.9)
                     remove_chips(user_id, reduced_loss, session)
                     expire_user_effect(session, user_id, "GAMBLER'S FATE")
                     session.commit()
-                    return f"{result.message}\nYour chips were partially refunded by **GAMBLER'S FATE**. The aura fades away."
+
+                    return (
+                        f"{result.message}\n"
+                        "**GAMBLER'S FATE** cushions the blow. Your chips were partially refunded"
+                    )
 
                 remove_chips(user_id, loss, session)
 
+            # ---- Win handling ----
             elif result.delta > 0:
                 add_chip(user_id, result.delta, session)
 
@@ -55,7 +96,11 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str):
 
         except VeyraError:
             session.rollback()
-            return "Some crazy error happened 😵‍💫 Your bet was refunded dw"
+            return (
+                "Something went off the rails mid-spin 😵‍💫\n"
+                "Your bet is safe. The casino pretends this never happened."
+            )
+
         except Exception:
             session.rollback()
             raise

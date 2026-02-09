@@ -20,7 +20,7 @@
       "fields": [
         { "name": "Expire", "value": "10 Hours", "inline": true },
         { "name": "Strain", "value": "52", "inline": true },
-        { "name": "Recipe", "value": "Empty Flask x1\nCoal x5\nCopper Bar x2\nIron Ore x6\nMana Berrries x2", "inline": false }
+        { "name": "Recipe", "value": "Empty Flask x1\nCoal x5\nCopper Ore x30\nIron Ore x6\nMana Berrries x4", "inline": false }
       ]
     },
 
