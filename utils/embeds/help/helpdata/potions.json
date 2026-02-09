@@ -56,7 +56,7 @@
 
     {
       "title": "🍀 Potion Of Luck III",
-      "description": "**Effect:** TREASURE LORD AURA\n\nYour **Iron Box** transforms into either:\n• Platinum Box (60%)\n• Stone Box (40%)",
+      "description": "**Effect:** TREASURE LORD AURA\n\nYour **Iron Box** transforms into either:\n• Platinum Box (80%)\n• Stone Box (20%)",
       "fields": [
         { "name": "Expire", "value": "24 Hours", "inline": true },
         { "name": "Strain", "value": "70", "inline": true },

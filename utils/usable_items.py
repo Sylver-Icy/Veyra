@@ -97,7 +97,7 @@ def use_potion_luck_3(user_id: int):
     except NotEnoughItemError:
         return "You don't have an Iron Box to spray the potion upon."
 
-    roll = random.random() < 0.60
+    roll = random.random() < 0.80
 
     if roll:
         give_item(user_id, 179, 1)

@@ -102,7 +102,6 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
             .all()
         )
 
-        reward = calculate_reward(delivery_items, user_id)
 
         # decide max quantity per item based on user level
         max_qty = quantity_for_level(user_lvl)
@@ -112,6 +111,8 @@ def create_quest(user_id: int, reset_rerolls: bool = False):
             item.item_name: random.randint(1, max_qty)
             for item in delivery_items
         }
+
+        reward = calculate_reward(delivery_items, delivery_items_dict, user_id)
 
         existing_quest = session.execute(
             select(Quests).where(Quests.user_id == user_id)
@@ -224,18 +225,17 @@ def fetch_quest(user_id: int):
         ).scalar_one_or_none()
 
 
-def calculate_reward(items: list, user_id: int):
+def calculate_reward(items: list, quantities: dict, user_id: int):
     """
     Calculate delivery reward based on item rarities, quantities, and streak.
     """
 
-    # fetch quest to read quantities
+    # fetch quest to read streak
     with Session() as session:
         quest = session.execute(
             select(Quests).where(Quests.user_id == user_id)
         ).scalar_one_or_none()
         streak = quest.streak if quest else 0
-        quantities = quest.delivery_items if quest and quest.delivery_items else {}
 
     rarities_list = []
 
