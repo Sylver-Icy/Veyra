@@ -41,46 +41,40 @@ def add_gold(user_id: int, gold_amount: int, session=None):
     except InvalidAmountError as exc:
         raise NegativeGoldError from exc
 
+    owns_session = session is None
+
     # If a session is provided, use it (do not commit/rollback here because the caller owns it).
-    if session is not None:
-        user = session.get(Wallet, user_id)
+    if owns_session:
+        session = Session()
 
-        if not user:
+    try:
+        stmt = (
+            update(Wallet)
+            .where(Wallet.user_id == user_id)
+            .values(gold=Wallet.gold + gold_amount)
+            .returning(Wallet.gold)
+        )
+        result = session.execute(stmt).first()
+        if result is None:
             logger.warning(
                 "Attempted to add %s gold to non-existent user %s",
                 gold_amount,
                 user_id,
             )
             raise UserNotFoundError(user_id)
-
-        user.gold += gold_amount
-        return user.gold, gold_amount
-
-    # Otherwise, create and manage our own session.
-    with Session() as session:
-        user = session.get(Wallet, user_id)
-
-        if not user:
-            logger.warning(
-                "Attempted to add %s gold to non-existent user %s",
-                gold_amount,
-                user_id,
-            )
-            raise UserNotFoundError(user_id)
-
-        try:
-            user.gold += gold_amount
+        new_balance = result[0]
+        if owns_session:
             session.commit()
-            return user.gold, gold_amount
-        except Exception as exc:
+        return new_balance, gold_amount
+
+    except Exception:
+        if owns_session:
             session.rollback()
-            logger.error(
-                "Failed to add %s gold to user %s: %s",
-                gold_amount,
-                user_id,
-                exc,
-            )
-            raise
+        raise
+
+    finally:
+        if owns_session:
+            session.close()
 
 
 def remove_gold(user_id: int, gold_amount: int, session=None):
@@ -100,56 +94,38 @@ def remove_gold(user_id: int, gold_amount: int, session=None):
     except InvalidAmountError as exc:
         raise NegativeGoldError from exc
 
-    # If a session is provided, use it (do not commit/rollback here because the caller owns it).
-    if session is not None:
-        user = session.get(Wallet, user_id)
+    owns_session = session is None
 
-        if not user:
-            logger.warning(
-                "Attempted to remove %s gold from non-existent user %s",
-                gold_amount,
-                user_id,
-            )
-            raise UserNotFoundError(user_id)
+    if owns_session:
+        session = Session()
 
-        try:
-            ensure_can_afford(user.gold, gold_amount)
-        except InsufficientFundsError as exc:
-            raise NotEnoughGoldError(gold_amount, user.gold) from exc
-
-        user.gold -= gold_amount
-        return user.gold, gold_amount
-
-    # Otherwise, create and manage our own session.
-    with Session() as session:
-        user = session.get(Wallet, user_id)
-
-        if not user:
-            logger.warning(
-                "Attempted to remove %s gold from non-existent user %s",
-                gold_amount,
-                user_id,
-            )
-            raise UserNotFoundError(user_id)
-
-        try:
-            ensure_can_afford(user.gold, gold_amount)
-        except InsufficientFundsError as exc:
-            raise NotEnoughGoldError(gold_amount, user.gold) from exc
-
-        try:
-            user.gold -= gold_amount
+    try:
+        stmt = (
+            update(Wallet)
+            .where(Wallet.user_id == user_id)
+            .where(Wallet.gold >= gold_amount)
+            .values(gold=Wallet.gold - gold_amount)
+            .returning(Wallet.gold)
+        )
+        result = session.execute(stmt).first()
+        if result is None:
+            user_exists = session.get(Wallet, user_id) is not None
+            if not user_exists:
+                raise UserNotFoundError(user_id)
+            raise NotEnoughGoldError(gold_amount, "gold")
+        new_balance = result[0]
+        if owns_session:
             session.commit()
-            return user.gold, gold_amount
-        except Exception as exc:
+        return new_balance, gold_amount
+
+    except Exception:
+        if owns_session:
             session.rollback()
-            logger.error(
-                "Failed to remove %s gold from user %s: %s",
-                gold_amount,
-                user_id,
-                exc,
-            )
-            raise
+        raise
+
+    finally:
+        if owns_session:
+            session.close()
 
 
 # ---------------------------------------------------------------------------
@@ -176,8 +152,18 @@ def transfer_gold(sender_id: int, receiver_id: int, amount: int):
         raise NegativeGoldError from exc
 
     with Session() as session:
-        sender = session.get(Wallet, sender_id)
-        receiver = session.get(Wallet, receiver_id)
+        sender = (
+            session.query(Wallet)
+            .filter(Wallet.user_id == sender_id)
+            .with_for_update()
+            .one_or_none()
+        )
+        receiver = (
+            session.query(Wallet)
+            .filter(Wallet.user_id == receiver_id)
+            .with_for_update()
+            .one_or_none()
+        )
 
         if not sender:
             raise UserNotFoundError(sender_id)
@@ -186,20 +172,32 @@ def transfer_gold(sender_id: int, receiver_id: int, amount: int):
 
         net_amount, fee = calculate_transfer_fee(amount)
 
-        try:
-            ensure_can_afford(sender.gold, amount)
-        except InsufficientFundsError as exc:
-            raise NotEnoughGoldError(amount, sender.gold) from exc
+        sender_stmt = (
+            update(Wallet)
+            .where(Wallet.user_id == sender_id)
+            .where(Wallet.gold >= amount)
+            .values(gold=Wallet.gold - amount)
+        )
+        sender_result = session.execute(sender_stmt)
+        if sender_result.rowcount == 0:
+            raise NotEnoughGoldError(amount, sender.gold)
+
+        receiver_stmt = (
+            update(Wallet)
+            .where(Wallet.user_id == receiver_id)
+            .values(gold=Wallet.gold + net_amount)
+        )
+        session.execute(receiver_stmt)
 
         try:
-            sender.gold -= amount
-            receiver.gold += net_amount
-
             session.commit()
 
+            sender_balance = session.get(Wallet, sender_id).gold
+            receiver_balance = session.get(Wallet, receiver_id).gold
+
             return TransferResult(
-                sender_balance=sender.gold,
-                receiver_balance=receiver.gold,
+                sender_balance=sender_balance,
+                receiver_balance=receiver_balance,
                 amount_transferred=net_amount,
                 fee_charged=fee,
             )
@@ -232,6 +230,8 @@ def check_wallet(user_id: int) -> Gold:
     """
     with Session() as session:
         user = session.get(Wallet, user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
         return user.gold
 
 
@@ -245,15 +245,29 @@ def check_wallet_full(user_id: int, session = None):
         return user.gold, user.chip
 
 def add_chip(user_id: int, amount: int, session = None):
-    if session is not None:
-        user = session.get(Wallet, user_id)
-        user.chip += amount
-        return
+    owns_session = session is None
 
-    with Session() as session:
-        user = session.get(Wallet, user_id)
-        user.chip += amount
-        session.commit()
+    if owns_session:
+        session = Session()
+
+    try:
+        stmt = (
+            update(Wallet)
+            .where(Wallet.user_id == user_id)
+            .values(chip=Wallet.chip + amount)
+        )
+        result = session.execute(stmt)
+        if result.rowcount == 0:
+            raise UserNotFoundError(user_id)
+        if owns_session:
+            session.commit()
+    except Exception:
+        if owns_session:
+            session.rollback()
+        raise
+    finally:
+        if owns_session:
+            session.close()
 
 
 def remove_chips(user_id: int, amount: int, session=None):

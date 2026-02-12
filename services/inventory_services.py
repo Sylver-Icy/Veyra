@@ -33,9 +33,6 @@ def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False,
         owns_session = True
 
     try:
-        if not is_user(target_id, session):
-            raise UserNotFoundError(target_id)
-
         user = session.get(User, target_id)
         if not user:
             raise UserNotFoundError(target_id)
@@ -139,13 +136,14 @@ def take_items_bulk(target_id: int, items: dict, session):
 
     # Fetch all relevant inventory rows in one query
     rows = (
-        session.query(Inventory)
-        .filter(
-            Inventory.user_id == target_id,
-            Inventory.item_id.in_(items.keys())
-        )
-        .all()
+    session.query(Inventory)
+    .filter(
+        Inventory.user_id == target_id,
+        Inventory.item_id.in_(items.keys())
     )
+    .with_for_update()
+    .all()
+)
 
     inventory_map = {row.item_id: row for row in rows}
 
@@ -169,46 +167,71 @@ def take_items_bulk(target_id: int, items: dict, session):
 
 
 
-def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount:int):
+def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount: int):
     """
-    Transfers given amount of given item from sender to reciver
+    Atomically transfers item from sender → receiver
     """
 
     if amount < 1:
         raise InvalidItemAmountError
 
     with Session() as session:
+
         if not is_user(sender_id, session):
             raise UserNotFoundError(sender_id)
+
         if not is_user(receiver_id, session):
             raise UserNotFoundError(receiver_id)
 
-        entry1 = session.get(Inventory,(sender_id,item_id)) #Sender's row
-        entry2 = session.get(Inventory,(receiver_id,item_id)) #reciver's row
-
-        #raise an error is sender has insuffiecient items to send
-        if not entry1 or entry1.item_quantity<amount:
-            raise NotEnoughItemError
-        if not allow_item_in_inventory(receiver_id, item_id, amount, session):
-            return "full_inventory"
-
-        entry1.item_quantity -= amount #deduct the amount for transaction
-
-        #if sender has no more items left delete the row
-        if entry1.item_quantity == 0:
-            session.delete(entry1)
-
-        if entry2: #if reciver already has the item
-            entry2.item_quantity += amount
-
-        else: #if reciver has no such item
-            new_entry = Inventory(
-                user_id=receiver_id,
-                item_id=item_id,
-                item_quantity=amount,
+        try:
+            #Lock sender inventory row
+            entry1 = (
+                session.query(Inventory)
+                .filter_by(user_id=sender_id, item_id=item_id)
+                .with_for_update()
+                .one_or_none()
             )
-            session.add(new_entry)
-        session.commit()
+
+            if not entry1 or entry1.item_quantity < amount:
+                raise NotEnoughItemError
+
+            # Lock receiver inventory row (if exists)
+            entry2 = (
+                session.query(Inventory)
+                .filter_by(user_id=receiver_id, item_id=item_id)
+                .with_for_update()
+                .one_or_none()
+            )
+
+            #Capacity check
+            if not allow_item_in_inventory(receiver_id, item_id, amount, session):
+                return "full_inventory"
+
+            # 🔧 Mutations
+            entry1.item_quantity -= amount
+
+            if entry1.item_quantity == 0:
+                session.delete(entry1)
+
+            if entry2:
+                entry2.item_quantity += amount
+            else:
+                session.add(Inventory(
+                    user_id=receiver_id,
+                    item_id=item_id,
+                    item_quantity=amount
+                ))
+
+            #atomic
+            session.commit()
+            logger.info(
+    "ITEM TRANSFERRED: %s → %s | item=%s amount=%s",
+    sender_id, receiver_id, item_id, amount
+)
+
+        except:
+            session.rollback()
+            raise
 
 def fetch_inventory(user_id: int, session=None) -> List[dict]:
     """Returns a list of items in user's inventory (excluding zero quantity).
