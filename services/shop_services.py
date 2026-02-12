@@ -1,6 +1,7 @@
 import logging
 import random
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import insert
 from datetime import date
 from datetime import timedelta
 
@@ -77,11 +78,14 @@ def update_daily_shop():
         )
 
         for item in random_items:
-            session.add(ShopDaily(
+            stmt = insert(ShopDaily).values(
                 shop_type="sell",
                 item_id=item.item_id,
-                price = item.item_price if item.item_price is not None else calculate_buy_price(item.item_rarity, False)
-            ))
+                price=item.item_price if item.item_price is not None else calculate_buy_price(item.item_rarity, False)
+            ).on_conflict_do_nothing(
+                index_elements=["date", "item_id"]
+            )
+            session.execute(stmt)
 
         session.commit()
 
@@ -119,12 +123,15 @@ def update_daily_buyback_shop():
         )
 
         for idx, item in enumerate(random_items):
-            session.add(ShopDaily(
+            stmt = insert(ShopDaily).values(
                 shop_type="buyback",
                 item_id=item.item_id,
                 price=calculate_buy_price(item.item_rarity, bonus=(idx == 4)),
                 is_bonus=(idx == 4)
-            ))
+            ).on_conflict_do_nothing(
+                index_elements=["date", "item_id"]
+            )
+            session.execute(stmt)
 
         session.commit()
 

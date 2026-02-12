@@ -18,7 +18,7 @@ from utils.custom_errors import UserNotFoundError, NotEnoughItemError, InvalidIt
 from utils.embeds.inventoryembed import build_inventory, build_item_info_embed
 
 
-logger = logging.getLogger('__name__')
+logger = logging.getLogger(__name__)
 
 
 def give_item(target_id: int, item_id: int, amount: int, overflow: bool = False, session=None):
@@ -281,29 +281,40 @@ def get_item_details(user_id, item_id: int):
         item_details['amount_owned'] = user_inv.item_quantity if user_inv else 0
     return build_item_info_embed(item_details)
 
-def use_item(user_id: int, item_id: str):
+def use_item(user_id: int, item_id: int):
     from utils.usable_items import UsableItemHandler
 
     with Session() as session:
-        item = session.get(Items, item_id)
-        if not item:
-            return "That item doesn't exist."
-        if not item.item_usable:
-            return f"{item.item_name} can’t be used."
-
-        handler = UsableItemHandler.get_handler(item.item_name)
-        if not handler:
-            return f"{item.item_name} is marked as usable but has no handler (dev issue)."
-
-        # Remove the item before use
         try:
-            take_item(user_id, item.item_id, 1)
-             # Run item logic
+            item = session.get(Items, item_id)
+            if not item:
+                return "That item doesn't exist."
+
+            if not item.item_usable:
+                return f"{item.item_name} can’t be used."
+
+            handler = UsableItemHandler.get_handler(item.item_name)
+            if not handler:
+                return f"{item.item_name} is marked as usable but has no handler (dev issue)."
+
+            # Remove item INSIDE SAME SESSION
+            take_item(user_id, item.item_id, 1, session=session)
+
+            # Run item logic
             result = handler(user_id)
 
+            # Commit only after success
+            session.commit()
+
+            return result
+
         except NotEnoughItemError:
-            return(f"You don't have any {item.item_name} left....")
-        return result
+            session.rollback()
+            return f"You don't have any {item.item_name} left...."
+
+        except Exception:
+            session.rollback()
+            raise
 
 
 def calculate_slots_used(user_id: int, session) -> int:
@@ -324,13 +335,11 @@ def calculate_slots_used(user_id: int, session) -> int:
 
     total_slots_used = 0
 
-    for item_id, qty, rarity in rows:
+    for _, qty, rarity in rows:
         if qty <= 0:
             continue
 
         stack_limit = allowed_stack_size(user_pockets.level, rarity)
-        if stack_limit < 1:
-            print(f"Invalid stack_limit={stack_limit} for rarity={rarity}, pockets={user_pockets.level}")
 
         stacks_needed = math.ceil(qty / stack_limit)
 

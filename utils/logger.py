@@ -1,7 +1,9 @@
 import logging
+import time
 from logging.handlers import RotatingFileHandler
 
 class SafeFormatter(logging.Formatter):
+    converter = time.gmtime
     def format(self, record):
         for attr in ["flex", "user", "cmd"]:
             if not hasattr(record, attr):

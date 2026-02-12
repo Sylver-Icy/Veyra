@@ -1,4 +1,4 @@
-from services.inventory_services import give_item, take_item
+from services.inventory_services import give_item, take_items_bulk
 
 from domain.crafting.rules import validate_smelt_amount, get_required_ore, required_ore_amount
 from domain.shared.errors import InvalidAmountError, InvalidRecipeError
@@ -6,64 +6,49 @@ from domain.shared.errors import InvalidAmountError, InvalidRecipeError
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError, FullInventoryError, PartialInventoryError
 
+from database.sessionmaker import Session
+
 
 def smelt(user_id: int, bar_name: str, amount: int, coal_cost: int):
-    """
-    Smelts a specified amount of bars for a user by consuming ores and coal.
-
-    Parameters:
-        user_id (int): The ID of the user performing the smelting.
-        bar_name (str): The name of the bar to smelt.
-        amount (int): The number of bars to smelt.
-
-    Returns:
-        str: A message indicating success or the reason for failure.
-
-    Raises:
-        NotEnoughItemError: If the user does not have enough ores or coal.
-    """
-    # Normalize bar name to lowercase
     bar_name = bar_name.lower()
 
-    # Validate smelting amount
     try:
         amount = validate_smelt_amount(amount)
     except InvalidAmountError:
         return "Smelt amount must be positive."
 
-    # Get required ore for the specified bar
     try:
         ore_name = get_required_ore(bar_name)
     except InvalidRecipeError:
         return f"'{bar_name}' is not a valid bar to smelt."
 
-    # Retrieve ore and bar item IDs
     ore_id, _ = get_item_id_safe(ore_name)
     bar_id, _ = get_item_id_safe(bar_name)
     coal_id, _ = get_item_id_safe("coal")
 
-    # Attempt to consume required ores
-    try:
-        ore_needed = required_ore_amount(amount)
-        take_item(user_id, ore_id, ore_needed)
+    ore_needed = required_ore_amount(amount)
 
-    except NotEnoughItemError:
-        return "Not enough ores to smelt."
+    with Session() as session:
+        try:
+            take_items_bulk(user_id, {
+                ore_id: ore_needed,
+                coal_id: amount * coal_cost
+            }, session=session)
 
-    # Attempt to consume required coal, refund ores if insufficient
-    try:
-        take_item(user_id, coal_id, amount * coal_cost)
+            give_item(user_id, bar_id, amount, session=session)
 
-    except NotEnoughItemError:
-        give_item(user_id, ore_id, ore_needed)
-        return "Not enough coal to smelt."
+            session.commit()
 
-    # Give smelted bars to user
-    try:
-        give_item(user_id, bar_id, amount)
-    except (FullInventoryError,PartialInventoryError):
-        give_item(user_id, ore_id, ore_needed)
-        give_item(user_id, coal_id, amount * coal_cost)
-        return "No Space in inventory to craft this! Either free up or upgrade via `!upgrade inventory`"
+        except NotEnoughItemError:
+            session.rollback()
+            return "Not enough materials to smelt."
+
+        except (FullInventoryError, PartialInventoryError):
+            session.rollback()
+            return "No Space in inventory to craft this! Either free up or upgrade via `!upgrade inventory`"
+
+        except Exception:
+            session.rollback()
+            raise
 
     return f"🔥 Successfully smelted {amount}x {bar_name.title()}."
