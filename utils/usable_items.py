@@ -5,7 +5,7 @@ from utils.emotes import GOLD_EMOJI
 from utils.custom_errors import NotEnoughItemError
 
 from services.alchemy_services import use_potion
-
+from services.profession.contractor.moonroot_services import plant_seed
 
 
 class UsableItemHandler:
@@ -59,6 +59,11 @@ def use_hint_key(user_id: int):
         return "🔑 You activated your Hint Key! Your next wrong guess will give a hint instead of ending the game.\n**Valid only for current stage**."
 
     return "You’re not currently playing a guessing game."
+
+@UsableItemHandler.register("Moonroot Seed")
+def use_moonroot_seed(user_id: int):
+    return plant_seed(user_id)
+
 
 # =========================
 # Potion Recipe Usables

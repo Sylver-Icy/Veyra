@@ -26,6 +26,7 @@ class User(Base):
     upgrades = relationship("Upgrades", back_populates="user")
     quests = relationship("Quests", back_populates="user", uselist=False, cascade="all, delete")
     user_stats = relationship("UserStats", back_populates="user", uselist=False, cascade="all, delete")
+    land = relationship("UserLand", back_populates="user", uselist=False, cascade="all, delete")
 
     effects = relationship(
         "UserEffects",
@@ -65,6 +66,23 @@ class UserStats(Base):
     updated_at = Column(TIMESTAMP, default=func.now())
 
     user = relationship("User", back_populates="user_stats")
+
+
+
+class UserLand(Base):
+    __tablename__ = 'user_land'
+
+    user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'), primary_key=True)
+    land_owned = Column(Integer, nullable=False, default=0)
+    land_used = Column(Integer, nullable=False, default=0)
+
+    __table_args__ = (
+        CheckConstraint('land_owned >= 0', name='chk_land_owned_non_negative'),
+        CheckConstraint('land_used >= 0', name='chk_land_used_non_negative'),
+        CheckConstraint('land_used <= land_owned', name='chk_land_usage_valid'),
+    )
+
+    user = relationship("User", back_populates="land")
 
 
 class Wallet(Base):
