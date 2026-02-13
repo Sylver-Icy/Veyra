@@ -101,7 +101,7 @@ class SylphNameModal(discord.ui.Modal):
         try:
             name = self.name_input.value
 
-            sylph_id = spawn_sylph(
+            spawn_sylph(
                 user_id=self.user_id,
                 tree_id=self.tree_id,
                 name=name
@@ -148,9 +148,14 @@ class SylphNamingView(View):
             )
             return
 
+        sylph_name = spawn_sylph(
+            user_id=self.user_id,
+            tree_id=self.tree_id,
+        )
+
         embed = discord.Embed(
-            title="🌿 Sylph Unnamed",
-            description="The baby sylph drifts away, nameless but free.",
+            title="🌿 Sylph Named by the Moonroot",
+            description=f"The Moonroot bestowed name {sylph_name} on the sylph",
             color=discord.Color.dark_teal()
         )
 

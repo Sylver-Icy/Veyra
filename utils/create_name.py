@@ -25,14 +25,14 @@ SYLPH_NAMES = [
     "Snowpuff", "Frostwhisper", "Iceblink", "Chill",
     "Breezlet", "Windy", "Gust", "Zephyr", "Whirl",
     "Drifty", "Floaty", "Hover", "Glide", "Skimmer",
-    "Glowbug", "Starbug", "Moonbug", "Lightlet",
+    "Glowbug", "Starlight", "buggy", "Lightlet",
     "Dreamlet", "Wish", "Hope", "Charm", "Lucky",
     "Shimmerdrop", "Twilite", "Radiance", "Lullaby",
     "Whimsy", "Pixie", "Sprite", "Fable", "Myth",
     "Echolet", "Softy", "Fluff", "Cotton", "Marsh",
     "Sugar", "Honey", "Caramel", "Toffee", "Vanilla",
     "Cream", "Pudding", "Jelly", "Candy", "Gummy",
-    "Starshine", "Moonshine", "Glowshine", "Sparkshine"
+    "Miku", "Piku", "Glowy", "Shiney"
 ]
 
 

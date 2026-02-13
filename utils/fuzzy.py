@@ -2,7 +2,7 @@ from rapidfuzz import process, fuzz
 
 
 
-commands = ("ping", "check", "unlock", "upgrade", "bet", "flipcoin", "play", "use", "info", "work", "open", "commandhelp", "helloveyra", "buy", "sell", "details", "cashout", "gamble", "buychips", "repayloan" )
+commands = ("ping", "check", "unlock", "upgrade", "bet", "flipcoin", "play", "use", "info", "work", "open", "commandhelp", "helloveyra", "buy", "sell", "details", "cashout", "gamble", "buychips", "repayloan", "prune" )
 
 def get_closest_command(cmd: str):
     """
