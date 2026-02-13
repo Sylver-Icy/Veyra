@@ -49,32 +49,36 @@ class Shop(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def buy(self, ctx: commands.Context, *args):
-        """Buy items from the bot shop.
 
-        Usage: !buy [item name] [quantity]
-        """
-
-        if len(args) < 2:
+        if len(args) == 0:
             await ctx.send("Usage: !buy [item name] [quantity]")
             return
 
+        # Try to treat last argument as quantity
         try:
             quantity = int(args[-1])
+            item_tokens = args[:-1]
+
+            if len(item_tokens) == 0:
+                await ctx.send("Item name missing.")
+                return
+
         except ValueError:
-            await ctx.send("Quantity must be a number.")
-            return
+            quantity = 1
+            item_tokens = args
 
-        item_name = " ".join(args[:-1]).lower()
+        item_name = " ".join(item_tokens).lower()
 
-        # Gets the item id if name matches; else suggests similar names in case of typo.
         item_id, suggestions = get_item_id_safe(item_name)
+
         if suggestions:
-            await ctx.send(f"Item not found in database. I think you meant {suggestions[0]} ???")
+            await ctx.send(f"Item not found. You meant {suggestions[0]} ???")
             return
 
         response = buy_item(ctx.author.id, item_id, quantity)
+
         if response == "Purchase successful":
-            await ctx.send(f"You bought {quantity} of {item_name.capitalize()}!!!")
+            await ctx.send(f"You bought {quantity} X {item_name.title()}!!!")
             logger.info("%s bought %dX%s from bot", ctx.author.name, quantity, item_name)
         else:
             await ctx.send(response)
