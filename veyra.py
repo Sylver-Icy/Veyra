@@ -194,7 +194,7 @@ async def on_message(message):
                     return getattr(self._original, attr)
 
             modified = ModifiedMessage(message, fixed_message)
-            # ctx = await bot.get_context(modified)
+            ctx = await bot.get_context(modified)
             if random.random() < 0.24:
                 response = create_response("typo", 1, typo = raw_cmd, correct = closest)
                 await ctx.send(response)
