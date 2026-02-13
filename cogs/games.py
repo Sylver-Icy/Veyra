@@ -7,11 +7,13 @@ import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.global_sessions_registry import sessions
 from utils.custom_errors import VeyraError,WrongInputError
+from utils.embeds.moonrootembed import create_prune_embed
 
 
 from services.delievry_minigame_services import requested_items
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
+
 
 from domain.guild.commands_policies import non_spam_command
 
@@ -139,6 +141,10 @@ class Games(commands.Cog):
         guess = Guess()
         await guess.play_game(ctx, self.bot, self.guess_sessions)
 
+    @commands.command()
+    async def prune(self, ctx, tree_id):
+        embed, view = create_prune_embed(tree_id, ctx.author.id)
+        await ctx.send(embed=embed, view=view)
 
 def setup(bot):
     """Setup the Cog"""
