@@ -45,4 +45,4 @@ def spawn_sylph(user_id: int, tree_id: int, name: str = None):
         session.commit()
 
         # Return the persisted Sylph instance
-        return new_sylph
+        return new_sylph.sylph_id

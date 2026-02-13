@@ -7,7 +7,7 @@ import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.global_sessions_registry import sessions
 from utils.custom_errors import VeyraError,WrongInputError
-from utils.embeds.moonrootembed import create_prune_embed
+from utils.embeds.moonrootembed import create_prune_embed, create_sylph_spawn_embed
 
 
 from services.delievry_minigame_services import requested_items

@@ -3,6 +3,7 @@ import discord
 from discord.ui import View, button, Button
 
 from services.profession.contractor.moonroot_services import prune_tree
+from services.profession.contractor.sylphs_services import spawn_sylph
 
 PRUNE_DIALOGUES = [
     "You snip a tiny glowing leaf. The Moonroot shivers politely. ✂️",
@@ -67,6 +68,7 @@ PRUNE_DIALOGUES = [
     "You step back. The Moonroot looks refreshed."
 ]
 
+
 def create_prune_embed(tree_id: int, user_id: int):
     embed = discord.Embed(
         title="🌙 Moonroot Care",
@@ -79,17 +81,106 @@ def create_prune_embed(tree_id: int, user_id: int):
     view = PruneView(tree_id=tree_id, user_id=user_id)
     return embed, view
 
+# --- Sylph naming modal and view ---
+class SylphNameModal(discord.ui.Modal):
+    def __init__(self, user_id: int, tree_id: int):
+        super().__init__(title="Name Your Sylph")
+        self.user_id = user_id
+        self.tree_id = tree_id
+
+        self.name_input = discord.ui.InputText(
+            label="Sylph Name",
+            placeholder="Enter a mystical (or ridiculous) name...",
+            max_length=32
+        )
+
+        self.add_item(self.name_input)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        try:
+            name = self.name_input.value
+
+            sylph_id = spawn_sylph(
+                user_id=self.user_id,
+                tree_id=self.tree_id,
+                name=name
+            )
+
+            embed = discord.Embed(
+                title="✨ Sylph Named",
+                description=f"Your baby sylph is now called **{name}**",
+                color=discord.Color.blurple()
+            )
+
+            await interaction.followup.send(embed=embed)
+
+        except Exception as e:
+            await interaction.response.send_message(
+                f"Sylph naming failed: {e}",
+                ephemeral=True
+            )
+
+
+class SylphNamingView(View):
+    def __init__(self, user_id: int, tree_id: int):
+        super().__init__(timeout=160)
+        self.user_id = user_id
+        self.tree_id = tree_id
+
+    @button(label="Name ✨", style=discord.ButtonStyle.primary)
+    async def name_button(self, button: Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message(
+                "Not your sylph. Hands off.",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.send_modal(SylphNameModal(self.user_id, self.tree_id))
+
+    @button(label="Skip", style=discord.ButtonStyle.secondary)
+    async def skip_button(self, button: Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message(
+                "Not your decision to make.",
+                ephemeral=True
+            )
+            return
+
+        embed = discord.Embed(
+            title="🌿 Sylph Unnamed",
+            description="The baby sylph drifts away, nameless but free.",
+            color=discord.Color.dark_teal()
+        )
+
+        self.disable_all_items()
+        await interaction.response.edit_message(embed=embed, view=self)
+
+
+def create_sylph_spawn_embed(user_id: int, tree_id: int):
+    embed = discord.Embed(
+        title="✨ A New Sylph",
+        description="A baby sylph emerges from the Moonroot’s glowing roots.\nDo you want to give it a name?",
+        color=discord.Color.dark_teal()
+    )
+
+    embed.set_footer(text="Choose wisely. Names are forever (probably).")
+
+    view = SylphNamingView(user_id=user_id, tree_id=tree_id)
+    return embed, view
+
 class PruneView(View):
     def __init__(self, tree_id: int, user_id: int):
-        super().__init__(timeout=60)
+        super().__init__(timeout=160)
         self.tree_id = tree_id
         self.user_id = user_id
         self.clicks = 0
-        self.max_clicks = random.randint(4, 6)
+        self.max_clicks = random.randint(1, 2)
         self.last_dialogue = None
 
     @button(label="Prune ✂️", style=discord.ButtonStyle.secondary)
-    async def prune_button(self, btn: Button, interaction: discord.Interaction,):
+    async def prune_button(self, button: Button, interaction: discord.Interaction):
         if interaction.user.id != self.user_id:
             await interaction.response.send_message(
                 "This is not your Moonroot to butcher ",
@@ -116,13 +207,24 @@ class PruneView(View):
             await interaction.response.edit_message(embed=embed, view=self)
             return
 
-        result = prune_tree(self.tree_id)
+        msg, spawn_possible = prune_tree(self.tree_id)
 
         embed = discord.Embed(
             title="✨ Pruning Complete",
-            description=result,
+            description=msg,
             color=discord.Color.green()
         )
 
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self)
+
+        if spawn_possible:
+            spawn_embed, spawn_view = create_sylph_spawn_embed(
+                user_id=self.user_id,
+                tree_id=self.tree_id
+            )
+            await interaction.followup.send(
+                content=f"{interaction.user.mention}",
+                embed=spawn_embed,
+                view=spawn_view
+            )

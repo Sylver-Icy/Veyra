@@ -15,6 +15,7 @@ from domain.moonroot.rules import max_sylphs_allowed, get_level_from_exp
 from services.profession.land_services import allow_construction
 from services.inventory_services import take_item
 
+
 from utils.custom_errors import NotEnoughItemError
 
 
@@ -95,19 +96,19 @@ def can_spawn_sylph(session, tree_id: int):
     return current_sylphs < max_allowed
 
 
-def prune_tree(tree_id: int) -> str:
+def prune_tree(tree_id: int) -> tuple[str, bool]:
     now = datetime.utcnow()
 
     with Session() as session:
         tree = session.get(UserTree, tree_id)
         if not tree:
-            return "The Moonroot tree seems to have vanished into thin air. 🌫️"
+            return "The Moonroot tree seems to have vanished into thin air. 🌫️", False
 
         if tree.last_pruned:
             hours_since_prune = (now - tree.last_pruned).total_seconds() / 3600
 
-            if hours_since_prune < 3:
-                return "You approach the Moonroot, but its branches sway smugly. Already pruned. Already thriving. 🌿"
+            if hours_since_prune < 0:
+                return "You approach the Moonroot, but its branches sway smugly. Already pruned. Already thriving. 🌿", False
 
         gained_bond = random.randint(3, 8)
         bonus_bond = 0
@@ -126,6 +127,7 @@ def prune_tree(tree_id: int) -> str:
         tree.last_pruned = now
 
         session.commit()
+        spawn_possible = can_spawn_sylph(session, tree_id)
 
         if bonus_bond:
             msg = f"You gently prune the Moonroot. ✨ Bond deepened by {gained_bond} + BONUS {bonus_bond}."
@@ -135,4 +137,5 @@ def prune_tree(tree_id: int) -> str:
         if tree.lvl > old_attunement:
             msg += " 🌳 The Moonroot hums softly. Its Attunement has grown."
 
-        return msg
+
+        return msg, spawn_possible
