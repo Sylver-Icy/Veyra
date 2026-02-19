@@ -27,6 +27,9 @@ from services.battle.campaign.campaign_services import (
 )
 from services.battle.campaign.campaign_config import CAMPAIGN_LEVELS
 
+from utils.embeds.loadoutembed import get_loadout_ui
+
+from domain.battle.rules import get_allowed_weapons, get_allowed_spells
 
 class Battle(commands.Cog):
     """Battle-related commands.
@@ -101,11 +104,18 @@ class Battle(commands.Cog):
             await ctx.send("No response. Challenge expired. Refunding pot gimme a moment.")
             add_gold(ctx.author.id, bet)
 
+
+
     @commands.slash_command()
-    async def loadout(self, ctx, weapon: str, spell: str):
-        """Update the user's loadout (weapon + spell)."""
-        result = update_loadout(ctx.author.id, weapon, spell)
-        await ctx.respond(result)
+    async def loadout(self, ctx):
+        """Update your loadout (weapon + spell)."""
+        view, embed = get_loadout_ui(
+            user=ctx.author,
+            allowed_weapons=get_allowed_weapons(),
+            allowed_spells=get_allowed_spells(),
+        )
+
+        await ctx.respond(embed=embed, view=view)
 
     @commands.slash_command(description="Fight me in campaign mode.")
     async def campaign(

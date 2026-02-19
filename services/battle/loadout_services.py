@@ -10,12 +10,14 @@ from models.users_model import BattleLoadout
 
 from services.battle.campaign.campaign_services import get_campaign_stage
 
-
-# Allowed weapons players can equip (alpha set)
-allowed_weapons = ("elephanthammer", "moonslasher", "trainingblade", "eternaltome", "veyrasgrimoire", "darkblade", "bardoksclaymore")
-
-# Allowed spells players can equip (alpha set)
-allowed_spells = ("fireball", "nightfall", "heavyshot", "erdtreeblessing", "frostbite", "veilofdarkness", "earthquake")
+from domain.battle.rules import (
+    get_allowed_weapons,
+    get_allowed_spells,
+    get_weapon_unlock_stage,
+    get_spell_unlock_stage,
+    get_weapon_label,
+    get_spell_label,
+)
 
 def _normalize_input(value: str) -> str:
     """
@@ -25,56 +27,86 @@ def _normalize_input(value: str) -> str:
     """
     return value.lower().replace(" ", "").replace("_", "")
 
-def update_loadout(user_id: int, weapon: str, spell: str):
+def update_loadout(user_id: int, weapon: str = None, spell: str = None):
     """
     Update or create a player's battle loadout.
 
-    - Validates weapon/spell names
-    - Updates existing loadout if present
-    - Creates a new loadout row if user has none
-    Returns a status message for the user.
+    - Accepts optional weapon and/or spell
+    - Validates provided values only
+    - Preserves existing values if not supplied
+    Returns structured result for UI usage.
     """
-    weapon_key = _normalize_input(weapon)
-    spell_key = _normalize_input(spell)
-    
-    # Validate user input before touching the database
-    if weapon_key not in allowed_weapons:
-        return f"{weapon} is incorrect pick among {allowed_weapons}"
 
-    if spell_key not in allowed_spells:
-        return f"{spell} bruh what kinda incantations you tryna do ?? pick from {allowed_spells}"
+    weapon_key = _normalize_input(weapon) if weapon else None
+    spell_key = _normalize_input(spell) if spell else None
 
-    if spell_key == "veilofdarkness":
-        if get_campaign_stage(user_id) < 10:
-            return "*Veil of Darkness* is a campaign spell. Reach campaign stage 10 to unlock it!"
+    allowed_weapons = get_allowed_weapons()
+    allowed_spells = get_allowed_spells()
 
-    if weapon_key == "veyrasgrimoire":
-        if get_campaign_stage(user_id) < 10:
-            return "*Veyra's Grimoire* is a campaign weapon. Reach campaign stage 10 to unlock it!"
+    if weapon_key and weapon_key not in allowed_weapons:
+        return {
+            "success": False,
+            "message": f"Invalid weapon: {weapon}"
+        }
 
-    if weapon_key == "bardoksclaymore":
-        if get_campaign_stage(user_id) < 15:
-            return "*Bardok's Claymore* is unlocked at campaign stage 15!"
+    if spell_key and spell_key not in allowed_spells:
+        return {
+            "success": False,
+            "message": f"Invalid spell: {spell}"
+        }
 
-    # Open DB session and fetch existing loadout
+    stage = get_campaign_stage(user_id)
+
+    if weapon_key:
+        required_stage = get_weapon_unlock_stage(weapon_key)
+        if stage < required_stage:
+            return {
+                "success": False,
+                "message": f"{get_weapon_label(weapon_key)} unlocks at campaign stage {required_stage}"
+            }
+
+    if spell_key:
+        required_stage = get_spell_unlock_stage(spell_key)
+        if stage < required_stage:
+            return {
+                "success": False,
+                "message": f"{get_spell_label(spell_key)} unlocks at campaign stage {required_stage}"
+            }
+
     with Session() as session:
-        # If user already has a loadout, update it
         warrior = session.get(BattleLoadout, user_id)
-        if warrior:
-            warrior.weapon = weapon_key
-            warrior.spell = spell_key
-            session.commit()
-            return f"Loadout updated You currently have {weapon} as weapon and your spell is {spell}"
 
-        # If user has no loadout, create a new one
+        if warrior:
+            if weapon_key:
+                warrior.weapon = weapon_key
+            if spell_key:
+                warrior.spell = spell_key
+
+            session.commit()
+
+            return {
+                "success": True,
+                "weapon": warrior.weapon,
+                "spell": warrior.spell,
+                "message": "Loadout updated"
+            }
+
+        # Create new loadout (fallback to defaults if missing)
         new_entry = BattleLoadout(
-            user_id = user_id,
-            weapon = weapon_key,
-            spell = spell_key
+            user_id=user_id,
+            weapon=weapon_key or "trainingblade",
+            spell=spell_key or "nightfall"
         )
+
         session.add(new_entry)
         session.commit()
-        return f"You currently have {weapon} as weapon and your spell is {spell}"
+
+        return {
+            "success": True,
+            "weapon": new_entry.weapon,
+            "spell": new_entry.spell,
+            "message": "Loadout created"
+        }
 
 def fetch_loadout(user_id: int):
     """
@@ -83,9 +115,8 @@ def fetch_loadout(user_id: int):
     """
     with Session() as session:
         warrior = session.get(BattleLoadout, user_id)
-
         if warrior:
             return (warrior.weapon, warrior.spell)
 
-        # Default loadout for new users
+        #default loadout
         return "trainingblade", "nightfall"
