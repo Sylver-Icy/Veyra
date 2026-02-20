@@ -146,7 +146,7 @@ class ResultRevealView(View):
 
     @button(label="View Result", style=discord.ButtonStyle.gray)
     async def view_result_button(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.send_message(self.result_text, ephemeral=True)
+        await interaction.response.send_message(self.result_text)
 
 
 async def animate_casino_result(interaction: discord.Interaction, data: dict):
@@ -169,12 +169,6 @@ async def animate_casino_result(interaction: discord.Interaction, data: dict):
 
     embed = discord.Embed(color=discord.Color.gold())
 
-    won = data.get("won")
-    if won is True:
-        embed.color = discord.Color.green()
-    elif won is False:
-        embed.color = discord.Color.red()
-
     game = data.get("game")
 
     result_text = data.get("summary", "No result details available.")
@@ -195,6 +189,13 @@ async def animate_casino_result(interaction: discord.Interaction, data: dict):
 
         coin = data.get("result", "?")
         embed.description = f"🪙 **Result:** **{coin}**"
+
+        won = data.get("won")
+        if won is True:
+            embed.color = discord.Color.green()
+        elif won is False:
+            embed.color = discord.Color.red()
+
         await interaction.edit_original_response(embed=embed, view=view)
 
     # 🎰 Slots Animation
@@ -214,6 +215,13 @@ async def animate_casino_result(interaction: discord.Interaction, data: dict):
 
         await asyncio.sleep(1)
         embed.description = f"🎰 **Result**\n{reels[0]} {reels[1]} {reels[2]}"
+
+        won = data.get("won")
+        if won is True:
+            embed.color = discord.Color.green()
+        elif won is False:
+            embed.color = discord.Color.red()
+
         await interaction.edit_original_response(embed=embed, view=view)
 
     # 🎡 Roulette Animation
@@ -225,6 +233,13 @@ async def animate_casino_result(interaction: discord.Interaction, data: dict):
 
         rolled = data.get("rolled", "?")
         embed.description = f"🎡 **Ball landed on:** **{rolled}**"
+
+        won = data.get("won")
+        if won is True:
+            embed.color = discord.Color.green()
+        elif won is False:
+            embed.color = discord.Color.red()
+
         await interaction.edit_original_response(embed=embed, view=view)
 
     # 🏰 Dungeon Animation
@@ -244,6 +259,12 @@ async def animate_casino_result(interaction: discord.Interaction, data: dict):
             embed.description = f"💀 **Trap triggered in the {area.title()}!**"
         else:
             embed.description = f"🏰 **Outcome:** **{outcome}**"
+
+        won = data.get("won")
+        if won is True:
+            embed.color = discord.Color.green()
+        elif won is False:
+            embed.color = discord.Color.red()
 
         await interaction.edit_original_response(embed=embed, view=view)
 
