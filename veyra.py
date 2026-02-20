@@ -147,6 +147,7 @@ async def tutorial_check(ctx):
 async def on_ready():
     """Run background jobs and log when the bot is ready."""
     print("veyra online")
+    await bot.sync_commands()
     await create_inv_cache(bot)
 
     try:

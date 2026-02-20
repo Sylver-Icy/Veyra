@@ -17,6 +17,11 @@ from domain.guild.commands_policies import non_spam_command
 class Gambling(commands.Cog):
     """Cog for handling gambling commands such as starting races and placing bets."""
 
+    gamble = discord.SlashCommandGroup(
+        "gamble",
+        "Play casino games"
+    )
+
     def __init__(self, bot):
         """
         Initialize the Gambling cog.
@@ -27,6 +32,46 @@ class Gambling(commands.Cog):
         self.bot = bot
         # Flag to indicate whether betting is currently allowed
         self.betting_phase = False
+
+
+    @gamble.command(name="flipcoin", description="Bet on a coin flip")
+    async def gamble_flipcoin(
+        self,
+        ctx: discord.ApplicationContext,
+        bet: discord.Option(int, "Amount of gold to bet", min_value=1, max_value=5000),
+        choice: discord.Option(str, "Pick heads or tails", choices=["Heads", "Tails"])
+    ):
+        msg = play_casino_game(ctx.author.id, "flipcoin", bet, choice)
+        await ctx.respond(msg)
+
+    @gamble.command(name="roulette", description="Bet on a roulette number")
+    async def gamble_roulette(
+        self,
+        ctx: discord.ApplicationContext,
+        bet: discord.Option(int, "Amount of gold to bet", min_value=10, max_value=2500),
+        number: discord.Option(int, "Choose a number (0–9)", min_value=0, max_value=9)
+    ):
+        msg = play_casino_game(ctx.author.id, "roulette", bet, str(number))
+        await ctx.respond(msg)
+
+    @gamble.command(name="slots", description="Spin the slot machine")
+    async def gamble_slots(
+        self,
+        ctx: discord.ApplicationContext,
+        bet: discord.Option(int, "Amount of gold to bet", min_value=10, max_value=2000)
+    ):
+        msg = play_casino_game(ctx.author.id, "slots", bet, "")
+        await ctx.respond(msg)
+
+    @gamble.command(name="dungeon", description="Risk gold exploring a dungeon")
+    async def gamble_dungeon(
+        self,
+        ctx: discord.ApplicationContext,
+        bet: discord.Option(int, "Amount of gold to risk", min_value=10, max_value=3000),
+        area: discord.Option(str, "Choose a dungeon", choices=["Caves", "Tunnels", "Ruins", "Lair", "Abyss"])
+    ):
+        msg = play_casino_game(ctx.author.id, "dungeon", bet, area)
+        await ctx.respond(msg)
 
 
     @commands.slash_command(name="start_race", description="Start an animal race and bet on the animals")
@@ -136,7 +181,7 @@ class Gambling(commands.Cog):
 
     @commands.command()
     # @commands.cooldown(1,5, commands.BucketType.user)
-    async def gamble(self, ctx, game_name: str, bet: int, choice: str = ""):
+    async def gambleold(self, ctx, game_name: str, bet: int, choice: str = ""):
         # Normalize user input and fuzzy match to the closest registered game id
         normalized = normalize_game_name(game_name)
         game_ids = list(GAMES.keys())
