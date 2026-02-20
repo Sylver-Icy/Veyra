@@ -1,4 +1,5 @@
 import discord
+import asyncio
 from discord.ui import View, button
 from utils.emotes import GOLD_EMOJI, CHIP_EMOJI
 
@@ -136,3 +137,116 @@ def get_casino_view_and_embed(offers: dict, convert_data: dict):
     view = CasinoView(offers, convert_data)
     embed = casino_buy_embed(offers)
     return embed, view
+
+
+class ResultRevealView(View):
+    def __init__(self, result_text: str):
+        super().__init__(timeout=60)
+        self.result_text = result_text
+
+    @button(label="View Result", style=discord.ButtonStyle.gray)
+    async def view_result_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message(self.result_text, ephemeral=True)
+
+
+async def animate_casino_result(interaction: discord.Interaction, data: dict):
+    """
+    Universal embed animator for casino games.
+
+    Expected data format examples:
+    Flipcoin:
+        {"game": "flipcoin", "result": "Heads"}
+
+    Slots:
+        {"game": "slots", "reels": ["🍒", "🍋", "🍒"]}
+
+    Roulette:
+        {"game": "roulette", "number": 7, "won": True}
+
+    Dungeon:
+        {"game": "dungeon", "area": "crypt", "outcome": "trap"}
+    """
+
+    embed = discord.Embed(color=discord.Color.gold())
+
+    won = data.get("won")
+    if won is True:
+        embed.color = discord.Color.green()
+    elif won is False:
+        embed.color = discord.Color.red()
+
+    game = data.get("game")
+
+    result_text = data.get("summary", "No result details available.")
+    view = ResultRevealView(result_text)
+
+    # ❌ Error / Failure Case
+    if game == "error":
+        embed.description = data.get("summary", "An unknown error occurred.")
+        await interaction.response.send_message(embed=embed)
+        return
+
+    # 🪙 Flipcoin Animation
+    if game == "flipcoin":
+        embed.description = "🪙 **Flipping the coin...**"
+        await interaction.response.send_message(embed=embed)
+
+        await asyncio.sleep(2)
+
+        coin = data.get("result", "?")
+        embed.description = f"🪙 **Result:** **{coin}**"
+        await interaction.edit_original_response(embed=embed, view=view)
+
+    # 🎰 Slots Animation
+    elif game == "slots":
+        reels = data.get("reels") or ["❔", "❔", "❔"]
+
+        embed.description = "🎰 **Spinning...**\n⬜ ⬜ ⬜"
+        await interaction.response.send_message(embed=embed)
+
+        await asyncio.sleep(1)
+        embed.description = f"🎰 **Spinning...**\n{reels[0]} ⬜ ⬜"
+        await interaction.edit_original_response(embed=embed)
+
+        await asyncio.sleep(1)
+        embed.description = f"🎰 **Spinning...**\n{reels[0]} {reels[1]} ⬜"
+        await interaction.edit_original_response(embed=embed)
+
+        await asyncio.sleep(1)
+        embed.description = f"🎰 **Result**\n{reels[0]} {reels[1]} {reels[2]}"
+        await interaction.edit_original_response(embed=embed, view=view)
+
+    # 🎡 Roulette Animation
+    elif game == "roulette":
+        embed.description = "🎡 **Spinning the wheel...**"
+        await interaction.response.send_message(embed=embed)
+
+        await asyncio.sleep(2)
+
+        rolled = data.get("rolled", "?")
+        embed.description = f"🎡 **Ball landed on:** **{rolled}**"
+        await interaction.edit_original_response(embed=embed, view=view)
+
+    # 🏰 Dungeon Animation
+    elif game == "dungeon":
+        area = data.get("area", "dungeon")
+
+        embed.description = f"🏰 **Entering the {area.title()}...**"
+        await interaction.response.send_message(embed=embed)
+
+        await asyncio.sleep(2)
+
+        outcome = data.get("outcome", "unknown")
+
+        if outcome == "win":
+            embed.description = f"🏰 **Victory in the {area.title()}!**"
+        elif outcome == "trap":
+            embed.description = f"💀 **Trap triggered in the {area.title()}!**"
+        else:
+            embed.description = f"🏰 **Outcome:** **{outcome}**"
+
+        await interaction.edit_original_response(embed=embed, view=view)
+
+    else:
+        embed.description = "🎰 **Game result unavailable**"
+        await interaction.response.send_message(embed=embed, view=view)

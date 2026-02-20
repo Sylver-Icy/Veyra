@@ -49,14 +49,16 @@ def flipcoin_game(bet: int, choice: str) -> GameResult:
             delta,
             f"🪙 It landed **{coin}**!\n"
             f"YAY!!. **Payout: {payout}{CHIP_EMOJI}**\n"
-            "Flip Again!!!."
+            "Flip Again!!!.",
+            meta={"result": coin}
         )
 
     return GameResult(
         False,
         -bet,
         f"🪙 It landed **{coin}**.\n"
-        f"Lost **-{bet}{CHIP_EMOJI}**. Cry about it."
+        f"Lost **-{bet}{CHIP_EMOJI}**. Cry about it.",
+        meta={"result": coin}
     )
 
 
@@ -96,7 +98,8 @@ def roulette_game(bet: int, choice: str) -> GameResult:
             delta,
             f"🎡 Wheel landed on **{rolled}**!\n"
             f"Unhinged accuracy. **10x payout** 💀🔥\n"
-            f"You walk away with **{payout}{CHIP_EMOJI}**"
+            f"You walk away with **{payout}{CHIP_EMOJI}**",
+            meta={"rolled": rolled, "picked": picked}
         )
 
     return GameResult(
@@ -104,7 +107,8 @@ def roulette_game(bet: int, choice: str) -> GameResult:
         -bet,
         f"🎡 Wheel landed on **{rolled}**.\n"
         f"You picked **{picked}**.\n"
-        "Rip your chips."
+        "Rip your chips.",
+        meta={"rolled": rolled, "picked": picked}
     )
 
 
@@ -144,7 +148,8 @@ def slots_game(bet: int, choice: str) -> GameResult:
             f"🎰 **SLOTS** 🎰\n"
             f"{spin}\n"
             f"TRIPLE HIT DAMNN🔥😭 **x{mult}**\n"
-            f"Paid out **{payout}{CHIP_EMOJI}**"
+            f"Paid out **{payout}{CHIP_EMOJI}**",
+            meta={"reels": [a, b, c]}
         )
 
     if a == b or b == c or a == c:
@@ -157,7 +162,8 @@ def slots_game(bet: int, choice: str) -> GameResult:
             f"🎰 **SLOTS** 🎰\n"
             f"{spin}\n"
             f"PAIR HIT ✨ **x{mult}**\n"
-            f"You won **{payout}{CHIP_EMOJI}**"
+            f"You won **{payout}{CHIP_EMOJI}**",
+            meta={"reels": [a, b, c]}
         )
 
     return GameResult(
@@ -166,7 +172,8 @@ def slots_game(bet: int, choice: str) -> GameResult:
         f"🎰 **SLOTS** 🎰\n"
         f"{spin}\n"
         f"Lost **-{bet}{CHIP_EMOJI}**.\n"
-        "Machine remains unimpressed."
+        "Machine remains unimpressed.",
+        meta={"reels": [a, b, c]}
     )
 
 
@@ -205,7 +212,8 @@ def dungeon_game(bet: int, choice: str) -> GameResult:
             f"🗡️ **DUNGEON RAID**\n"
             f"Area: **{area['name']}**\n"
             f"You triggered a trap and died 💀\n"
-            f"Lost **-{bet}{CHIP_EMOJI}**"
+            f"Lost **-{bet}{CHIP_EMOJI}**",
+            meta={"area": choice_norm, "outcome": "trap"}
         )
 
     payout = round(bet * area["mult"])
@@ -218,7 +226,8 @@ def dungeon_game(bet: int, choice: str) -> GameResult:
         f"Area: **{area['name']}**\n"
         f"Treasure secured 🎁✨\n"
         f"Multiplier: **x{area['mult']}**\n"
-        f"Loot worth **{payout}{CHIP_EMOJI}**"
+        f"Loot worth **{payout}{CHIP_EMOJI}**",
+        meta={"area": choice_norm, "outcome": "win"}
     )
 
 

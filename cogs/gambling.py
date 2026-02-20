@@ -9,6 +9,7 @@ from services.economy_services import remove_gold, add_gold
 from services.casino_services import play_casino_game, GAMES
 
 from utils.embeds.animalraceembed import race_start_embed
+from utils.embeds.casinoembed import animate_casino_result
 from utils.custom_errors import NotEnoughGoldError
 from utils.fuzzy import normalize_game_name
 
@@ -41,8 +42,8 @@ class Gambling(commands.Cog):
         bet: discord.Option(int, "Amount of gold to bet", min_value=1, max_value=5000),
         choice: discord.Option(str, "Pick heads or tails", choices=["Heads", "Tails"])
     ):
-        msg = play_casino_game(ctx.author.id, "flipcoin", bet, choice)
-        await ctx.respond(msg)
+        data = play_casino_game(ctx.author.id, "flipcoin", bet, choice)
+        await animate_casino_result(ctx.interaction, data)
 
     @gamble.command(name="roulette", description="Bet on a roulette number")
     async def gamble_roulette(
@@ -51,8 +52,8 @@ class Gambling(commands.Cog):
         bet: discord.Option(int, "Amount of gold to bet", min_value=10, max_value=2500),
         number: discord.Option(int, "Choose a number (0–9)", min_value=0, max_value=9)
     ):
-        msg = play_casino_game(ctx.author.id, "roulette", bet, str(number))
-        await ctx.respond(msg)
+        data = play_casino_game(ctx.author.id, "roulette", bet, str(number))
+        await animate_casino_result(ctx.interaction, data)
 
     @gamble.command(name="slots", description="Spin the slot machine")
     async def gamble_slots(
@@ -60,8 +61,8 @@ class Gambling(commands.Cog):
         ctx: discord.ApplicationContext,
         bet: discord.Option(int, "Amount of gold to bet", min_value=10, max_value=2000)
     ):
-        msg = play_casino_game(ctx.author.id, "slots", bet, "")
-        await ctx.respond(msg)
+        data = play_casino_game(ctx.author.id, "slots", bet, "")
+        await animate_casino_result(ctx.interaction, data)
 
     @gamble.command(name="dungeon", description="Risk gold exploring a dungeon")
     async def gamble_dungeon(
@@ -70,8 +71,8 @@ class Gambling(commands.Cog):
         bet: discord.Option(int, "Amount of gold to risk", min_value=10, max_value=3000),
         area: discord.Option(str, "Choose a dungeon", choices=["Caves", "Tunnels", "Ruins", "Lair", "Abyss"])
     ):
-        msg = play_casino_game(ctx.author.id, "dungeon", bet, area)
-        await ctx.respond(msg)
+        data = play_casino_game(ctx.author.id, "dungeon", bet, area)
+        await animate_casino_result(ctx.interaction, data)
 
 
     @commands.slash_command(name="start_race", description="Start an animal race and bet on the animals")
@@ -176,46 +177,6 @@ class Gambling(commands.Cog):
         else:
             # Inform user that betting is currently closed
             await ctx.send("There is no ongoing betting phase right now.")
-
-
-
-    @commands.command()
-    # @commands.cooldown(1,5, commands.BucketType.user)
-    async def gambleold(self, ctx, game_name: str, bet: int, choice: str = ""):
-        # Normalize user input and fuzzy match to the closest registered game id
-        normalized = normalize_game_name(game_name)
-        game_ids = list(GAMES.keys())
-
-        # RapidFuzz best match
-        match = process.extractOne(
-            normalized,
-            game_ids,
-            scorer=fuzz.WRatio,
-        )
-
-        # Only accept fuzzy match if score is >= 75
-        if not match or match[1] < 75:
-            available = ", ".join(game.name for game in GAMES.values())
-            await ctx.send(
-                f"The casino doesn't support `{game_name}`\n"
-                f"Available games: {available}"
-            )
-            return
-
-        resolved_game_id = match[0]
-
-        # Simple missing-choice check: require a choice for every game except slots
-        if resolved_game_id != "slots" and not choice:
-            await ctx.send(
-                f"❌ Missing choice for `{resolved_game_id}`. "
-                f"Example: `!gamble {resolved_game_id} {bet} <choice>`"
-            )
-            return
-
-        msg = play_casino_game(ctx.author.id, resolved_game_id, bet, choice)
-        await ctx.send(msg)
-
-
 
 def setup(bot):
     """Setup function to add the Gambling cog to the bot."""

@@ -24,7 +24,7 @@ from utils.custom_errors import VeyraError
 from utils.emotes import CHIP_EMOJI
 
 
-def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> str:
+def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> dict:
     """
     Plays a casino game for a user.
 
@@ -35,33 +35,33 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> str:
         choice (str): Player's game-specific choice
 
     Returns:
-        str: Result message to display to the user
+        dict: Result message to display to the user
     """
     game = GAMES.get(game_id)
     if not game:
-        return "That game doesn't exist. Even the casino is confused."
+        return {"game": "error", "summary": "That game doesn't exist. Even the casino is confused."}
 
     # ---- Bet validation ----
     if bet < game.min_bet:
-        return (
-            f"Minimum bet is **{game.min_bet}**{CHIP_EMOJI}. "
-            "COME ON!! Bet Big to WIN BIG!"
-        )
+        return {
+            "game": "error",
+            "summary": f"Minimum bet is **{game.min_bet}**{CHIP_EMOJI}. COME ON!! Bet Big to WIN BIG!"
+        }
 
     if bet > game.max_bet:
-        return (
-            f"Maximum bet is **{game.max_bet}**{CHIP_EMOJI}. "
-            "We're reckless, not irresponsible."
-        )
+        return {
+            "game": "error",
+            "summary": f"Maximum bet is **{game.max_bet}**{CHIP_EMOJI}. We're reckless, not irresponsible."
+        }
 
     with Session() as session:
         _, chips = check_wallet_full(user_id, session)
 
         if chips < bet:
-            return (
-                f"You have **{chips}**{CHIP_EMOJI} but tried to bet **{bet}**. "
-                "Bold move. Unfortunately, math exists."
-            )
+            return {
+                "game": "error",
+                "summary": f"You have **{chips}**{CHIP_EMOJI} but tried to bet **{bet}**. Bold move. Unfortunately, math exists."
+            }
 
         try:
             # Play the game (pure logic, no DB side effects inside)
@@ -80,10 +80,16 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> str:
                     expire_user_effect(session, user_id, "GAMBLER'S FATE")
                     session.commit()
 
-                    return (
-                        f"{result.message}\n"
-                        "**GAMBLER'S FATE** cushions the blow. Your chips were partially refunded"
-                    )
+                    return {
+                        "game": game_id,
+                        "summary": (
+                            f"{result.message}\n"
+                            "**GAMBLER'S FATE** cushions the blow. Your chips were partially refunded"
+                        ),
+                        "delta": -reduced_loss,
+                        "won": False,
+                        **result.meta
+                    }
 
                 remove_chips(user_id, loss, session)
 
@@ -92,14 +98,20 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> str:
                 add_chip(user_id, result.delta, session)
 
             session.commit()
-            return result.message
+            return {
+                "game": game_id,
+                "summary": result.message,
+                "delta": result.delta,
+                "won": result.delta > 0,
+                **result.meta
+            }
 
         except VeyraError:
             session.rollback()
-            return (
-                "Something went off the rails mid-spin 😵‍💫\n"
-                "Your bet is safe. The casino pretends this never happened."
-            )
+            return {
+                "game": "error",
+                "summary": "Something went off the rails mid-spin 😵‍💫\nYour bet is safe. The casino pretends this never happened."
+            }
 
         except Exception:
             session.rollback()
