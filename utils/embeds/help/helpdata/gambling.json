@@ -5,7 +5,7 @@
   "pages": [
     {
       "title": "🎰 Gambling Overview",
-      "description": "Veyra gambling is a **risk-based minigame system** where you bet **Chips** to win more chips.\n\nImportant:\n• Gambling uses **Chips**, not Gold\n• Games are designed with **fair odds (EV ≈ 1)**\n\nUse this guide to learn:\n✅ how chips work\n✅ commands + format\n✅ all games + their rules",
+      "description": "Veyra gambling is a **risk-based minigame system** where you bet **Chips** to win more chips.\n\nImportant:\n• Gambling uses **Chips**, not Gold\n• Games are designed with **fair odds (EV ≈ 1)**\n\n✨ Games include animations & result reveals for better game feel\n\nUse this guide to learn:\n✅ how chips work\n✅ commands + format\n✅ all games + their rules",
       "fields": [
         {
           "name": "Core Currency",
@@ -21,16 +21,16 @@
     },
     {
       "title": "⌨️ Commands & Format",
-      "description": "Gambling is played using a **prefix command format**.\n\n**Format:**\n`!gamble <game> <bet> <choice>`\n\nNot all games need a choice.",
+      "description": "Gambling is played using **slash commands** for a cleaner UI.\n\n**Format:**\n`/gamble <game>`\n\nEach game provides built-in options like bet amount and choices.",
       "fields": [
         {
           "name": "Main Commands",
-          "value": "• `/casino` - open casino shop (buy chips / cashout chips)\n• `!gamble <game> <bet> <choice?>` - play a casino game\n• `!details gambling` - view this guide again",
+          "value": "• `/casino` - open casino shop (buy chips / cashout chips)\n• `/gamble <game>` - play a casino game\n• `!details gambling` - view this guide again",
           "inline": false
         },
         {
           "name": "Examples",
-          "value": "• `!gamble flipcoin 100 heads`\n• `!gamble roulette 50 7`\n• `!gamble slots 100`\n• `!gamble dungeon 200 caves`",
+          "value": "• `/gamble flipcoin`\n• `/gamble roulette`\n• `/gamble slots`\n• `/gamble dungeon`",
           "inline": false
         },
         {
@@ -46,12 +46,12 @@
       "fields": [
         {
           "name": "Command",
-          "value": "`!gamble flipcoin <bet> <heads/tails>`\nExample: `!gamble flipcoin 100 heads`",
+          "value": "`/gamble flipcoin`\nChoose bet amount and Heads/Tails from options",
           "inline": false
         },
         {
           "name": "Valid Inputs",
-          "value": "Accepted choices:\n• `heads`, `head`\n• `tails`, `tail`\n\nCase-insensitive.\nInvalid choice → no loss.",
+          "value": "Heads/Tails are selectable via dropdown.\nNo typing required.",
           "inline": false
         },
         {
@@ -72,7 +72,7 @@
       "fields": [
         {
           "name": "Command",
-          "value": "`!gamble roulette <bet> <0-9>`\nExample: `!gamble roulette 100 7`",
+          "value": "`/gamble roulette`\nChoose bet amount and number (0–9)",
           "inline": false
         },
         {
@@ -82,7 +82,7 @@
         },
         {
           "name": "Invalid Input",
-          "value": "If your number is not 0–9:\n✅ no loss\nYou’ll be told the correct format.",
+          "value": "Number selection is restricted to 0–9 via UI options.",
           "inline": false
         },
         {
@@ -98,7 +98,7 @@
       "fields": [
         {
           "name": "Command",
-          "value": "`!gamble slots <bet>`\nExample: `!gamble slots 200`",
+          "value": "`/gamble slots`\nChoose bet amount",
           "inline": false
         },
         {
@@ -129,12 +129,12 @@
       "fields": [
         {
           "name": "Command",
-          "value": "`!gamble dungeon <bet> <area>`\nExample: `!gamble dungeon 300 ruins`",
+          "value": "`/gamble dungeon`\nChoose bet amount and dungeon area",
           "inline": false
         },
         {
           "name": "Valid Areas",
-          "value": "`caves`, `tunnels`, `ruins`, `lair`, `abyss`\n\nInvalid area → no loss (delta = 0).",
+          "value": "Dungeon areas are selectable via dropdown.\nInvalid selections are prevented by Discord UI.",
           "inline": false
         },
         {
