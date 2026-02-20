@@ -11,12 +11,20 @@ WEAPONS = {
         "label": "Training Blade",
         "unlock_stage": 0,
     },
+    "moonslasher": {
+        "label": "Moon Slasher",
+        "unlock_stage": 0,
+    },
+    "eternaltome": {
+        "label": "Eternal Tome",
+        "unlock_stage": 0,
+    },
     "elephanthammer": {
         "label": "Elephant Hammer",
         "unlock_stage": 0,
     },
-    "moonslasher": {
-        "label": "Moon Slasher",
+    "darkblade": {
+        "label": "Dark Blade",
         "unlock_stage": 0,
     },
     "veyrasgrimoire": {
@@ -32,12 +40,20 @@ WEAPONS = {
 
 # ===== SPELLS =====
 SPELLS = {
+    "fireball": {
+        "label": "Fireball",
+        "unlock_stage": 0,
+    },
     "nightfall": {
         "label": "Nightfall",
         "unlock_stage": 0,
     },
-    "fireball": {
-        "label": "Fireball",
+    "heavyshot": {
+        "label": "Heavyshot",
+        "unlock_stage": 0,
+    },
+    "erdtreeblessing": {
+        "label": "Erdtree Blessing",
         "unlock_stage": 0,
     },
     "frostbite": {
@@ -48,8 +64,11 @@ SPELLS = {
         "label": "Veil of Darkness",
         "unlock_stage": 10,
     },
+    "earthquake": {
+        "label": "Earthquake",
+        "unlock_stage": 0,
+    },
 }
-
 
 # ===== ACCESSORS =====
 
@@ -79,3 +98,16 @@ def get_weapon_unlock_stage(weapon_key: str) -> int:
 
 def get_spell_unlock_stage(spell_key: str) -> int:
     return SPELLS.get(spell_key, {}).get("unlock_stage", 0)
+
+def queue_bet_validation(min_bet: int, max_bet: int) -> bool:
+
+    if not isinstance(min_bet, int) or not isinstance(max_bet, int):
+        return False
+
+    if min_bet < 1:
+        return False
+
+    if max_bet < min_bet:
+        return False
+
+    return True

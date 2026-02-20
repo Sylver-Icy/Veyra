@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func, CheckConstraint
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func, CheckConstraint, Index
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -51,6 +51,13 @@ class User(Base):
         'Loan',
         back_populates='user',
         cascade='all, delete'
+    )
+
+    battle_queue = relationship(
+        "BattleQueue",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete"
     )
 
 class UserStats(Base):
@@ -246,3 +253,25 @@ class UserEffects(Base):
         "User",
         back_populates="effects"
     )
+
+class BattleQueue(Base):
+    __tablename__ = 'battle_queue'
+
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        primary_key=True
+    )
+
+    min_bet = Column(Integer, nullable=False)
+    max_bet = Column(Integer, nullable=False)
+    score = Column(Integer, default=0)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+
+    __table_args__ = (
+        CheckConstraint('min_bet > 0', name='battle_queue_min_bet_check'),
+        CheckConstraint('max_bet >= min_bet', name='battle_queue_max_bet_check'),
+        Index('idx_battle_queue_bet_range', 'min_bet', 'max_bet'),
+    )
+
+    user = relationship("User", back_populates="battle_queue")

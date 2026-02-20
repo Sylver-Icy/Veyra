@@ -26,6 +26,7 @@ from services.battle.campaign.campaign_services import (
     get_campaign_stage,
 )
 from services.battle.campaign.campaign_config import CAMPAIGN_LEVELS
+from services.battle.battle_queue import try_to_start_battle_queue
 
 from utils.embeds.loadoutembed import get_loadout_ui
 
@@ -43,15 +44,17 @@ class Battle(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.slash_command(description="Challenge someone to a 1v1 battle.")
+    @commands.slash_command(description="Challenge another player to a PvP battle with a gold bet.")
     async def battle(self, ctx, target: discord.User, bet: int):
-        """Challenge a user to a battle.
+        """Challenge another player to a PvP battle.
 
-        Workflow:
-        1) Validate target and bet.
-        2) Ensure challenger can afford the bet.
-        3) Deduct bet (pot money).
-        4) Send challenge UI; on accept, run simulation; otherwise refund.
+        Flow:
+        1) Validate target and bet amount.
+        2) Ensure the challenger has enough gold.
+        3) Deduct gold into the battle pot.
+        4) Send a challenge prompt to the opponent.
+        5) On accept → run battle simulation.
+           On reject/timeout → refund the pot.
         """
 
         # --- Target sanity checks ---
@@ -106,9 +109,9 @@ class Battle(commands.Cog):
 
 
 
-    @commands.slash_command()
+    @commands.slash_command(description="View and update your battle loadout (weapon & spell).")
     async def loadout(self, ctx):
-        """Update your loadout (weapon + spell)."""
+        """Open the UI to view or change your equipped weapon and spell."""
         view, embed = get_loadout_ui(
             user=ctx.author,
             allowed_weapons=get_allowed_weapons(),
@@ -117,7 +120,7 @@ class Battle(commands.Cog):
 
         await ctx.respond(embed=embed, view=view)
 
-    @commands.slash_command(description="Fight me in campaign mode.")
+    @commands.slash_command(description="Fight Veyra in campaign mode (PvE progression).")
     async def campaign(
         self,
         ctx,
@@ -129,7 +132,11 @@ class Battle(commands.Cog):
             required=False
         )
     ):
-        """Start a campaign (PvE) fight against Veyra."""
+        """Start a PvE campaign battle.
+
+        Battle against Veyra (or later NPCs) based on your campaign stage.
+        Progress through stages to face stronger enemies and new loadouts.
+        """
 
         stage = get_campaign_stage(ctx.author.id)
 
@@ -157,6 +164,32 @@ class Battle(commands.Cog):
         )
 
         await start_campaign_battle(ctx, ctx.author, delay)
+
+    @commands.slash_command(description="Enter the PvP queue and get matched automatically.")
+    async def open_to_battle(
+        self,
+        ctx,
+        min_bet: int = Option(
+            int,
+            description="Minimum bet you are willing to battle on",
+            min_value = 10,
+            max_value = 1000,
+            required=True
+        ),
+        max_bet: int = Option(
+            int,
+            description="Max bet you are willing to battle one",
+            min_value = 10,
+            max_value = 10000,
+            required=True
+        )
+
+    ):
+        """Join the PvP matchmaking queue within a chosen bet range."""
+        result = await try_to_start_battle_queue(ctx, ctx.author.id, min_bet, max_bet)
+        if result and not ctx.response.is_done():
+            await ctx.respond(result)
+
 
 
 def setup(bot: commands.Bot):

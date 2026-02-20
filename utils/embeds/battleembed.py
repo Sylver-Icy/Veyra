@@ -84,7 +84,36 @@ async def send_battle_challenge(ctx, challenger_id: int, target_id: int, bet_amo
     else:
         return False
 
-    # services/discord_battle/battle_embed.py
+def build_match_found_embed(opponent_name: str, bet_amount: int, channel_id: int) -> discord.Embed:
+    title = "⚔️ Match Found!"
+    desc = (
+        f"You were matched with **<@{opponent_name}>**.\n"
+        f"💰 **Bet:** {bet_amount}\n"
+        f"📍 **Channel:** <#{channel_id}>\n\n"
+        "Accept the battle before it expires. ⏳"
+    )
+
+    embed = discord.Embed(
+        title=title,
+        description=desc,
+        color=discord.Color.blurple()
+    )
+    embed.set_footer(text="Time is ticking…")
+    return embed
+
+
+def build_removed_from_queue_embed(reason: str) -> discord.Embed:
+    title = "🚫 Removed From Queue"
+    desc = f"You were removed from the battle queue.\n\n📄 **Reason:** {reason}"
+
+    embed = discord.Embed(
+        title=title,
+        description=desc,
+        color=discord.Color.red()
+    )
+    embed.set_footer(text="Use /open_to_battle to Queue again.")
+    return embed
+
 
 MOVE_EMOJI = {
     "attack": "⚔️",
