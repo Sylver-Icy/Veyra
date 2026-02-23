@@ -6,14 +6,14 @@ class Jobs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def work(self, ctx, job: str, target: discord.Member = None):
-        """Perform a job (knight, digger, miner, thief)."""
-        valid_jobs = ("knight", "digger", "miner", "thief", "explorer")
-        job = job.lower()
-        if job not in valid_jobs:
-            await ctx.send(f"Available jobs: {', '.join(valid_jobs)}")
-            return
+    @commands.slash_command(description="Perform a job (knight, digger, miner, thief, explorer).")
+    async def work(
+        self,
+        ctx: discord.ApplicationContext,
+        job: discord.Option(str, "Pick a job", choices=["knight", "digger", "miner", "thief", "explorer"]),
+        target: discord.Option(discord.Member, "User to rob (required for thief)", required=False) = None,
+    ):
+        """Perform a job (knight, digger, miner, thief, explorer)."""
 
         worker = JobsClass(ctx.author.id)
 
@@ -27,11 +27,11 @@ class Jobs(commands.Cog):
             result = worker.explorer()
         elif job == "thief":
             if not target:
-                await ctx.send("You need to specify someone to steal from! You can't rob air can you?")
+                await ctx.respond("You need to specify someone to steal from! You can't rob air can you?")
                 return
             result = worker.thief(target)
 
-        await ctx.send(result)
+        await ctx.respond(result)
 
 
 
