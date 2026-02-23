@@ -104,7 +104,7 @@ async def handle_open_shop(ctx, command, arg):
     if command == "shop":
         embed,view = daily_shop()
         await safe_send(ctx, embed=embed, view=view)
-        await safe_send(ctx, "Buy anything you want. Intructions are at the bottom of shop embed\nYou can also sell items back using the Buyback button.\n\nOne final lesson left.\nNext task: earn gold by working.\nType `!work knight`")
+        await safe_send(ctx, "Buy anything you want. Intructions are at the bottom of shop embed\nYou can also sell items back using the Buyback button.\n\nOne final lesson left.\nNext task: earn gold by working.\nType `/work knight`")
         await advance(ctx.author.id, TutorialState.WORK)
         return True
 
@@ -112,7 +112,7 @@ async def handle_open_shop(ctx, command, arg):
 
 async def handle_work(ctx, command, arg):
     if command not in ("use", "work", "open", "buy"):
-        await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `!work knight`")
+        await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `/work knight`")
         return True
 
     if command == "work":

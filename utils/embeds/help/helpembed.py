@@ -45,11 +45,6 @@ class HelpView(discord.ui.View):
                                                   "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
             embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich" \
             "\n`!upgrade` -  Gotta upgrade those machines don't we?", inline=False)
-            embed.add_field(
-    name="🛠️ Jobs",
-    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
-    inline=False
-)
             embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
             embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
             embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile` - Check your stats")
@@ -78,6 +73,7 @@ class HelpView(discord.ui.View):
                                                                   "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
                                                                   "`/delete_listing` - Delete one of your active listings.", inline=False)
             embed.add_field(name="🔥 Smelting", value="`/smelt` - Turn your ores into bars", inline=False)
+            embed.add_field(name="🛠️ Jobs", value="`/work` - Perform jobs like knight, digger, miner, thief, or explorer to earn resources.", inline=False)
             embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
             embed.add_field(name="🧾 Profile", value="`/profile` - View your full Veyra profile.", inline=False)
             embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
@@ -139,11 +135,6 @@ def get_help_embed(user: discord.User):
     embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich"
                                              "\n`!upgrade` - Upgrade machines for better gains",
                                               inline=False)
-    embed.add_field(
-    name="🛠️ Jobs",
-    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
-    inline=False
-)
     embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
     embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile - check your stats`")
     embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")

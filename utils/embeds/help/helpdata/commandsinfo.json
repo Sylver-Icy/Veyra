@@ -1,102 +1,121 @@
 {
-
   "bet": {
     "title": "🎲 Bet",
     "description": "Place a wager on an ongoing animal race and hope luck is on your side.",
     "usage": "!bet <animal name> <amount>",
     "category": "Gambling",
     "cooldown": "One bet per race; bets cannot be edited or placed multiple times in the same race.",
-    "examples": ["!bet fox 500", "!bet raBbit 1000", "!bet TurtLe 69"],
+    "examples": [
+      "!bet fox 500",
+      "!bet raBbit 1000",
+      "!bet TurtLe 69"
+    ],
     "notes": "Animal names are case-insensitive. The winning reward is calculated based on the total betting pool, so if you are the only participant or everyone bets on the same animal, the reward may be less than your original bet."
   },
-
   "ping": {
     "title": "🏓 Ping",
     "description": "Check the bot’s responsiveness and latency.",
     "usage": "!ping",
     "category": "Fun",
     "cooldown": "No cooldown; use as often as you like.",
-    "examples": ["!ping"],
+    "examples": [
+      "!ping"
+    ],
     "notes": "A fast response indicates smooth performance. If you experience lag, it is likely due to your internet connection or Discord's API, not the bot."
   },
-
   "solve_wordle": {
     "title": "🧠 Wordle Solver",
     "description": "Starts a thread with instructions for inputting your guesses. Follow the guidelines to solve any Wordle puzzle within 3-4 attempts.",
     "usage": "!solve_wordle",
     "category": "Fun / Utility",
     "cooldown": "1 Session at a time",
-    "examples": ["!solve_wordle"],
+    "examples": [
+      "!solve_wordle"
+    ],
     "notes": "Utilizes logical deduction rather than random guesses for solving."
   },
-    "gamble": {
+  "gamble": {
     "title": "🎰 Gamble",
     "description": "Play casino games using chips. Bet chips, pick your game, and test your luck.",
     "usage": "!gamble <game> <bet> <choice?>",
     "category": "Gambling",
     "cooldown": "5s per user",
-    "examples": ["!gamble flipcoin 100 heads", "!gamble roulette 50 7", "!gamble slots 200", "!gamble dungeon 300 caves"],
+    "examples": [
+      "!gamble flipcoin 100 heads",
+      "!gamble roulette 50 7",
+      "!gamble slots 200",
+      "!gamble dungeon 300 caves"
+    ],
     "notes": "Use `!details gambling` for the full casino guide, rules, and game mechanics."
   },
-
   "quest": {
     "title": "🎯 Quest",
     "description": "Check for active quests or mini-tasks available to you. Complete them to earn rewards.",
     "usage": "/quest",
     "category": "Events",
     "cooldown": "30s per user",
-    "examples": ["!quest"],
+    "examples": [
+      "!quest"
+    ],
     "notes": "Quests update daily based on Veyra’s system. You may skip up to three quests per day if desired."
   },
-
-
   "open": {
     "title": "🎁 Open Lootbox",
     "description": "Open any lootboxes you own to reveal the rewards determined by chance.",
     "usage": "!open <box name>",
     "category": "Lootbox",
     "cooldown": "5s per user",
-    "examples": ["!open platinum box", "!open wooden box"],
+    "examples": [
+      "!open platinum box",
+      "!open wooden box"
+    ],
     "notes": "Rewards scale according to the rarity of the lootbox."
   },
-
   "buy": {
     "title": "🛍️ Buy Item",
     "description": "Purchase items from the current shop rotation using your gold balance.",
     "usage": "!buy <item name> <item quantity>",
     "category": "Shop",
     "cooldown": "5s per user",
-    "examples": ["!buy Healing Potion 5", "!buy Common Lootbox 4"],
+    "examples": [
+      "!buy Healing Potion 5",
+      "!buy Common Lootbox 4"
+    ],
     "notes": "The shop inventory updates daily. Use `/shop` to view available items."
   },
-
   "sell": {
     "title": "💸 Sell Item",
     "description": "Sell items from your inventory that are currently accepted in the buyback shop.",
     "usage": "!sell <item name> <item quantity>",
     "category": "Shop",
     "cooldown": "5s per user",
-    "examples": ["!sell Apple 4", "!sell Rare Gemstone 2"],
+    "examples": [
+      "!sell Apple 4",
+      "!sell Rare Gemstone 2"
+    ],
     "notes": "Certain days may offer boosted sell prices. Keep an eye out for special deals."
   },
-
   "helloveyra": {
     "title": "🐐 Hello Veyra",
     "description": "Onboarding command to save your name in the database. If already registered, it serves as a friendly greeting.",
     "usage": "!helloVeyra",
     "category": "Profile / Fun",
     "cooldown": "15s per user",
-    "examples": ["!helloVeyra"],
+    "examples": [
+      "!helloVeyra"
+    ],
     "notes": "You must use this command before accessing other commands. Veyra needs to recognize you to interact properly."
   },
-
   "transfer_item": {
     "title": "📦 Transfer Item",
     "description": "Send an item from your inventory to another player, provided you have sufficient quantity.",
     "usage": "/transfer_item <user> <item> <amount>",
     "category": "Inventory",
     "cooldown": "None",
-    "examples": ["/transfer_item @Sylver Apple 3", "/transfer_item @Veyra Potion 1"],
+    "examples": [
+      "/transfer_item @Sylver Apple 3",
+      "/transfer_item @Veyra Potion 1"
+    ],
     "notes": "You cannot transfer items you do not own. Items can also be sent to Veyra."
   },
   "find_item": {
@@ -105,107 +124,120 @@
     "usage": "/find_item <item name>",
     "category": "Inventory",
     "cooldown": "None",
-    "examples": ["/find_item Iron Sword", "/find_item Healing Potion"],
+    "examples": [
+      "/find_item Iron Sword",
+      "/find_item Healing Potion"
+    ],
     "notes": "Using this command costs gold."
   },
-
   "transfer_gold": {
     "title": "💰 Transfer Gold",
     "description": "Transfer gold to another user. This can be a gift or a bribe—your choice.",
     "usage": "/transfer_gold <user> <amount>",
     "category": "Economy",
     "cooldown": "None",
-    "examples": ["/transfer_gold @Sylver 1000"],
+    "examples": [
+      "/transfer_gold @Sylver 1000"
+    ],
     "notes": "Transfers incur a 5% fee, so if you send 1000 gold, the recipient will receive 950."
   },
-
   "battle": {
     "title": "⚔️ Battle",
     "description": "Challenge another player to a turn-based battle. The winner takes the pot.",
     "usage": "/battle <user> <bet>",
     "category": "Games",
     "cooldown": "One game at a time",
-    "examples": ["/battle @Sylver"],
+    "examples": [
+      "/battle @Sylver"
+    ],
     "notes": "Use `!details battle` for detailed rules and gameplay information."
   },
-
   "start_race": {
     "title": "🏇 Start Race",
     "description": "Initiate an animal race and allow players to place bets. Only one animal will win.",
     "usage": "/start_race",
     "category": "Games / Gambling",
     "cooldown": "15 minutes since the last race",
-    "examples": ["/start_race"],
+    "examples": [
+      "/start_race"
+    ],
     "notes": "Race outcomes are random with no animal having a higher chance of winning. RNG governs the results.\nUse `<!commandhelp explainrace>` for in depth guide."
   },
-
   "shop": {
     "title": "🛒 Shop",
     "description": "Display the current shop inventory, showing items available for purchase and buyback.",
     "usage": "/shop",
     "category": "Shop",
     "cooldown": "15s per user",
-    "examples": ["/shop"],
+    "examples": [
+      "/shop"
+    ],
     "notes": "The shop inventory rotates daily."
   },
-
   "create_listing": {
     "title": "💼 Create Listing",
     "description": "List items on the player marketplace for others to purchase at your specified price.",
     "usage": "/create_listing <item> <quantity> <price/unit>",
     "category": "Marketplace",
     "cooldown": "Twice per hour per user",
-    "examples": ["/create_listing Apple 5 200"],
+    "examples": [
+      "/create_listing Apple 5 200"
+    ],
     "notes": "Set prices thoughtfully; overpriced items may not sell. There is 7% listing fee will be charged from revenue if item sold."
   },
-
   "load_marketplace": {
     "title": "🧾 Load Marketplace",
     "description": "View the live marketplace to see items currently listed by players, including yourself.",
     "usage": "/load_marketplace",
     "category": "Marketplace",
     "cooldown": "15s per user",
-    "examples": ["/load_marketplace"],
+    "examples": [
+      "/load_marketplace"
+    ],
     "notes": "Prices and availability update dynamically. Don’t miss limited-time deals!"
   },
-
   "buy_from_marketplace": {
     "title": "🪙 Buy from Marketplace",
     "description": "Purchase an item listed by another player, provided you have enough gold.",
     "usage": "/buy_from_marketplace <listing_id> <quantity>",
     "category": "Marketplace",
     "cooldown": "5s per user",
-    "examples": ["/buy_from_marketplace 432 5"],
+    "examples": [
+      "/buy_from_marketplace 432 5"
+    ],
     "notes": "Once purchased, items are delivered directly to your inventory and gold is transferred to the seller. Transactions are secure and scam-free."
   },
-
   "delete_listing": {
     "title": "🗑️ Delete Listing",
     "description": "Remove one of your active marketplace listings. Useful if you change your mind or wish to adjust your prices.",
     "usage": "/delete_listing <listing_id>",
     "category": "Marketplace",
     "cooldown": "30s per user",
-    "examples": ["/delete_listing 123"],
+    "examples": [
+      "/delete_listing 123"
+    ],
     "notes": "Only the creator of a listing can delete it. Deleted listings automatically refund unsold items to the seller’s inventory."
   },
-
   "wordle_hint": {
     "title": "🧩 Wordle Hint",
     "description": "Stuck on Wordle? Provide your past guesses and results, and Veyra will suggest the next best word.",
     "usage": "/wordle_hint <current_word_state>",
     "category": "Wordle",
     "cooldown": "None",
-    "examples": ["Try it out and see how it helps you improve."],
+    "examples": [
+      "Try it out and see how it helps you improve."
+    ],
     "notes": "Perfect for breaking losing streaks—Veyra’s got your back."
   },
-
   "help": {
     "title": "🙋 Help",
     "description": "Displays the main help menu.",
     "usage": "/help",
     "category": "Utility",
     "cooldown": "25s per user",
-    "examples": ["/help"],
+    "examples": [
+      "/help"
+    ],
     "notes": "Opens an embed listing all command names with brief descriptions."
   },
   "commandhelp": {
@@ -214,7 +246,10 @@
     "usage": "!commandhelp <command name>",
     "category": "Utility",
     "cooldown": "5s per user",
-    "examples": ["!commandhelp buy", "Definitely not !commandhelp commandhelp"],
+    "examples": [
+      "!commandhelp buy",
+      "Definitely not !commandhelp commandhelp"
+    ],
     "Notes": "Use this command to get comprehensive information about any command."
   },
   "details": {
@@ -223,7 +258,11 @@
     "usage": "!details <topic>",
     "category": "Utility / Guides",
     "cooldown": "None",
-    "examples": ["!details battle", "!details jobs", "!details loadout"],
+    "examples": [
+      "!details battle",
+      "!details jobs",
+      "!details loadout"
+    ],
     "notes": "Shows a multi-page embed with in-depth information. Topics are case-insensitive and depend on the helpdata pages available."
   },
   "profile": {
@@ -232,43 +271,57 @@
     "usage": "/profile",
     "category": "Profile / Stats",
     "cooldown": "250s per user",
-    "examples": ["/profile"],
+    "examples": [
+      "/profile"
+    ],
     "notes": "Opens an interactive embed with multiple pages. Only you can control your own profile view."
   },
   "buychips": {
-  "title": "🪙 Buy Chips",
-  "description": "Buy casino chips using your gold. Chips are used for gambling games.",
-  "usage": "!buychips <pack_id>",
-  "category": "Gambling",
-  "cooldown": "5s per user",
-  "examples": ["!buychips 1", "!buychips 2", "!buychips 3"],
-  "notes": "Chips are a separate gambling currency. Use `/casino` to view today’s chip packs and offers. Full guide: `!details gambling`."
-},
-"cashout": {
-  "title": "💸 Cashout Chips",
-  "description": "Convert your casino chips back into gold using today’s cashout offers.",
-  "usage": "!cashout <pack_id>",
-  "category": "Gambling",
-  "cooldown": "5s per user",
-  "examples": ["!cashout 1", "!cashout 2"],
-  "notes": "Cashout rates depend on today’s offers. Use `/casino` to see the current cashout packs. Full guide: `!details gambling`."
-},
-"casino": {
-  "title": "🏛️ Casino",
-  "description": "Open the casino shop to buy chips, cashout chips, and view today’s casino offers.",
-  "usage": "/casino",
-  "category": "Gambling",
-  "cooldown": "155s per user",
-  "examples": ["/casino"],
-  "notes": "Use this as the main hub for gambling currency conversion. To play games: `!gamble <game> <bet> <choice?>`. Full guide: `!details gambling`."
-},
+    "title": "🪙 Buy Chips",
+    "description": "Buy casino chips using your gold. Chips are used for gambling games.",
+    "usage": "!buychips <pack_id>",
+    "category": "Gambling",
+    "cooldown": "5s per user",
+    "examples": [
+      "!buychips 1",
+      "!buychips 2",
+      "!buychips 3"
+    ],
+    "notes": "Chips are a separate gambling currency. Use `/casino` to view today’s chip packs and offers. Full guide: `!details gambling`."
+  },
+  "cashout": {
+    "title": "💸 Cashout Chips",
+    "description": "Convert your casino chips back into gold using today’s cashout offers.",
+    "usage": "!cashout <pack_id>",
+    "category": "Gambling",
+    "cooldown": "5s per user",
+    "examples": [
+      "!cashout 1",
+      "!cashout 2"
+    ],
+    "notes": "Cashout rates depend on today’s offers. Use `/casino` to see the current cashout packs. Full guide: `!details gambling`."
+  },
+  "casino": {
+    "title": "🏛️ Casino",
+    "description": "Open the casino shop to buy chips, cashout chips, and view today’s casino offers.",
+    "usage": "/casino",
+    "category": "Gambling",
+    "cooldown": "155s per user",
+    "examples": [
+      "/casino"
+    ],
+    "notes": "Use this as the main hub for gambling currency conversion. To play games: `!gamble <game> <bet> <choice?>`. Full guide: `!details gambling`."
+  },
   "info": {
     "title": "ℹ️ Item Info",
     "description": "Get detailed information about a specific item, including its rarity, value, and details if available.",
     "usage": "!info <item name>",
     "category": "Inventory",
     "cooldown": "5s per user",
-    "examples": ["!info Healing Potion", "!info Dragon Scale"],
+    "examples": [
+      "!info Healing Potion",
+      "!info Dragon Scale"
+    ],
     "notes": "If you misspell an item name, Veyra will suggest the closest matches. Useful for checking item details before trading or selling."
   },
   "play": {
@@ -277,7 +330,9 @@
     "usage": "!play",
     "category": "Games",
     "cooldown": "Once a day",
-    "examples": ["!play"],
+    "examples": [
+      "!play"
+    ],
     "notes": "Each stage requires a guess; rewards increase with progress. Losing early still grants partial rewards."
   },
   "use": {
@@ -286,88 +341,118 @@
     "usage": "!use <item name>",
     "category": "Inventory / Utility",
     "cooldown": "5s per user",
-    "examples": ["!use Potion of EXP", "!use Hint Key", "!use Bag of Gold"],
+    "examples": [
+      "!use Potion of EXP",
+      "!use Hint Key",
+      "!use Bag of Gold"
+    ],
     "notes": "Certain items can only be used in specific situations (e.g., Hint Key during number guessing). Using an item consumes one unit from your inventory."
   },
   "leaderboard": {
-  "title": "📈 Leaderboard",
-  "description": "Shows the richest players ranked by their total gold balance.",
-  "usage": "/leaderboard",
-  "category": "Economy / Stats",
-  "cooldown": "Once per hour per user",
-  "examples": ["/leaderboard"],
-  "notes": "This command updates real and  there is another also a automatic weekly tag that tags the top 3 users every Weekend."
-},
-"smelt": {
-  "title": "🔥 Smelt",
-  "description": "Turn raw ores into their refined bars using your smelter. Higher smelter levels unlock better bars and reduce coal cost.",
-  "usage": "/smelt <bar name> <amount>",
-  "category": "Crafting",
-  "cooldown": "No cooldown",
-  "examples": ["/smelt copper bar 5", "/smelt iron bar 3"],
-  "notes": "Requires owning a smelter. Coal cost scales with smelter level."
-},
-"flipcoin": {
-  "title": "🪙 Flip Coin",
-  "description": "Flip a coin and let fate decide—heads or tails, no rigging, pure RNG.",
-  "usage": "!flipcoin",
-  "category": "Fun",
-  "cooldown": "No cooldown",
-  "examples": ["!flipcoin"],
-  "notes": "Responses are procedurally generated."
-},
-"upgrade": {
-  "title": "📈 Upgrade Building",
-  "description": "Upgrade one of your unlocked buildings to improve its performance. Each level grants specific bonuses.",
-  "usage": "!upgrade <building name>",
-  "category": "Crafting",
-  "cooldown": "20s per user",
-  "examples": ["!upgrade smelter"],
-  "notes": "Shows next upgrade effects and cost before asking for confirmation."
-},
-"unlock": {
-  "title": "🔓 Unlock Building",
-  "description": "Unlock a new crafting building such as the smelter. Required before you can upgrade or use it.",
-  "usage": "!unlock <building name>",
-  "category": "Crafting",
-  "cooldown": "10s per user",
-  "examples": ["!unlock smelter"],
-  "notes": "Buildings must be unlocked before upgrades or crafting commands can be used."
-},
-"check":{
-  "title": "Check Your Stats",
-  "description": "Check your current/live stats.",
-  "usage": "!check <stat name>",
-  "category": "Profile",
-  "cooldown": "5s per user",
-  "examples": ["!check enery", "!check wallet", "!check inv", "!check exp"],
-  "notes": "Supports some extent of typos - wall, inv, ener, exp etc should work."
-},
-"work": {
-  "title": "🛠️ Work Job",
-  "description": "Perform a job in Natlade to earn gold, lootboxes, or ores depending on the job you choose. Each job consumes energy and has unique rewards.",
-  "usage": "!work <job name>",
-  "category": "Job",
-  "cooldown": "No cooldown (limited only by your energy)",
-  "examples": ["!work knight", "!work digger", "!work miner", "!work thief @target"],
-  "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!details jobs` for details about each job title."
-},
-"repayloan": {
-  "title": "💳 Repay Loan",
-  "description": "Repay your currently active loan to clear your debt and unlock restricted actions again.",
-  "usage": "!repayloan",
-  "category": "Economy / Loans",
-  "cooldown": "5s per user",
-  "examples": ["!repayloan"],
-  "notes": "If you don’t have an active loan, Veyra will tell you to take one with `/loan`. Repayment will deduct the required gold instantly and mark the loan as paid."
-},
-"loan": {
-  "title": "🏦 Loan",
-  "description": "View available loan offers and take a loan pack. Loans must be repaid before you can take another one.",
-  "usage": "/loan",
-  "category": "Economy / Loans",
-  "cooldown": "25s per user",
-  "examples": ["/loan"],
-  "notes": "Loans are currently WIP. You can only have ONE active loan at a time.Defaulting may block you from future loans."
-}
+    "title": "📈 Leaderboard",
+    "description": "Shows the richest players ranked by their total gold balance.",
+    "usage": "/leaderboard",
+    "category": "Economy / Stats",
+    "cooldown": "Once per hour per user",
+    "examples": [
+      "/leaderboard"
+    ],
+    "notes": "This command updates real and  there is another also a automatic weekly tag that tags the top 3 users every Weekend."
+  },
+  "smelt": {
+    "title": "🔥 Smelt",
+    "description": "Turn raw ores into their refined bars using your smelter. Higher smelter levels unlock better bars and reduce coal cost.",
+    "usage": "/smelt <bar name> <amount>",
+    "category": "Crafting",
+    "cooldown": "No cooldown",
+    "examples": [
+      "/smelt copper bar 5",
+      "/smelt iron bar 3"
+    ],
+    "notes": "Requires owning a smelter. Coal cost scales with smelter level."
+  },
+  "flipcoin": {
+    "title": "🪙 Flip Coin",
+    "description": "Flip a coin and let fate decide—heads or tails, no rigging, pure RNG.",
+    "usage": "!flipcoin",
+    "category": "Fun",
+    "cooldown": "No cooldown",
+    "examples": [
+      "!flipcoin"
+    ],
+    "notes": "Responses are procedurally generated."
+  },
+  "upgrade": {
+    "title": "📈 Upgrade Building",
+    "description": "Upgrade one of your unlocked buildings to improve its performance. Each level grants specific bonuses.",
+    "usage": "!upgrade <building name>",
+    "category": "Crafting",
+    "cooldown": "20s per user",
+    "examples": [
+      "!upgrade smelter"
+    ],
+    "notes": "Shows next upgrade effects and cost before asking for confirmation."
+  },
+  "unlock": {
+    "title": "🔓 Unlock Building",
+    "description": "Unlock a new crafting building such as the smelter. Required before you can upgrade or use it.",
+    "usage": "!unlock <building name>",
+    "category": "Crafting",
+    "cooldown": "10s per user",
+    "examples": [
+      "!unlock smelter"
+    ],
+    "notes": "Buildings must be unlocked before upgrades or crafting commands can be used."
+  },
+  "check": {
+    "title": "Check Your Stats",
+    "description": "Check your current/live stats.",
+    "usage": "!check <stat name>",
+    "category": "Profile",
+    "cooldown": "5s per user",
+    "examples": [
+      "!check enery",
+      "!check wallet",
+      "!check inv",
+      "!check exp"
+    ],
+    "notes": "Supports some extent of typos - wall, inv, ener, exp etc should work."
+  },
+  "work": {
+    "title": "🛠️ Work Job",
+    "description": "Perform a job in Natlade to earn gold, lootboxes, or ores depending on the job you choose. Each job consumes energy and has unique rewards.",
+    "usage": "/work <job>",
+    "category": "Job",
+    "cooldown": "No cooldown (limited only by your energy)",
+    "examples": [
+      "/work knight",
+      "/work digger",
+      "/work miner",
+      "/work thief @target",
+      "/work explorer"
+    ],
+    "notes": "You must have enough energy to perform a job. Job rewards vary based on job type — Use `!details jobs` for details about each job title."
+  },
+  "repayloan": {
+    "title": "💳 Repay Loan",
+    "description": "Repay your currently active loan to clear your debt and unlock restricted actions again.",
+    "usage": "!repayloan",
+    "category": "Economy / Loans",
+    "cooldown": "5s per user",
+    "examples": [
+      "!repayloan"
+    ],
+    "notes": "If you don’t have an active loan, Veyra will tell you to take one with `/loan`. Repayment will deduct the required gold instantly and mark the loan as paid."
+  },
+  "loan": {
+    "title": "🏦 Loan",
+    "description": "View available loan offers and take a loan pack. Loans must be repaid before you can take another one.",
+    "usage": "/loan",
+    "category": "Economy / Loans",
+    "cooldown": "25s per user",
+    "examples": [
+      "/loan"
+    ],
+    "notes": "Loans are currently WIP. You can only have ONE active loan at a time.Defaulting may block you from future loans."
+  }
 }
