@@ -1,29 +1,34 @@
 import asyncio
+import importlib
 import os
 import sqlite3
+import sys
 from types import SimpleNamespace
 
 
-db_url = os.getenv("DB_URL", "")
-if db_url.startswith("sqlite:///"):
-    db_path = db_url.removeprefix("sqlite:///")
-    with sqlite3.connect(db_path) as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS items (
-                item_id INTEGER PRIMARY KEY,
-                item_name TEXT UNIQUE NOT NULL,
-                item_description TEXT NOT NULL,
-                item_rarity TEXT NOT NULL,
-                item_icon TEXT,
-                item_durability INTEGER,
-                item_price INTEGER NOT NULL,
-                item_usable BOOLEAN NOT NULL DEFAULT 0
+def load_jobs_cog():
+    db_url = os.getenv("DB_URL", "")
+    if db_url.startswith("sqlite:///"):
+        db_path = db_url.removeprefix("sqlite:///")
+        with sqlite3.connect(db_path) as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS items (
+                    item_id INTEGER PRIMARY KEY,
+                    item_name TEXT UNIQUE NOT NULL,
+                    item_description TEXT NOT NULL,
+                    item_rarity TEXT NOT NULL,
+                    item_icon TEXT,
+                    item_durability INTEGER,
+                    item_price INTEGER NOT NULL,
+                    item_usable BOOLEAN NOT NULL DEFAULT 0
+                )
+                """
             )
-            """
-        )
 
-from cogs import jobs as jobs_cog
+    if "cogs.jobs" in sys.modules:
+        return importlib.reload(sys.modules["cogs.jobs"])
+    return importlib.import_module("cogs.jobs")
 
 
 class DummyCtx:
@@ -36,6 +41,8 @@ class DummyCtx:
 
 
 def test_work_requires_target_for_thief(monkeypatch):
+    jobs_cog = load_jobs_cog()
+
     class Worker:
         def __init__(self, user_id):
             self.user_id = user_id
@@ -67,6 +74,8 @@ def test_work_requires_target_for_thief(monkeypatch):
 
 
 def test_work_runs_selected_job(monkeypatch):
+    jobs_cog = load_jobs_cog()
+
     class Worker:
         def __init__(self, user_id):
             self.user_id = user_id

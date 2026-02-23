@@ -13,12 +13,7 @@ class Jobs(commands.Cog):
         job: discord.Option(str, "Pick a job", choices=["knight", "digger", "miner", "thief", "explorer"]),
         target: discord.Option(discord.Member, "User to rob (required for thief)", required=False) = None,
     ):
-        """Perform a job (knight, digger, miner, thief)."""
-        valid_jobs = ("knight", "digger", "miner", "thief", "explorer")
-        job = job.lower()
-        if job not in valid_jobs:
-            await ctx.respond(f"Available jobs: {', '.join(valid_jobs)}")
-            return
+        """Perform a job (knight, digger, miner, thief, explorer)."""
 
         worker = JobsClass(ctx.author.id)
 
