@@ -15,6 +15,7 @@ This file intentionally stays as a command/UI layer. Business logic lives in
 """
 
 import asyncio
+import discord
 
 from discord.ext import commands
 
@@ -147,13 +148,29 @@ class Profile(commands.Cog):
         embed = get_command_info_embed(command_name)
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def details(self, ctx: commands.Context, topic):
+    @commands.slash_command(description="Show feature details for a topic.")
+    @discord.option(
+        "topic",
+        description="Choose a help topic",
+        required=True,
+        choices=[
+            "battle",
+            "jobs",
+            "loadout",
+            "race",
+            "smelting",
+            "inventory",
+            "gambling",
+            "loan",
+            "alchemy",
+            "potions"
+        ]
+    )
+    async def details(self, ctx: discord.ApplicationContext, topic: str):
         """Show feature docs pages for a topic."""
         embed, view = get_json_pages_embed(ctx.author, topic.lower())
-        msg = await ctx.send(embed=embed, view=view)
+        msg = await ctx.respond(embed=embed, view=view)
 
-        # Some views need message reference for interaction callbacks.
         if view:
             view.message = msg
 
