@@ -1,5 +1,6 @@
 import time
 import random
+import discord
 
 from discord.ext import commands, pages
 
@@ -19,6 +20,8 @@ from utils.chatexp import add_exp_with_announcement
 user_cooldowns = {}
 
 class Exp(commands.Cog):
+    check = discord.SlashCommandGroup("check", "Check various stats")
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -40,113 +43,91 @@ class Exp(commands.Cog):
         await add_exp_with_announcement(ctx, user_id, random.randint(1,20))
 
 
-    @commands.command()
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def check(self, ctx, value):
-        """
-        Check various stats using short keywords:
-        wallet, energy, inventory, exp.
-        """
+    @check.command(name="wallet", description="Check your wallet")
+    async def check_wallet(self, ctx: discord.ApplicationContext):
+        gold, chip = check_wallet_full(ctx.author.id)
+        response = create_response(
+            "check_wallet",
+            1,
+            user=ctx.author.mention,
+            gold=gold,
+            emoji=GOLD_EMOJI
+        )
+        await ctx.respond(f"{response}\nChips Available: {chip}{CHIP_EMOJI}")
 
-        val = value.lower()
+    @check.command(name="energy", description="Check your energy")
+    async def check_energy(self, ctx: discord.ApplicationContext):
+        user = JobsClass(ctx.author.id)
+        energy = user.check_energy()
+        await ctx.respond(f"You current have {energy} energy...")
 
-        # ──────────────────────────────
-        # BUILDINGS
-        # ──────────────────────────────
-        if val.startswith(("sme", "smelter")):
-            lvl = building_lvl(ctx.author.id, "smelter")
-            desc = get_building_description("smelter", lvl)
-            return await ctx.send(desc)
+    @check.command(name="inventory", description="Check your inventory")
+    @discord.option(
+        "category",
+        description="Filter inventory by category",
+        required=False,
+        choices=["Common", "Rare", "Epic", "Legendary", "minerals", "lootbox", "Potion"]
+    )
+    async def check_inventory(self, ctx: discord.ApplicationContext, category: str = None):
+        status, embed_pages = get_inventory(ctx.author.id, ctx.author.name, category)
 
-        if val.startswith(("brew", "brewing")):
-            lvl = building_lvl(ctx.author.id, "brewing stand")
-            desc = get_building_description("brewing stand", lvl)
-            return await ctx.send(desc)
-
-        if val.startswith(("pock", "pockets")):
-            inv_lvl = building_lvl(ctx.author.id, "inventory")
-            pocket_lvl = building_lvl(ctx.author.id, "pockets")
-
-            inv_desc = get_building_description("inventory", inv_lvl)
-            pocket_desc = get_building_description("pockets", pocket_lvl)
-
-            return await ctx.send(
-                f"{inv_desc}\n{pocket_desc}"
+        if status == "start_event":
+            return await ctx.respond(
+                "Awww you poor thing… you don't own anything.\nHere, take this flower from me :3"
             )
 
-        # ──────────────────────────────
-        # WALLET
-        # ──────────────────────────────
-        if val.startswith(("wal", "wall", "walle")):
-            gold,chip = check_wallet_full(ctx.author.id)
-            response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
-            await ctx.send(f"{response}\nChips Available: {chip}{CHIP_EMOJI}")
-            return
+        paginator = pages.Paginator(pages=embed_pages)
+        return await paginator.respond(ctx.interaction)
 
-        # ──────────────────────────────
-        # ENERGY
-        # ──────────────────────────────
-        if val.startswith(("en", "ene")):
-            user = JobsClass(ctx.author.id)
-            energy = user.check_energy()
-            await ctx.send(f"You current have {energy} energy...")
-            return
+    @check.command(name="exp", description="Check your EXP and level")
+    async def check_exp_cmd(self, ctx: discord.ApplicationContext):
+        exp, level = current_exp(ctx.author.id)
+        response = create_response(
+            "check_exp",
+            1,
+            user=ctx.author.mention,
+            level=level,
+            exp=exp
+        )
+        return await ctx.respond(response)
 
+    @check.command(name="smelter", description="Check your smelter level")
+    async def check_smelter(self, ctx: discord.ApplicationContext):
+        lvl = building_lvl(ctx.author.id, "smelter")
+        desc = get_building_description("smelter", lvl)
+        return await ctx.respond(desc)
 
-        # ──────────────────────────────
-        # INVENTORY
-        # ──────────────────────────────
-        if val.startswith(("inv", "inve")):
+    @check.command(name="brewing_stand", description="Check your brewing stand level")
+    async def check_brewing(self, ctx: discord.ApplicationContext):
+        lvl = building_lvl(ctx.author.id, "brewing stand")
+        desc = get_building_description("brewing stand", lvl)
+        return await ctx.respond(desc)
 
-            #Check your own inventory (prefix command).
+    @check.command(name="pockets", description="Check your pockets & inventory level")
+    async def check_pockets(self, ctx: discord.ApplicationContext):
+        inv_lvl = building_lvl(ctx.author.id, "inventory")
+        pocket_lvl = building_lvl(ctx.author.id, "pockets")
 
-            status, embed_pages = get_inventory(ctx.author.id, ctx.author.name)
+        inv_desc = get_building_description("inventory", inv_lvl)
+        pocket_desc = get_building_description("pockets", pocket_lvl)
 
-            if status == "start_event":
-                # User has no items; send a friendly message
-                return await ctx.send(
-                    "Awww you poor thing… you don't own anything.\nHere, take this flower from me :3"
-                )
+        return await ctx.respond(f"{inv_desc}\n{pocket_desc}")
 
-            # Paginate and send inventory embeds
-            paginator = pages.Paginator(pages=embed_pages)
-            return await paginator.send(ctx)
+    @check.command(name="status", description="Check active effects and strain")
+    async def check_status(self, ctx: discord.ApplicationContext):
+        from database.sessionmaker import Session
+        from services.alchemy_services import get_active_user_effect, get_strain_status
 
-        # ──────────────────────────────
-        # EXP / LEVEL
-        # ──────────────────────────────
-        if val.startswith(("ex", "exp")):
+        with Session() as session:
+            effect = get_active_user_effect(session, ctx.author.id)
+            strain_msg = get_strain_status(session, ctx.author.id)
 
-            #Check  current EXP and level.
+        effect_display = effect if effect else "None"
 
-            exp, level = current_exp(ctx.author.id)
-            response = create_response(
-                "check_exp",
-                1,
-                user=ctx.author.mention,
-                level=level,
-                exp=exp
-            )
-            return await ctx.send(response)
-
-        # ──────────────────────────────
-        # STATUS (EFFECT + STRAIN)
-        # ──────────────────────────────
-        if val.startswith(("stat", "status", "str")):
-
-            from database.sessionmaker import Session
-            from services.alchemy_services import get_active_user_effect, get_strain_status
-
-            with Session() as session:
-                effect = get_active_user_effect(session, ctx.author.id)
-                strain_msg = get_strain_status(session, ctx.author.id)
-
-            effect_display = effect if effect else "None"
-
-            return await ctx.send(
-                f"**Active Effect:** {effect_display}\n"
-                f"**Strain:** {strain_msg}"
-            )
+        return await ctx.respond(
+            f"**Active Effect:** {effect_display}\n"
+            f"**Strain:** {strain_msg}"
+        )
 
 
 def setup(bot):

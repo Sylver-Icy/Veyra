@@ -201,79 +201,80 @@
     "thief": {
         "1": {
             "part1": [
-                "Difficult times demand difficult measures",
-                "You were tired of poverty so you decided to rob people",
-                "The shadows were your allies as you prepared for the night's work",
-                "You sharpened your dagger and checked your lockpicks",
-                "The city's alleys whispered secrets only you could hear",
-                "You blended into the darkness, unseen and unheard",
-                "Your heart raced with the thrill of the impending heist",
-                "You studied your target's routine to find the perfect moment",
-                "The moonlight guided your steps through silent streets",
-                "You silenced your breath and moved with practiced stealth"
+                "Desperation pushed you toward a dangerous choice.",
+                "With pockets empty and patience gone, you embraced the shadows.",
+                "Tonight, morality took a backseat to survival.",
+                "The moonlit streets welcomed another silent predator.",
+                "You tightened your hood, committing to the night's gamble.",
+                "Fortune favors the bold — or so you told yourself.",
+                "You silenced your doubts and stepped into the darkness.",
+                "Greed and necessity formed a risky alliance.",
+                "The city slept, unaware of your intentions.",
+                "You moved like a whisper through Natlade’s alleys."
             ],
             "part2": [
-                "You decided to rob {target}",
-                "You went to {target}'s house",
-                "You planned your heist carefully under the cover of night you target was {target}",
-                "You scoped out {target}'s house looking for weaknesses",
-                "You picked the lock with nimble fingers and slipped inside {target}'s house",
-                "You avoided creaky floorboards and patrolling guards and went to {target}'s house",
-                "You searched the rooms for valuables of {target} without making a sound",
-                "You found a hidden safe inside {target}'s house behind a tapestry and cracked it open ",
-                "You gathered trinkets and coins from {target}, stuffing them into your pouch",
-                "You escaped through a secret passage you discovered earlier. {target} was robbed"
+                "Your target became <@{target}>, rumored to be rich.",
+                "You stalked <@{target}>, studying their movements carefully.",
+                "You crept toward <@{target}>'s home under cover of night.",
+                "You observed <@{target}>'s residence, searching for weaknesses.",
+                "You slipped silently into <@{target}>'s house.",
+                "You navigated the shadows within <@{target}>'s home.",
+                "You searched <@{target}>'s rooms for anything valuable.",
+                "You uncovered a hidden stash inside <@{target}>'s house.",
+                "You filled your pouch with valuables belonging to <@{target}>.",
+                "You vanished before <@{target}> noticed anything amiss."
             ],
             "part3": [
-                "You sneaked into {target}'s house and came out juggling with {gold} gold",
-                "You managed to escape with some of {target}'s valuables - {gold} gold",
-                "Your quick thinking helped you evade capture, and got you lost some loot {gold}",
-                "You vanished into the night with {gold} gold.",
-                "Your daring heist netted you {gold} gold, but left you breathless",
-                "You left behind a false trail, keeping your stolen {gold} gold safe",
-                "The thrill of the steal earned you {gold} gold and a narrow escape",
-                "You slipped away unseen, pockets heavy with {gold} gold",
-                "Though chased, you secured {gold} gold before disappearing"
+                "By dawn, you escaped with {gold} gold.",
+                "Your risk paid off — {gold} gold richer.",
+                "You melted into the alleys, clutching {gold} gold.",
+                "The night rewarded your audacity with {gold} gold.",
+                "You survived the gamble and gained {gold} gold.",
+                "No witnesses, no regrets — {gold} gold secured.",
+                "Your purse grew heavier by {gold} gold.",
+                "A clean escape earned you {gold} gold.",
+                "Luck stayed loyal — {gold} gold obtained.",
+                "Another successful heist brought {gold} gold."
             ]
         },
         "2": {
-    "part1": [
-        "You put on your mask and gloves, blending into the night like a shadow.",
-        "As the moonlight hit your dagger, you tightened your gloves and grinned.",
-        "You adjusted your mask — tonight, you wouldn’t be a citizen, you’d be a ghost.",
-        "With steady hands, you slipped on your mask and gloves, ready for mischief.",
-        "You prepared silently, your reflection in the window staring back at a thief.",
-        "You checked your gear twice — no room for mistakes tonight.",
-        "You slipped into dark clothes and pulled your mask tight, adrenaline rising.",
-        "Your disguise complete, you whispered to yourself — time to make history.",
-        "The night air felt cold against your gloves as you took your first quiet step.",
-        "You pulled your hood low and vanished into the alleys, unseen and unheard."
-    ],
-    "part2": [
-        "You had decided to rob {target} today, hoping their fortune would become yours.",
-        "Your target tonight was {target}, known for their overflowing coffers.",
-        "Rumor said {target} kept a vault unguarded — how could you resist?",
-        "You made your way toward {target}'s mansion, every sound feeling louder than it should.",
-        "You crept along the rooftops toward {target}, careful not to wake the guards.",
-        "You studied {target}’s routine for days — now was the perfect time to strike.",
-        "Your heart pounded as you approached {target}’s gate, ready for a quick in and out.",
-        "You whispered a quick prayer that {target} would sleep through the whole ordeal.",
-        "You moved through the shadows, eyes fixed on {target}’s glowing windows.",
-        "The thrill of the hunt surged through you as {target}’s home came into view."
-    ],
-    "part3": [
-        "You were caught by Veyra's guards — pay 30G fine and count your blessings.",
-        "A hand gripped your shoulder — Veyra’s guards had been waiting all along.",
-        "Just as you reached for the loot, a torch flared — the guards caught you red-handed.",
-        "You tried to run, but armored footsteps closed in fast — 30G fine for your troubles.",
-        "The sound of chains greeted you before dawn — seems the guards don’t sleep either.",
-        "You froze as Veyra’s patrol appeared from the shadows — busted.",
-        "Luck wasn’t on your side tonight; the guards dragged you off for questioning.",
-        "Your grand heist ended in cuffs — you paid 30G to keep your record clean.",
-        "Caught mid-step, you sighed as the guards confiscated your spoils — and your dignity.",
-        "Next time, maybe don’t whistle while robbing people — 30G fine paid."
-    ]
-}
+            "part1": [
+                "You prepared your disguise with steady hands.",
+                "Leather gloves on, mask secured — game time.",
+                "The thrill of crime sharpened your senses.",
+                "You blended into the darkness like a phantom.",
+                "Every sound felt louder as you readied yourself.",
+                "Your heartbeat echoed beneath the silent sky.",
+                "You slipped into the night with practiced stealth.",
+                "Cold air, quiet streets, dangerous intentions.",
+                "You embraced the role of Natlade’s unseen menace.",
+                "Another risky venture began under moonlight."
+            ],
+            "part2": [
+                "You set your sights on <@{target}>.",
+                "You tracked <@{target}> through dimly lit streets.",
+                "You approached <@{target}>'s property cautiously.",
+                "You watched for guards near <@{target}>'s home.",
+                "You scaled the walls of <@{target}>'s residence.",
+                "You slipped past defenses protecting <@{target}>.",
+                "You crept inside, eyes scanning for loot in <@{target}>'s house.",
+                "You reached for treasure within the silent house of <@{target}>.",
+                "You nearly completed the perfect robbery of <@{target}>.",
+                "You underestimated <@{target}>’s security."
+            ],
+            "part3": [
+                "Veyra’s guards caught you — 30G fine paid.",
+                "Your escape failed; you paid a 30G penalty.",
+                "Chains rattled — 30G vanished from your purse.",
+                "You were dragged away and fined 30G.",
+                "The guards ruined everything — 30G gone.",
+                "Your luck collapsed; 30G confiscated.",
+                "Caught red‑handed, you lost 30G.",
+                "Your heist ended badly — 30G fine.",
+                "Security prevailed; 30G penalty enforced.",
+                "Next time, maybe be quieter — 30G fine."
+            ]
+        }
     },
     "tired": {
         "1": {

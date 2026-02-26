@@ -233,9 +233,10 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount: int):
             session.rollback()
             raise
 
-def fetch_inventory(user_id: int, session=None) -> List[dict]:
+def fetch_inventory(user_id: int, session=None, rarity: Optional[str] = None) -> List[dict]:
     """Returns a list of items in user's inventory (excluding zero quantity).
     If session is provided, it will be reused. Otherwise, a new session is created.
+    If rarity is provided, only items of that rarity are returned.
     """
 
     owns_session = False
@@ -245,16 +246,19 @@ def fetch_inventory(user_id: int, session=None) -> List[dict]:
         owns_session = True
 
     try:
-        inventory = (
+        query = (
             session.query(Inventory, Items)
             .join(Items, Inventory.item_id == Items.item_id)
             .filter(
                 Inventory.user_id == user_id,
                 Inventory.item_quantity > 0
             )
-            .order_by(Items.item_name.asc())
-            .all()
         )
+
+        if rarity:
+            query = query.filter(Items.item_rarity == rarity)
+
+        inventory = query.order_by(Items.item_name.asc()).all()
 
         result = []
         for entry, item in inventory:
@@ -273,10 +277,10 @@ def fetch_inventory(user_id: int, session=None) -> List[dict]:
         if owns_session:
             session.close()
 
-def get_inventory(user_id: int, user_name: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
+def get_inventory(user_id: int, user_name: str, cataegory: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
     with Session() as session:
         user = session.get(User, user_id)
-        result = fetch_inventory(user_id, session=session)
+        result = fetch_inventory(user_id, session=session, rarity=cataegory)
 
         if not result:
             if user.starter_given:

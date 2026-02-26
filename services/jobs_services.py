@@ -262,7 +262,6 @@ class JobsClass:
         """Attempt to steal gold from another user."""
 
         target_id = target.id
-        target_name = target.display_name
 
         if target_id == 1355171756624580772:
             return "I hire you idiot."
@@ -280,7 +279,7 @@ class JobsClass:
         target_wealth = check_wallet(target_id)
 
         if target_wealth < 50:
-            return f"{target_name} was broke. You wasted your effort for nothing."
+            return f"@<{target_id}> was broke. You wasted your effort for nothing."
 
         # Check luck effect
         effect = get_active_user_effect(Session(), self.user_id)
@@ -297,7 +296,7 @@ class JobsClass:
             expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
 
             remove_gold(self.user_id, 30)
-            response = create_response("thief", 2, target=target_name, gold=0)
+            response = create_response("thief", 2, target=target_id, gold=0)
             return response
 
         stolen = int(min(target_wealth * 0.10, max_steal_cap))
@@ -309,7 +308,7 @@ class JobsClass:
         # Consume luck buff after successful robbery
         expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
 
-        response = create_response("thief", 1, target=target_name, gold=stolen)
+        response = create_response("thief", 1, target=target_id, gold=stolen)
 
         return response
 
