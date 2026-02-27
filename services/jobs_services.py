@@ -19,6 +19,9 @@ from services.alchemy_services import get_active_user_effect, expire_user_effect
 from utils.custom_errors import VeyraError
 
 
+# Global in-memory robbery shield tracker
+# {user_id: shield_until_timestamp}
+robbery_shields = {}
 
 class JobsClass:
     def __init__(self, user_id):
@@ -172,7 +175,7 @@ class JobsClass:
 
 
 
-    def miner(self, energy_cost = 50):
+    def miner(self, energy_cost = 60):
         """
         Perform the 'miner' job, consuming energy and awarding a random ore or gold reward.
 
@@ -258,7 +261,7 @@ class JobsClass:
         return response
 
 
-    def thief(self, target: discord.Member, energy_cost=60):
+    def thief(self, target: discord.Member, energy_cost=65):
         """Attempt to steal gold from another user."""
 
         target_id = target.id
@@ -272,41 +275,63 @@ class JobsClass:
         if target_id == self.user_id:
             return "Why do you wanna waste energy? try go robbing someone else"
 
+        import time
+        shield_until = robbery_shields.get(target_id)
+        current_time = time.time()
+
+        if shield_until and current_time < shield_until:
+            remaining = int(shield_until - current_time)
+
+            hours = remaining // 3600
+            minutes = (remaining % 3600) // 60
+
+            return (
+                f"This person was recently robbed. Their house has security for another "
+                f"{hours}h {minutes}m. Not the best time to try."
+            )
+
         if not self.consume_energy(energy_cost):
             response = create_response("tired", 1)
             return response
 
         target_wealth = check_wallet(target_id)
 
-        if target_wealth < 50:
+        if target_wealth < 100:
             return f"@<{target_id}> was broke. You wasted your effort for nothing."
 
         # Check luck effect
         effect = get_active_user_effect(Session(), self.user_id)
 
+        # Base success chance and cap
         success_chance = 0.5
-        max_steal_cap = 150
+        max_steal_cap = 300
 
-        if effect == "LUCK OF THE ABYSS":
+        # Gamblers Fate effect
+        if effect == "GAMBLERS FATE":
             success_chance = 0.9
             max_steal_cap = 500
 
         if random.random() > success_chance:
-            # Consume luck buff even on failed robbery
-            expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
-
+            # Failed robbery -> lose 30G fine
             remove_gold(self.user_id, 30)
             response = create_response("thief", 2, target=target_id, gold=0)
             return response
 
-        stolen = int(min(target_wealth * 0.10, max_steal_cap))
-        fine = int(min(target_wealth * 0.01, 50))
+        # Calculate steal amount (5-10% capped at max_steal_cap)
+        steal_percent = random.uniform(0.05, 0.10)
+        stolen = int(min(target_wealth * steal_percent, max_steal_cap))
+
+        # Victim loses 1% of wealth (no cap)
+        victim_loss = int(target_wealth * 0.01)
+
+        if stolen <= 0:
+            return f"@<{target_id}> was too broke to steal anything meaningful."
 
         add_gold(self.user_id, stolen)
-        remove_gold(target_id, fine)
+        remove_gold(target_id, victim_loss)
 
-        # Consume luck buff after successful robbery
-        expire_user_effect(Session(), self.user_id, "LUCK OF THE ABYSS")
+        # Apply 6 hour shield
+        robbery_shields[target_id] = current_time + (6 * 60 * 60)
 
         response = create_response("thief", 1, target=target_id, gold=stolen)
 

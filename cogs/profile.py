@@ -154,16 +154,16 @@ class Profile(commands.Cog):
         description="Choose a help topic",
         required=True,
         choices=[
-            "battle",
-            "jobs",
-            "loadout",
-            "race",
-            "smelting",
-            "inventory",
-            "gambling",
-            "loan",
-            "alchemy",
-            "potions"
+            "Battle",
+            "Jobs",
+            "Loadout",
+            "Race",
+            "Smelting",
+            "Inventory",
+            "Gambling",
+            "Loan",
+            "Alchemy",
+            "Potions"
         ]
     )
     async def details(self, ctx: discord.ApplicationContext, topic: str):
