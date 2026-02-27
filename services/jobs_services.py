@@ -1,5 +1,7 @@
 import random
 import discord
+import time
+
 
 from sqlalchemy import select, func
 
@@ -175,7 +177,7 @@ class JobsClass:
 
 
 
-    def miner(self, energy_cost = 60):
+    def miner(self, energy_cost = 70):
         """
         Perform the 'miner' job, consuming energy and awarding a random ore or gold reward.
 
@@ -207,7 +209,7 @@ class JobsClass:
             response = create_response("miner", 2, gold=25)
             return response
 
-        bonus = random.random() < 0.93  # True 93% of time
+        bonus = random.random() < 0.97  # True 97% of time
 
         if bonus:
             ore_amount = random.randint(3, 6)
@@ -261,7 +263,7 @@ class JobsClass:
         return response
 
 
-    def thief(self, target: discord.Member, energy_cost=65):
+    def thief(self, target: discord.Member, energy_cost=69):
         """Attempt to steal gold from another user."""
 
         target_id = target.id
@@ -275,7 +277,6 @@ class JobsClass:
         if target_id == self.user_id:
             return "Why do you wanna waste energy? try go robbing someone else"
 
-        import time
         shield_until = robbery_shields.get(target_id)
         current_time = time.time()
 
@@ -299,43 +300,45 @@ class JobsClass:
         if target_wealth < 100:
             return f"@<{target_id}> was broke. You wasted your effort for nothing."
 
-        # Check luck effect
-        effect = get_active_user_effect(Session(), self.user_id)
+        with Session() as session:
+            # Check luck effect
+            effect = get_active_user_effect(session, self.user_id)
 
-        # Base success chance and cap
-        success_chance = 0.5
-        max_steal_cap = 300
+            # Base success chance and cap
+            success_chance = 0.5
+            max_steal_cap = 300
 
-        # Gamblers Fate effect
-        if effect == "GAMBLERS FATE":
-            success_chance = 0.9
-            max_steal_cap = 500
+            # Gamblers Fate effect
+            if effect == "GAMBLERS FATE":
+                success_chance = 0.9
+                max_steal_cap = 500
+                expire_user_effect(session, self.user_id, "GAMBLERS FATE")
 
-        if random.random() > success_chance:
-            # Failed robbery -> lose 30G fine
-            remove_gold(self.user_id, 30)
-            response = create_response("thief", 2, target=target_id, gold=0)
+            if random.random() > success_chance:
+                # Failed robbery -> lose 30G fine
+                remove_gold(self.user_id, 30, session)
+                response = create_response("thief", 2, target=target_id, gold=0)
+                return response
+
+            # Calculate steal amount (5-10% capped at max_steal_cap)
+            steal_percent = random.uniform(0.05, 0.10)
+            stolen = int(min(target_wealth * steal_percent, max_steal_cap))
+
+            # Victim loses 1% of wealth (no cap)
+            victim_loss = int(target_wealth * 0.01)
+
+            if stolen <= 0:
+                return f"@<{target_id}> was too broke to steal anything meaningful."
+
+            add_gold(self.user_id, stolen, session)
+            remove_gold(target_id, victim_loss, session)
+
+            # Apply 6 hour shield
+            robbery_shields[target_id] = current_time + (6 * 60 * 60)
+
+            response = create_response("thief", 1, target=target_id, gold=stolen)
+
             return response
-
-        # Calculate steal amount (5-10% capped at max_steal_cap)
-        steal_percent = random.uniform(0.05, 0.10)
-        stolen = int(min(target_wealth * steal_percent, max_steal_cap))
-
-        # Victim loses 1% of wealth (no cap)
-        victim_loss = int(target_wealth * 0.01)
-
-        if stolen <= 0:
-            return f"@<{target_id}> was too broke to steal anything meaningful."
-
-        add_gold(self.user_id, stolen)
-        remove_gold(target_id, victim_loss)
-
-        # Apply 6 hour shield
-        robbery_shields[target_id] = current_time + (6 * 60 * 60)
-
-        response = create_response("thief", 1, target=target_id, gold=stolen)
-
-        return response
 
     def explorer(self, energy_cost=20):
         "Explore around and find random item"
