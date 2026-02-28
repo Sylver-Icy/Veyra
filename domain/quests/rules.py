@@ -75,13 +75,25 @@ QUESTS = {
 def get_random_quest(exclude_ids=None):
     """
     Return a random quest from QUESTS.
-    
+
     Args:
         exclude_ids: Optional list of quest IDs to exclude from selection
-        
+
     Returns:
         A random quest dictionary
     """
     exclude_ids = exclude_ids or []
     available_quests = [q for qid, q in QUESTS.items() if qid not in exclude_ids]
     return random.choice(available_quests)
+
+def get_quest_by_id(quest_id):
+    """
+    Return a quest dictionary by its ID.
+
+    Args:
+        quest_id: The ID of the quest to retrieve
+
+    Returns:
+        The quest dictionary, or None if not found
+    """
+    return QUESTS.get(quest_id)

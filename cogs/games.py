@@ -14,7 +14,12 @@ from utils.embeds.questembed import create_quest_embed
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
 
+from services.quest_services import get_or_create_quest
+from database.sessionmaker import Session
+
 from domain.guild.commands_policies import non_spam_command
+from domain.quests.rules import get_quest_by_id
+
 
 class Games(commands.Cog):
 
@@ -137,19 +142,24 @@ class Games(commands.Cog):
 
     @commands.slash_command(name="quest", description="View a sample task")
     async def quest(self, ctx):
+        await ctx.defer()
 
-        dummy_quest = {
-            "name": "Defeat the Dragon",
-            "description": "Travel to the mountains and defeat the ancient dragon",
-            "reward": 500
+        with Session() as session:
+            user_quest = get_or_create_quest(session, ctx.author.id)
+            quest_config = get_quest_by_id(user_quest.quest_id)
+        quest_data = {
+            "name": quest_config["name"],
+            "description": quest_config["description"],
+            "reward": quest_config["reward"]["gold"],
         }
 
-        dummy_progress = {
-            "current": 7,
-            "total": 10,
+        progress_data = {
+            "current": user_quest.progress,
+            "total": user_quest.target,
         }
+        session.commit()  # commit quest creation if it occurred
 
-        embed = create_quest_embed(dummy_quest, dummy_progress)
+        embed = create_quest_embed(quest_data, progress_data)
         await ctx.respond(embed=embed)
 
 

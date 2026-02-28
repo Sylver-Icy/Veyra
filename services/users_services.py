@@ -12,7 +12,7 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from database.sessionmaker import Session
 from models.inventory_model import Inventory
-from models.users_model import Quests, User, UserStats, Wallet, Upgrades
+from models.users_model import User, UserStats, Wallet, Upgrades
 
 from domain.friendship.rules import friendship_title_and_progress
 
@@ -99,8 +99,6 @@ def get_user_profile(user_id: int) -> dict:
         if not user:
             raise ValueError("User not found")
 
-        quest = session.query(Quests).filter(Quests.user_id == user_id).one_or_none()
-
         inventory_preview = [
             {
                 "name": inv.item.item_name,
@@ -123,15 +121,6 @@ def get_user_profile(user_id: int) -> dict:
             if user.battle_loadout
             else None,
             "inventory_preview": inventory_preview,
-            "quest": {
-                "delivery_items": quest.delivery_items,
-                "reward": quest.reward,
-                "limit": quest.limit,
-                "skips": quest.skips,
-                "streak": quest.streak,
-            }
-            if quest
-            else None,
         }
 
 

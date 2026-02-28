@@ -24,7 +24,7 @@ class User(Base):
     inventory = relationship('Inventory', back_populates='user', cascade='all, delete')
     marketplace = relationship('Marketplace', back_populates = 'user')
     upgrades = relationship("Upgrades", back_populates="user")
-    quests = relationship("Quests", back_populates="user", uselist=False, cascade="all, delete")
+    quests = relationship("UserQuest", back_populates="user", cascade="all, delete")
     user_stats = relationship("UserStats", back_populates="user", uselist=False, cascade="all, delete")
 
     effects = relationship(
@@ -83,23 +83,37 @@ class Wallet(Base):
 
     user = relationship("User", back_populates="wallet")
 
-class Quests(Base):
+
+# New UserQuest model replacing Quests
+class UserQuest(Base):
     __tablename__ = 'quests'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     user_id = Column(
         BigInteger,
         ForeignKey('users.user_id', ondelete='CASCADE'),
-        primary_key=True
+        nullable=False,
+        index=True
     )
 
-    delivery_items = Column(JSONB, default=list)
-    reward = Column(Integer, default=0)
-    limit = Column(Integer, default=0)
-    skips = Column(Integer, default=0)
-    streak = Column(Integer, default=0)
-    rerolls = Column(Integer, default=0)
+    quest_id = Column(String(100), nullable=False)
+
+    progress = Column(Integer, nullable=False, default=0)
+    target = Column(Integer, nullable=False)
+
+    started_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    expires_at = Column(TIMESTAMP, nullable=False)
+
+    completed = Column(Boolean, nullable=False, default=False)
+    completed_at = Column(TIMESTAMP, nullable=True)
+
+    __table_args__ = (
+        Index('idx_user_quest_active', 'user_id', 'completed'),
+    )
 
     user = relationship("User", back_populates="quests")
+
 
 
 
