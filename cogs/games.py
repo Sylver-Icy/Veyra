@@ -7,6 +7,7 @@ import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.global_sessions_registry import sessions
 from utils.custom_errors import VeyraError,WrongInputError
+from utils.embeds.questembed import create_quest_embed
 
 
 from services.delievry_minigame_services import requested_items
@@ -138,6 +139,23 @@ class Games(commands.Cog):
     async def play(self, ctx):
         guess = Guess()
         await guess.play_game(ctx, self.bot, self.guess_sessions)
+
+    @commands.slash_command(name="task", description="View a sample task")
+    async def task(self, ctx):
+
+        dummy_quest = {
+            "name": "Defeat the Dragon",
+            "description": "Travel to the mountains and defeat the ancient dragon",
+            "reward": 500
+        }
+
+        dummy_progress = {
+            "current": 7,
+            "total": 10,
+        }
+
+        embed = create_quest_embed(dummy_quest, dummy_progress)
+        await ctx.respond(embed=embed)
 
 
 def setup(bot):
