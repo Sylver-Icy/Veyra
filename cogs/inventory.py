@@ -26,7 +26,7 @@ from services.inventory_services import (
 from services.users_services import is_user
 from services.response_services import create_response
 from services.friendship_services import add_friendship
-from services.delievry_minigame_services import lookup_item_sources
+from services.item_services import lookup_item_sources
 
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError

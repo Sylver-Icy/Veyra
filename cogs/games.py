@@ -10,7 +10,7 @@ from utils.custom_errors import VeyraError,WrongInputError
 from utils.embeds.questembed import create_quest_embed
 
 
-from services.delievry_minigame_services import requested_items
+
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
 
@@ -130,18 +130,13 @@ class Games(commands.Cog):
         except Exception as e:
             await ctx.respond(f"Error generating hint: {str(e)}")
 
-    @commands.slash_command(name = "quest", description="Do quest for Veyra")
-    async def quest(self,ctx):
-        embed, view = requested_items(ctx.author.display_name, ctx.author.id)
-        await ctx.respond(embed=embed, view=view)
-
     @commands.command()
     async def play(self, ctx):
         guess = Guess()
         await guess.play_game(ctx, self.bot, self.guess_sessions)
 
-    @commands.slash_command(name="task", description="View a sample task")
-    async def task(self, ctx):
+    @commands.slash_command(name="quest", description="View a sample task")
+    async def quest(self, ctx):
 
         dummy_quest = {
             "name": "Defeat the Dragon",
