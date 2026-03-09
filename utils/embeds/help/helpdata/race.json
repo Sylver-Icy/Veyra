@@ -77,7 +77,7 @@
         },
         {
           "name": "Tips",
-          "value": "• All animals are statistically equal.\n• Don’t chase losses.\n• If you’re down bad, go do `!work` instead of speedrunning bankruptcy.",
+          "value": "• All animals are statistically equal.\n• Don’t chase losses.\n• If you’re down bad, go do `/work` instead of speedrunning bankruptcy.",
           "inline": false
         }
       ]

@@ -6,7 +6,7 @@ QUESTS = {
         "type": "BATTLE_WIN",
         "name": "Seasoned Warrior",
         "description": "Prove your mettle on the battlefield. Win 10 PvP or campaign battles within 24 hours to claim your reward.",
-        "target": 10,
+        "target": 7,
         "filters": {},
         "reward": [
             {"type": "gold", "amount": 500},
@@ -24,7 +24,7 @@ QUESTS = {
         "target": 5,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 200},
+            {"type": "gold", "amount": 250},
             {"type": "xp", "amount": 200},
             {"type": "item", "item_id": 178, "item_name": "Iron Box", "amount": 1}
         ],
@@ -141,7 +141,7 @@ QUESTS = {
         "type": "JOB_COMPLETE",
         "name": "Hard Worker",
         "description": "Put in the hours! Complete 8 jobs of any kind — knight, digger, miner, explorer, or thief — within 15 hours.",
-        "target": 8,
+        "target": 5,
         "filters": {},
         "reward": [
             {"type": "gold", "amount": 100},

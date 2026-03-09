@@ -1,7 +1,7 @@
 {
   "title": "⚔️ Battle System Guide",
   "color": "purple",
-  "footer": "Veyra • Battles Help • Tip: Use !details loadout for gear info",
+  "footer": "Veyra • Battles Help • Tip: Use /details loadout for gear info",
   "pages": [
     {
       "title": "⚔️ Battles Overview",
@@ -9,7 +9,7 @@
       "fields": [
         {
           "name": "Main Commands",
-          "value": "• `/battle @user <bet>` - Challenge a player (PvP)\n• `/campaign` - Solo campaign battles (PvE)\n• `/loadout <weapon> <spell>` - Set your gear\n\nMore info:\n• `!details loadout`",
+          "value": "• `/battle <target> <bet>` - Challenge a specific player (PvP)\n• `/open_to_battle <min_bet> <max_bet>` - Queue for automatic PvP matchmaking\n• `/campaign [delay]` - Solo campaign battles (PvE)\n• `/loadout` - Open loadout UI (weapon + spell selectors)\n\nMore info:\n• `/details loadout`",
           "inline": false
         },
         {
@@ -21,7 +21,7 @@
     },
     {
       "title": "📊 Core Stats (What matters)",
-      "description": "Every fighter has a stat sheet. Your **weapon modifies** these values.\n\nBase stats (before weapon bonuses):\n• **HP**: 40\n• **Attack**: 5\n• **Defense**: 0\n• **Speed**: 10\n• **Mana**: 10\n\nExtra mechanic:\n• **Frost**: starts at 0 and builds up from certain weapons/spells.",
+      "description": "Every fighter has a stat sheet. Your **weapon modifies** these values.\n\nBase stats (before weapon bonuses):\n• **HP**: 40\n• **Attack**: 5\n• **Defense**: 10\n• **Speed**: 10\n• **Mana**: 10\n\nExtra mechanic:\n• **Frost**: starts at 0 and builds up from certain weapons/spells.",
       "fields": [
         {
           "name": "HP",
@@ -136,7 +136,7 @@
     },
     {
       "title": "🤺 PvP Battles (How betting works)",
-      "description": "PvP is a 1v1 battle with gold on the line.\n\nFlow:\n1) Challenger uses `/battle @opponent <bet>`\n2) Bet is deducted instantly\n3) Opponent accepts/declines\n4) If accepted, opponent bet is deducted\n5) Battle begins\n6) Winner earns the pot minus fee",
+      "description": "PvP is a 1v1 battle with gold on the line. You can either challenge directly with `/battle` or queue with `/open_to_battle` for auto-matching.\n\nDirect challenge flow (`/battle`):\n1) Challenger uses `/battle @opponent <bet>`\n2) Bet is deducted instantly\n3) Opponent accepts/declines\n4) If accepted, opponent bet is deducted\n5) Battle begins\n6) Winner earns the pot minus fee",
       "fields": [
         {
           "name": "Payout",
@@ -152,16 +152,16 @@
     },
     {
       "title": "🧰 Loadouts (Weapons + Spells)",
-      "description": "Your loadout matters a lot. A good loadout makes your strategy easier; a bad loadout makes it painful.\n\nSet your loadout with:\n`/loadout <weapon> <spell>`\n\nFor the FULL gear breakdown, use:\n`!details loadout`",
+      "description": "Your loadout matters a lot. A good loadout makes your strategy easier; a bad loadout makes it painful.\n\nOpen your loadout UI with:\n`/loadout`\n\nFor the FULL gear breakdown, use:\n`/details loadout`",
       "fields": [
         {
           "name": "Weapons (Overview)",
-          "value": "• **Training Blade** - strong basic scaling (+1 Attack on hit)\n• **Moon Slasher** - Frost builder (+3 Frost on hit)\n• **Dark Blade** - disables healing for both players\n• **Elephant Hammer** - tank tool (full block, high defense)\n• **Eternal Tome** - longer status duration (+3 rounds)\n• **Veyra’s Grimoire** ⭐ - spell-synergy (casting gives +Mana but costs HP)\n\n⭐ Exclusive unlock exists via campaign progression.",
+          "value": "• **Training Blade** - strong basic scaling (+1 Attack on hit)\n• **Moon Slasher** - Frost builder (+4 Frost on hit)\n• **Dark Blade** - disables healing for both players\n• **Elephant Hammer** - tank tool (full block, high defense)\n• **Eternal Tome** - longer status duration (+3 rounds)\n• **Veyra’s Grimoire** ⭐ - spell-synergy (casting gives +Mana but costs HP)\n\n⭐ Exclusive unlock exists via campaign progression.",
           "inline": false
         },
         {
           "name": "Spells (Overview)",
-          "value": "• **Fireball** (15 mana) - 16 damage\n• **Nightfall** (9 mana) - applies Nightfall\n• **Heavyshot** (16 mana) - sets opponent HP equal to your HP\n• **Erdtree Blessing** (14 mana) - Large Heal\n• **Frostbite** (6 mana) - +6 Frost, -1 Speed\n• **Veil of Darkness** ⭐ (10 mana) - 60% attack dmg reduction\n\n⭐ Exclusive unlock exists via campaign progression.",
+          "value": "• **Fireball** (15 mana) - 16 damage\n• **Nightfall** (9 mana) - applies Nightfall\n• **Heavyshot** (16 mana) - sets opponent HP equal to your HP\n• **Erdtree Blessing** (14 mana) - Large Heal\n• **Frostbite** (6 mana) - +5 Frost, -1 Speed\n• **Veil of Darkness** ⭐ (10 mana) - 60% attack dmg reduction\n• **Earthquake** (13 mana) - 5 damage, defense reset, -3 speed\n\n⭐ Exclusive unlock exists via campaign progression.",
           "inline": false
         }
       ]

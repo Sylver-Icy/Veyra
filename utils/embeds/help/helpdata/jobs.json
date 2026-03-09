@@ -11,7 +11,7 @@
       "fields": [
         {
           "name": "Core Commands",
-          "value": "• `!work <job>` - perform a job\n• `!check energy` - check your current energy\n\nExamples:\n`!work miner`\n`!work digger`\n`!work knight`",
+          "value": "• `/work <job>` - perform a job\n• `/check energy` - check your current energy\n\nExamples:\n`/work miner`\n`/work digger`\n`/work knight`",
           "inline": false
         },
         {
@@ -95,7 +95,7 @@
       "fields": [
         {
           "name": "Energy Cost",
-          "value": "**50 Energy**",
+          "value": "**70 Energy**",
           "inline": true
         },
         {
@@ -126,7 +126,7 @@
       "fields": [
         {
           "name": "Energy Cost",
-          "value": "**60 Energy**",
+          "value": "**69 Energy**",
           "inline": true
         },
         {
@@ -136,7 +136,7 @@
         },
         {
           "name": "Success / Fail",
-          "value": "Thief is a coin flip:\n\n✅ **Success:**\n• You steal **10% of target’s gold**, capped at **150**\n• Target pays an extra **fine** (1% of their gold, capped at 50)\n\n❌ **Fail:**\n• You lose **30 gold** (ouch)",
+          "value": "Thief is a coin flip:\n\n✅ **Success:**\n• You steal **5% to 10% of target's gold**, capped at **300**\n• Target loses an extra **1% of their gold**\n\n❌ **Fail:**\n• You lose **30 gold** (ouch)",
           "inline": false
         },
         {
@@ -148,7 +148,7 @@
     },
     {
   "title": "🧭 Explorer",
-  "description": "Explorer lets you roam around and discover a random item. It’s a loot job, not a gold job.",
+  "description": "Explorer lets you roam around and discover one random item. It’s a loot job, not a gold job.",
   "fields": [
     {
       "name": "Energy Cost",
@@ -162,7 +162,7 @@
     },
     {
       "name": "Rarity Chances",
-      "value": "Explorer gets you a random Common(85%) or a Rare(15%) item.",
+      "value": "Explorer currently rolls a random Rare(85%) or Common(15%) item.",
       "inline": false
     },
 

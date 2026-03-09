@@ -25,7 +25,7 @@
       "fields": [
         {
           "name": "Main Commands",
-          "value": "• `/casino` - open casino shop (buy chips / cashout chips)\n• `/gamble <game>` - play a casino game\n• `!details gambling` - view this guide again",
+          "value": "• `/casino` - open casino shop (buy chips / cashout chips)\n• `/gamble <game>` - play a casino game\n• `/details gambling` - view this guide again",
           "inline": false
         },
         {

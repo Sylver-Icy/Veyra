@@ -9,7 +9,7 @@
       "fields": [
         {
           "name": "Equip / Change Loadout",
-          "value": "Use: `/loadout <weapon> <spell>`\n\nExamples:\n`/loadout training_blade fireball`\n`/loadout moon_slasher frostbite`\n`/loadout elephant_hammer erdtree_blessing`",
+          "value": "Use: `/loadout`\n\nThis opens an interactive UI with dropdowns to select your weapon and spell.",
           "inline": false
         },
         {
@@ -193,7 +193,7 @@
       "fields": [
         {
           "name": "Available Spells",
-          "value": "• Fireball\n• Nightfall\n• Heavyshot\n• Erdtree Blessing\n• Frostbite\n• Veil of Darkness ⭐\n• Earthquake ⭐",
+          "value": "• Fireball\n• Nightfall\n• Heavyshot\n• Erdtree Blessing\n• Frostbite\n• Veil of Darkness ⭐\n• Earthquake",
           "inline": false
         },
         {

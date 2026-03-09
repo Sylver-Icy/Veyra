@@ -9,7 +9,7 @@
       "fields": [
         {
           "name": "Core Commands",
-          "value": "• `!check inventory` - view your inventory\n• `!info <item>` - detailed item info\n• `/transfer_item <user> <item> <amount>` - give items to someone\n• `!use <item>` - use an item (only works if usable)\n\nExamples:\n`!checkinventory`\n`!info copper ore`\n`/transfer_item @user wooden box 2`\n`!use bread`",
+          "value": "• `/check inventory [category]` - view your inventory\n• `!info <item>` - detailed item info\n• `/transfer_item <user> <item> <amount>` - give items to someone\n• `/find_item <item_name>` - find where an item can be obtained (costs 25G)\n• `!use <item>` - use an item (only works if usable)\n\nExamples:\n`/check inventory`\n`!info copper ore`\n`/transfer_item @user wooden box 2`\n`/find_item silver ore`\n`!use bread`",
           "inline": false
         },
         {

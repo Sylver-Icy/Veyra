@@ -14,7 +14,7 @@
         },
         {
           "name": "Main Commands",
-          "value": "• `/loan` - take starter loan (one-time)\n• `!repayloan` - repay your active loan\n\n(Upcoming system: `/take_loan`, `/pay_loan`, `/my_packs`)",
+          "value": "• `/loan` - take starter loan (one-time)\n• `!repayloan` - repay your active loan",
           "inline": false
         }
       ]

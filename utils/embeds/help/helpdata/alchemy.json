@@ -1,11 +1,11 @@
 {
   "title": "🔮 Alchemy System Guide",
   "color": "purple",
-  "footer": "Veyra • Alchemy Help • Tip: Use !details potions",
+  "footer": "Veyra • Alchemy Help • Tip: Use /details potions",
   "pages": [
     {
       "title": "🔮 Alchemy Overview",
-      "description": "Alchemy lets you brew potions that grant powerful status effects.\n\nPotions provide strong buffs but increase **Strain**, which raises the chance future potions fail.\n\nFor exact potion recipes and effects, use:\n`!details potions`",
+      "description": "Alchemy lets you brew potions that grant powerful status effects.\n\nPotions provide strong buffs but increase **Strain**, which raises the chance future potions fail.\n\nFor exact potion recipes and effects, use:\n`/details potions`",
       "fields": [
         {
           "name": "Core Idea",
@@ -41,7 +41,7 @@
         },
         {
           "name": "Check your status",
-          "value": "`!check status`",
+          "value": "`/check status`",
           "inline": false
         },
         {

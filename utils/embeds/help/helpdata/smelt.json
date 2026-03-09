@@ -42,7 +42,7 @@
       "fields": [
         {
           "name": "How to Get Ores",
-          "value": "Use **Miner jobs** to obtain ores.\nMore info:\n• `!details jobs`",
+          "value": "Use **Miner jobs** to obtain ores.\nMore info:\n• `/details jobs`",
           "inline": false
         },
         {
