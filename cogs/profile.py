@@ -155,6 +155,7 @@ class Profile(commands.Cog):
         required=True,
         choices=[
             "Battle",
+            "Quests",
             "Jobs",
             "Loadout",
             "Race",

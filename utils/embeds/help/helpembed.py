@@ -263,6 +263,7 @@ class JSONPageView(discord.ui.View):
 
 DETAILS_MAP = {
         "battle": "battle.json",
+    "quests": "quests.json",
         "jobs": "jobs.json",
         "loadout": "loadout.json",
         "race": "race.json",
@@ -281,7 +282,7 @@ def get_json_pages_embed(user: discord.User, topic: str):
     if not mapped_file:
         embed = discord.Embed(
             title="❌ No such system",
-            description="Try `!details race` \n allowed arguments: battle, jobs, loadout, race, smelting, inventory, gambling, loan, alchemy, potions",
+            description="Try `!details race` \n allowed arguments: battle, quests, jobs, loadout, race, smelting, inventory, gambling, loan, alchemy, potions",
             color=discord.Color.red()
         )
         return embed, None

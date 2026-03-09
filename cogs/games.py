@@ -15,12 +15,18 @@ from utils.embeds.questembed import create_quest_embed, create_quest_complete_em
 
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
+from services.economy_services import remove_gold
 
 from services.quest_services import get_or_create_quest, skip_quest, claim_quest_rewards, create_quest
 from database.sessionmaker import Session
 
 from domain.guild.commands_policies import non_spam_command
 from domain.quests.rules import get_quest_by_id
+from utils.custom_errors import NotEnoughGoldError
+from utils.emotes import GOLD_EMOJI
+
+
+QUEST_SKIP_COST = 88
 
 
 class SkipQuestView(discord.ui.View):
@@ -36,15 +42,26 @@ class SkipQuestView(discord.ui.View):
 
         with Session() as session:
             skipped = skip_quest(session, self.user_id)
-            session.commit()
 
-        if not skipped:
-            await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
-            return
+            if not skipped:
+                await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
+                return
+
+            try:
+                remove_gold(self.user_id, QUEST_SKIP_COST, session=session)
+            except NotEnoughGoldError:
+                session.rollback()
+                await interaction.response.send_message(
+                    f"Nice try. Skipping costs **{QUEST_SKIP_COST} {GOLD_EMOJI}** and your pockets are echoing.",
+                    ephemeral=True
+                )
+                return
+
+            session.commit()
 
         embed = discord.Embed(
             title="⏭️ Quest Skipped",
-            description="Quest skipped! Run `/quest` again and I'll hand you a new one.",
+            description=f"Quest skipped for **{QUEST_SKIP_COST} {GOLD_EMOJI}**. Run `/quest` again and I'll hand you a new one.",
             color=discord.Color.greyple()
         )
         self.stop()

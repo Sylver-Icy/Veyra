@@ -9,7 +9,7 @@ QUESTS = {
         "target": 10,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 300},
+            {"type": "gold", "amount": 500},
             {"type": "xp", "amount": 100},
             {"type": "item", "item_id": 177, "item_name": "Stone Box", "amount": 1}
         ],
@@ -24,7 +24,7 @@ QUESTS = {
         "target": 5,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 500},
+            {"type": "gold", "amount": 200},
             {"type": "xp", "amount": 200},
             {"type": "item", "item_id": 178, "item_name": "Iron Box", "amount": 1}
         ],
@@ -35,14 +35,14 @@ QUESTS = {
         "id": "gold_grinder",
         "type": "GOLD_EARN",
         "name": "Gold Grinder",
-        "description": "Stack that coin! Earn a total of 500 gold from jobs, battles, sales, or any other source within 24 hours.",
+        "description": "Stack that coin! Earn a total of 500 gold from jobs, battles, sales, or any other source within 7 hours.",
         "target": 500,
         "filters": {},
         "reward": [
             {"type": "gold", "amount": 150},
             {"type": "xp", "amount": 80}
         ],
-        "duration_hours": 24
+        "duration_hours": 7
     },
 
     "market_merchant": {
@@ -68,7 +68,7 @@ QUESTS = {
         "target": 3,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 200},
+            {"type": "gold", "amount": 100},
             {"type": "xp", "amount": 90}
         ],
         "duration_hours": 24
@@ -87,7 +87,7 @@ QUESTS = {
             {"type": "gold", "amount": 80},
             {"type": "xp", "amount": 40}
         ],
-        "duration_hours": 24
+        "duration_hours": 4
     },
 
     "big_spender": {
@@ -98,7 +98,6 @@ QUESTS = {
         "target": 1000,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 200},
             {"type": "xp", "amount": 100},
             {"type": "item", "item_id": 177, "item_name": "Stone Box", "amount": 1}
         ],
@@ -115,11 +114,10 @@ QUESTS = {
         "target": 5,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 180},
             {"type": "xp", "amount": 90},
             {"type": "item", "item_id": 187, "item_name": "Coal", "amount": 10}
         ],
-        "duration_hours": 24
+        "duration_hours": 3
     },
 
     "potion_brewer": {
@@ -142,15 +140,15 @@ QUESTS = {
         "id": "hard_worker",
         "type": "JOB_COMPLETE",
         "name": "Hard Worker",
-        "description": "Put in the hours! Complete 8 jobs of any kind — knight, digger, miner, explorer, or thief — within 24 hours.",
+        "description": "Put in the hours! Complete 8 jobs of any kind — knight, digger, miner, explorer, or thief — within 15 hours.",
         "target": 8,
         "filters": {},
         "reward": [
-            {"type": "gold", "amount": 200},
+            {"type": "gold", "amount": 100},
             {"type": "xp", "amount": 100},
             {"type": "item", "item_id": 176, "item_name": "Wooden Box", "amount": 1}
         ],
-        "duration_hours": 24
+        "duration_hours": 15
     },
 
     # --- Battle variants ---
@@ -159,29 +157,14 @@ QUESTS = {
         "id": "first_blood",
         "type": "BATTLE_WIN",
         "name": "First Blood",
-        "description": "Step into the arena and score 3 victories. PvP or campaign — both count toward your goal.",
+        "description": "Step into the arena and score 3 victories",
         "target": 3,
         "filters": {},
         "reward": [
             {"type": "gold", "amount": 120},
             {"type": "xp", "amount": 50}
         ],
-        "duration_hours": 24
-    },
-
-    "campaign_pusher": {
-        "id": "campaign_pusher",
-        "type": "CAMPAIGN_WIN",
-        "name": "Campaign Pusher",
-        "description": "Push deeper into the campaign and conquer 3 new stages. Only campaign victories count — time to face the PvE gauntlet.",
-        "target": 3,
-        "filters": {},
-        "reward": [
-            {"type": "gold", "amount": 350},
-            {"type": "xp", "amount": 150},
-            {"type": "item", "item_id": 178, "item_name": "Iron Box", "amount": 1}
-        ],
-        "duration_hours": 24
+        "duration_hours": 4
     },
 
     # --- Gambling ---
@@ -197,7 +180,7 @@ QUESTS = {
             {"type": "gold", "amount": 150},
             {"type": "xp", "amount": 70}
         ],
-        "duration_hours": 24
+        "duration_hours": 2
     },
 
     # --- Marketplace ---
@@ -213,7 +196,7 @@ QUESTS = {
             {"type": "gold", "amount": 180},
             {"type": "xp", "amount": 85}
         ],
-        "duration_hours": 24
+        "duration_hours": 12
     },
 
     # --- Lootbox variant ---
@@ -222,7 +205,7 @@ QUESTS = {
         "id": "box_addict",
         "type": "LOOTBOX_OPEN",
         "name": "Box Addict",
-        "description": "Can't stop, won't stop. Rip open 7 lootboxes of any tier within 24 hours. Fortune favors the bold.",
+        "description": "Can't stop, won't stop. Rip open 7 lootboxes of any tier within 4 hours. Fortune favors the bold.",
         "target": 7,
         "filters": {},
         "reward": [
@@ -230,7 +213,7 @@ QUESTS = {
             {"type": "xp", "amount": 180},
             {"type": "item", "item_id": 179, "item_name": "Platinum Box", "amount": 1}
         ],
-        "duration_hours": 24
+        "duration_hours": 4
     }
 }
 
