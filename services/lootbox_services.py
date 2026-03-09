@@ -4,11 +4,13 @@ from models.inventory_model import Items, Inventory
 from database.sessionmaker import Session
 from services.inventory_services import give_item
 from services.economy_services import add_gold
+from services.quest_services import update_quest_progress
 from utils.itemname_to_id import get_item_id_safe
 from utils.embeds.lootboxembed import lootbox_embed_and_view
 
 def open_box(user_id, lootbox: str):
     rewards = lootbox_reward(user_id, lootbox)
+    update_quest_progress(user_id, "LOOTBOX_OPEN", 1)
     return lootbox_embed_and_view(rewards)
 
 def lootbox_reward(user_id: int,lootbox: str):

@@ -19,9 +19,27 @@ def handle_level_up(user, new_level: int):
     if new_level == 5:
         inviter_id = get_inviter(user.user_id)
         mark_inv_successful(inviter_id, user.user_id)
-        
+
     logger.info("%s has reached level %s", user.user_id, new_level)
 
+
+def give_exp(session, user_id: int, exp_amount: int):
+    "Synchronous EXP grant using an existing session"
+    user = session.get(User, user_id)
+    if not user:
+        logger.warning("User ID %s not found", user_id)
+        return
+
+    user.exp += exp_amount
+    logger.info("%s got %s exp points.", user.user_name, exp_amount)
+
+    current_level = user.level
+    new_level = calculate_level(user.exp)
+
+    if new_level > current_level:
+        handle_level_up(user, new_level)
+
+    return new_level if new_level > current_level else None
 
 async def add_exp(user_id: int, exp_amount: int):
     "Adds exp and handles level up logic"

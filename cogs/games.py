@@ -1,5 +1,6 @@
 import random
 
+import discord
 from discord.ext import commands
 import asyncio
 
@@ -14,11 +15,39 @@ from utils.embeds.questembed import create_quest_embed
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
 
-from services.quest_services import get_or_create_quest
+from services.quest_services import get_or_create_quest, skip_quest
 from database.sessionmaker import Session
 
 from domain.guild.commands_policies import non_spam_command
 from domain.quests.rules import get_quest_by_id
+
+
+class SkipQuestView(discord.ui.View):
+    def __init__(self, user_id: int):
+        super().__init__(timeout=120)
+        self.user_id = user_id
+
+    @discord.ui.button(label="Skip Quest", style=discord.ButtonStyle.danger, emoji="⏭️")
+    async def skip_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+            return
+
+        with Session() as session:
+            skipped = skip_quest(session, self.user_id)
+            session.commit()
+
+        if not skipped:
+            await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
+            return
+
+        embed = discord.Embed(
+            title="⏭️ Quest Skipped",
+            description="Quest skipped! Run `/quest` again and I'll hand you a new one.",
+            color=discord.Color.greyple()
+        )
+        self.stop()
+        await interaction.response.edit_message(embed=embed, view=None)
 
 
 class Games(commands.Cog):
@@ -140,27 +169,31 @@ class Games(commands.Cog):
         guess = Guess()
         await guess.play_game(ctx, self.bot, self.guess_sessions)
 
-    @commands.slash_command(name="quest", description="View a sample task")
+    @commands.slash_command(name="quest", description="View your current quest")
     async def quest(self, ctx):
         await ctx.defer()
 
         with Session() as session:
             user_quest = get_or_create_quest(session, ctx.author.id)
-            quest_config = get_quest_by_id(user_quest.quest_id)
-        quest_data = {
-            "name": quest_config["name"],
-            "description": quest_config["description"],
-            "reward": quest_config["reward"]["gold"],
-        }
 
-        progress_data = {
-            "current": user_quest.progress,
-            "total": user_quest.target,
-        }
-        session.commit()  # commit quest creation if it occurred
+            quest_config = get_quest_by_id(user_quest.quest_id)
+
+            quest_data = {
+                "name": quest_config["name"],
+                "description": quest_config["description"],
+                "reward": quest_config["reward"],
+            }
+
+            progress_data = {
+                "current": user_quest.progress,
+                "total": user_quest.target,
+            }
+
+            session.commit()
 
         embed = create_quest_embed(quest_data, progress_data)
-        await ctx.respond(embed=embed)
+        view = SkipQuestView(user_id=ctx.author.id)
+        await ctx.respond(embed=embed, view=view)
 
 
 def setup(bot):

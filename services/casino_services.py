@@ -22,6 +22,7 @@ from services.alchemy_services import (
 )
 from utils.custom_errors import VeyraError
 from utils.emotes import CHIP_EMOJI
+from services.quest_services import update_quest_progress
 
 
 def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> dict:
@@ -79,6 +80,7 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> dict:
                     remove_chips(user_id, reduced_loss, session)
                     expire_user_effect(session, user_id, "GAMBLER'S FATE")
                     session.commit()
+                    update_quest_progress(user_id, "CASINO_PLAY", 1)
 
                     return {
                         "game": game_id,
@@ -98,6 +100,7 @@ def play_casino_game(user_id: int, game_id: str, bet: int, choice: str) -> dict:
                 add_chip(user_id, result.delta, session)
 
             session.commit()
+            update_quest_progress(user_id, "CASINO_PLAY", 1)
             return {
                 "game": game_id,
                 "summary": result.message,

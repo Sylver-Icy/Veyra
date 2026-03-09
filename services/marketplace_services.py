@@ -4,6 +4,7 @@ from models.marketplace_model import Marketplace
 from database.sessionmaker import Session
 from services.inventory_services import take_item, give_item
 from services.economy_services import add_gold, remove_gold
+from services.quest_services import update_quest_progress
 from utils.custom_errors import VeyraError, NotEnoughGoldError, FullInventoryError, PartialInventoryError
 from utils.embeds.marketplaceembed import build_marketplace
 from utils.emotes import GOLD_EMOJI
@@ -88,6 +89,10 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
         # Transfer item and gold
         give_item(buyer_id, item_id, quantity)
         add_gold(listing.user_id, int((quantity * price) * 0.93)) #Charge the 7 % listing fee
+
+        # Quest progress: seller sold items, buyer bought items
+        update_quest_progress(listing.user_id, "ITEM_SELL", quantity)
+        update_quest_progress(buyer_id, "ITEM_BUY", quantity)
 
         # Remove or update listing
         if items_in_stock == quantity:

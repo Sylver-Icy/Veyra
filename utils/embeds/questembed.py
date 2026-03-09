@@ -16,7 +16,7 @@ def create_quest_embed(quest: dict, progress: dict) -> discord.Embed:
     # Extract quest and progress data
     quest_name = quest.get("name", "Unknown Quest")
     quest_description = quest.get("description", "No description")
-    quest_reward = quest.get("reward", 0)
+    rewards = quest.get("reward", [])
 
     current_progress = progress.get("current", 0)
     total_progress = progress.get("total", 100)
@@ -41,10 +41,22 @@ def create_quest_embed(quest: dict, progress: dict) -> discord.Embed:
         inline=False
     )
 
-    # Add reward field
+    # Build reward display from list
+    reward_lines = []
+    for r in rewards:
+        rtype = r.get("type")
+        amount = r.get("amount", 0)
+        if rtype == "gold":
+            reward_lines.append(f"💰 {amount} Gold")
+        elif rtype == "xp":
+            reward_lines.append(f"✨ {amount} XP")
+        elif rtype == "item":
+            item_name = r.get("item_name", "Item")
+            reward_lines.append(f"📦 {amount}x {item_name}")
+
     embed.add_field(
         name="Reward",
-        value=f"💰 {quest_reward}",
+        value="\n".join(reward_lines) if reward_lines else "💰 0",
         inline=False
     )
 
