@@ -21,6 +21,15 @@ from utils.custom_errors import (
 logger = logging.getLogger(__name__)
 
 
+def _track_gold_quest(user_id: int, gold_amount: int, quest_type: str):
+    """Fire-and-forget quest progress update for gold actions."""
+    try:
+        from services.quest_services import update_quest_progress
+        update_quest_progress(user_id, quest_type, gold_amount)
+    except Exception:
+        logger.debug("Quest progress update failed for user %s", user_id)
+
+
 # ---------------------------------------------------------------------------
 # Wallet mutation services
 # ---------------------------------------------------------------------------
@@ -65,6 +74,7 @@ def add_gold(user_id: int, gold_amount: int, session=None):
         new_balance = result[0]
         if owns_session:
             session.commit()
+        _track_gold_quest(user_id, gold_amount, "GOLD_EARN")
         return new_balance, gold_amount
 
     except Exception:
@@ -116,6 +126,7 @@ def remove_gold(user_id: int, gold_amount: int, session=None):
         new_balance = result[0]
         if owns_session:
             session.commit()
+        _track_gold_quest(user_id, gold_amount, "GOLD_SPEND")
         return new_balance, gold_amount
 
     except Exception:

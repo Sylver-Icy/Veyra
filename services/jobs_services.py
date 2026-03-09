@@ -16,6 +16,7 @@ from services.users_services import is_user
 from services.response_services import create_response
 from services.notif_services import send_notification
 from services.alchemy_services import get_active_user_effect, expire_user_effect
+from services.quest_services import update_quest_progress
 
 
 from utils.custom_errors import VeyraError
@@ -93,6 +94,7 @@ class JobsClass:
         if eligible:
             earning = random.randint(40, 90)
             add_gold(self.user_id, earning)
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("knight", 1, gold=earning)
             return response
 
@@ -128,6 +130,7 @@ class JobsClass:
     )[0]
         if reward == "gold":
             add_gold(self.user_id, 20)
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("digger", 1, gold=20)
             return response
 
@@ -139,6 +142,7 @@ class JobsClass:
                     "You dug for hours and unearthed a Wooden Box, but your satchel was already bursting. "
                     "With nowhere to stash it, you had to leave it half-buried in the dirt."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("digger", 2, reward="Wooden Box")
             return response
 
@@ -150,6 +154,7 @@ class JobsClass:
                     "You struck stone and found a Stone Box, but your pack was stuffed to the brim. "
                     "You marked the spot with a pebble and walked away empty-handed."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("digger", 2, reward="Stone Box")
             return response
 
@@ -161,6 +166,7 @@ class JobsClass:
                     "You finally hauled up an Iron Box... then remembered your inventory has the storage capacity of a napkin. "
                     "No space left, so you had to abandon it."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("digger", 2, reward="Iron Box")
 
             return response
@@ -172,6 +178,7 @@ class JobsClass:
                 "You uncovered a Platinum Box gleaming in the soil, but your satchel couldn't fit another pebble. "
                 "You left it behind, cursing your lack of space all the way home."
             )
+        update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
         response = create_response("digger", 2, reward="Platinum Box")
         return response
 
@@ -206,6 +213,7 @@ class JobsClass:
 
         if reward == "gold":
             add_gold(self.user_id, 25)
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("miner", 2, gold=25)
             return response
 
@@ -224,6 +232,7 @@ class JobsClass:
                     f"You mined {ore_amount}x Coal, but your satchel had no room left. "
                     "With a heavy sigh, you left the haul by the tunnel mouth for someone luckier."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("miner", 1, amount=ore_amount, ores="Coal")
             return response
 
@@ -235,6 +244,7 @@ class JobsClass:
                     f"You pried loose {ore_amount}x Copper Ore, but your pack was packed tighter than a tavern on payday. "
                     "You stashed the ore behind a rock and left with empty hands."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("miner", 1, amount=ore_amount, ores="Copper Ore")
 
             return response
@@ -247,6 +257,7 @@ class JobsClass:
                     f"You dragged out {ore_amount}x Iron Ore, but your inventory was already full. "
                     "You had to leave the ore behind before the tunnel collapsed."
                 )
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("miner", 1, amount=ore_amount, ores="Iron Ore")
 
             return response
@@ -258,6 +269,7 @@ class JobsClass:
                 f"You uncovered {ore_amount}x Silver Ore, but your satchel couldn't carry another shard. "
                 "You reluctantly left the glittering prize in the darkness."
             )
+        update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
         response = create_response("miner", 1, amount=ore_amount, ores="Silver Ore")
 
         return response
@@ -336,6 +348,7 @@ class JobsClass:
             # Apply 6 hour shield
             robbery_shields[target_id] = current_time + (6 * 60 * 60)
 
+            update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
             response = create_response("thief", 1, target=target_id, gold=stolen)
 
             return response
@@ -368,6 +381,7 @@ class JobsClass:
                 f"You found {item.item_name} but your satchel was already stuffed to the brim. With no room to carry it, you left the find behind in the wilds."
             )
 
+        update_quest_progress(self.user_id, "JOB_COMPLETE", 1)
         return f"You explored and found something! ({item.item_name})"
 
 async def regen_energy_for_all(bot):

@@ -9,6 +9,7 @@ from domain.alchemy.potion_recipes import POTION_RECIPES
 from domain.alchemy.rules import can_craft_potion_tier, resolve_potion, roll_strain_risk
 
 from services.inventory_services import take_items_bulk, give_item
+from services.quest_services import update_quest_progress
 
 from utils.itemname_to_id import get_item_id_safe
 
@@ -62,6 +63,7 @@ def craft_potion(user_id: int, potion_name: str):
         give_item(user_id, potion_id, 1, session=session)
 
         session.commit()
+        update_quest_progress(user_id, "BREW_POTION", 1)
         return f"Successfully crafted {potion_key}"
 
 

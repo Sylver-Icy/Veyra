@@ -15,6 +15,7 @@ from services.battle.campaign.bardok_ai import BardokAI
 from services.battle.arena_class import LavaArena, FrozenArena, NullArena, IrritationArena
 from services.economy_services import add_gold
 from services.users_services import inc_battles_won
+from services.quest_services import update_quest_progress, decrease_quest_progress
 
 from services.battle.campaign.campaign_services import fetch_veyra_loadout, advance_campaign_stage, give_stage_rewards, stage_reward_details, get_campaign_stage
 
@@ -148,12 +149,18 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 #P2 won give reward
                 add_gold(target.id, int((bet * 2) * 0.9))
                 inc_battles_won(target.id)
+                update_quest_progress(target.id, "BATTLE_WIN", 1)
+                update_quest_progress(target.id, "BATTLE_WIN_STREAK", 1)
+                decrease_quest_progress(challenger.id, "BATTLE_WIN_STREAK")
                 final_embed = build_final_embed(target.name, challenger.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
             elif p2.hp <= 0:
                 add_gold(challenger.id, int((bet * 2) * 0.9))
                 inc_battles_won(challenger.id)
+                update_quest_progress(challenger.id, "BATTLE_WIN", 1)
+                update_quest_progress(challenger.id, "BATTLE_WIN_STREAK", 1)
+                decrease_quest_progress(target.id, "BATTLE_WIN_STREAK")
                 final_embed = build_final_embed(challenger.name, target.name, bet)
                 await ctx.channel.send(embed=final_embed)
                 return
@@ -297,6 +304,7 @@ async def start_campaign_battle(ctx, player: discord.User, result_display_time: 
             if p1.hp <= 0:
                 final_embed = build_final_embed(enemy_name, player.name, 0)
                 await ctx.channel.send(embed=final_embed)
+
                 return
             elif p2.hp <= 0:
                 final_embed = build_final_embed(player.name, enemy_name, 0)
@@ -305,6 +313,7 @@ async def start_campaign_battle(ctx, player: discord.User, result_display_time: 
                 await ctx.followup.send(f"🏆 {player.name} advanced to the next campaign stage!\n{reward_string}")
                 give_stage_rewards(player.id)
                 advance_campaign_stage(player.id)
+                update_quest_progress(player.id, "CAMPAIGN_WIN", 1)
                 return
 
             round_num += 1

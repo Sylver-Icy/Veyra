@@ -11,6 +11,135 @@ def load_json(path: str):
             _HELP_JSON_CACHE[path] = json.load(f)
     return _HELP_JSON_CACHE[path]
 
+
+def _normalize_command_key(command_name: str) -> str:
+    """Normalize command input so users can pass with or without ! or /."""
+    key = (command_name or "").strip().lower()
+    if key.startswith("/") or key.startswith("!"):
+        key = key[1:]
+    return " ".join(key.split())
+
+
+def get_all_commandhelp_options() -> list[str]:
+    help_data = load_json(os.path.join(os.path.dirname(__file__), "helpdata", "commandsinfo.json"))
+    return sorted(help_data.keys())
+
+
+def build_prefix_help_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="📘 Veyra Prefix Commands",
+        description="Use `!` commands for quick actions.",
+        color=discord.Color.blurple()
+    )
+
+    embed.add_field(
+        name="🎮 Games",
+        value="`!ping` - Bot latency check\n"
+              "`!flipcoin` - Flip a coin\n"
+              "`!play` - Number guessing game\n"
+              "`!solve_wordle` - Start Wordle solver session",
+        inline=False
+    )
+    embed.add_field(
+        name="🎒 Inventory & Loot",
+        value="`!info <item_name>` - Item info\n"
+              "`!use <item_name>` - Use an item\n"
+              "`!open <lootbox_name>` - Open a lootbox",
+        inline=False
+    )
+    embed.add_field(
+        name="🛒 Economy & Shop",
+        value="`!buy <item_name> [amount]` - Buy from shop\n"
+              "`!sell <item> <amount>` - Sell to buyback\n"
+              "`!buychips <pack_id>` - Convert gold to chips\n"
+              "`!cashout <pack_id>` - Convert chips to gold\n"
+              "`!repayloan` - Repay active loan",
+        inline=False
+    )
+    embed.add_field(
+        name="🛠️ Progression",
+        value="`!unlock <building_name>` - Unlock machine/building\n"
+              "`!upgrade <building_name>` - Upgrade building\n"
+              "`!bet <animal> <amount>` - Bet in active race",
+        inline=False
+    )
+    embed.add_field(
+        name="🙋 Help & Profile",
+        value="`!helloVeyra` - Check your friendship status\n"
+              "`/commandhelp <command_name>` - Command docs",
+        inline=False
+    )
+    embed.set_footer(text="Tip: Use /help and switch to / Commands for slash commands.")
+    return embed
+
+
+def build_slash_help_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="✨ Veyra Slash Commands",
+        description="Use `/` commands for full features and interactive UIs.",
+        color=discord.Color.green()
+    )
+
+    embed.add_field(
+        name="⚔️ Battle",
+        value="`/battle <target> <bet>` - PvP battle\n"
+              "`/campaign [delay]` - PvE campaign fight\n"
+              "`/loadout` - Set weapon + spell\n"
+              "`/open_to_battle <min_bet> <max_bet>` - Join auto-match queue",
+        inline=False
+    )
+    embed.add_field(
+        name="🧪 Crafting",
+        value="`/smelt <bar_name> <amount>` - Smelt ores into bars\n"
+              "`/brew <potion_name>` - Brew a potion",
+        inline=False
+    )
+    embed.add_field(
+        name="💰 Economy",
+        value="`/leaderboard` - Richest players\n"
+              "`/loan` - Claim starter loan\n"
+              "`/transfer_gold <user> <amount>` - Send gold",
+        inline=False
+    )
+    embed.add_field(
+        name="🎲 Games & Quests",
+        value="`/start_race` - Start race event\n"
+              "`/quest` - View, skip, claim, or refresh quest\n"
+              "`/wordle_hint` - Wordle hint from guess history\n"
+              "`/gamble flipcoin|roulette|slots|dungeon` - Casino minigames",
+        inline=False
+    )
+    embed.add_field(
+        name="🎒 Inventory & Market",
+          value="`/transfer_item <user> <item_name> <amount>` - Send item\n"
+              "`/find_item <item_name>` - Where to get item\n"
+              "`/shop` - Open shop\n"
+              "`/create_listing <item_name> <quantity> <price>` - List item\n"
+              "`/loadmarketplace` - Browse listings\n"
+              "`/buy_from_marketplace <listing_id> <quantity>` - Buy listing\n"
+              "`/delete_listing <listing_id>` - Remove your listing",
+        inline=False
+    )
+    embed.add_field(
+        name="💼 Work & Checks",
+        value="`/work knight|digger|miner|explorer` - Do jobs\n"
+              "`/work thief <target>` - Attempt a steal\n"
+              "`/check wallet|energy|inventory|exp|smelter|brewing_stand|pockets|status` - Quick stat checks",
+        inline=False
+    )
+    embed.add_field(
+        name="👤 Utility",
+        value="`/casino` - Open casino menu\n"
+              "`/help` - Open this menu\n"
+              "`/details <topic>` - System guides\n"
+              "`/introduction` - Intro modal\n"
+              "`/profile` - View profile\n"
+              "`/invite` - Referral progress",
+        inline=False
+    )
+    embed.set_footer(text="Need specifics? Use !commandhelp <command>.")
+    return embed
+
 class HelpView(discord.ui.View):
     def __init__(self, user: discord.User):
         super().__init__(timeout=300)  # 5 min timeout
@@ -27,61 +156,10 @@ class HelpView(discord.ui.View):
 
     async def update_embed(self, interaction: discord.Interaction):
         if self.current_page == "prefix":
-            embed = discord.Embed(
-                title="📜 Prefix Commands",
-                description="Use these commands with `!` before the command name.\n\n**Example:** `!balance`, `!shop`",
-                color=discord.Color.blurple()
-            )
-            embed.add_field(name="🔥 Stats", value="`!check` - View your different stats", inline=False)
-            embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
-            embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                                 "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
-                                                 "\n`!play` - We can play a number guessing game :3" \
-                                                 "\n`!flipcoin` - Let gacha decide your fate", inline=False)
-            embed.add_field(name="🗃️ Inventory", value="`!info` - Confused? I can tell you about any item — just name it!"
-            "\n`!use` - Use any usable item from your inventory.", inline=False)
-            embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
-            embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
-                                                  "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
-            embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich" \
-            "\n`!upgrade` -  Gotta upgrade those machines don't we?", inline=False)
-            embed.add_field(
-    name="🛠️ Jobs",
-    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
-    inline=False
-)
-            embed.add_field(name="🙋🏻‍♀️ Help", value="`!commandhelp` - Look down, bottom of this embed 👇🏻", inline=False)
-            embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
-            embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile` - Check your stats")
-            embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
+            embed = build_prefix_help_embed()
 
         else:
-            embed = discord.Embed(
-                title="⚡ Slash Commands",
-                description="Use these commands directly by typing `/`.",
-                color=discord.Color.green()
-            )
-            embed.add_field(name="🎲 Games", value="`/battle` - Challenge anyone to a turn-based PvP battle.\n"
-                                                  "`/start_race` - Start an animal race and bet your gold to win more!!!", inline=False)
-            embed.add_field(name="💸 Economy", value="`/transfer_gold` - Send your gold to your friends :O", inline=False)
-            embed.add_field(name="㊗️ Wordle", value="`/wordle_hint` - Get a hint if you just can't guess the next word.", inline=False)
-            embed.add_field(
-                name="📦 Inventory",
-                value="`/transfer_item` - Give items from your inventory to your friends.\n"
-                      "`/quest` - Maybe I need some items? Check it out — you’ll be rewarded for helping!\n"
-                      "`/find_item` - I can let you know where an item can be obtained (shop, marketplace, or players).",
-                inline=False
-            )
-            embed.add_field(name="🛍️ Shop and Marketplace", value="`/shop` - View the shop embed. Check what items I'm selling and buying.\n"
-                                                                  "`/create_listing` - Create a marketplace listing others can buy at the price you set.\n"
-                                                                  "`/load_marketplace` - See what others (and you) are selling.\n"
-                                                                  "`/buy_from_marketplace` - Like something in the marketplace? Make it yours if you've got the gold!" \
-                                                                  "`/delete_listing` - Delete one of your active listings.", inline=False)
-            embed.add_field(name="🔥 Smelting", value="`/smelt` - Turn your ores into bars", inline=False)
-            embed.add_field(name="📈 Leaderboard", value="`/leaderboard` - Check who currently has the most gold.", inline=False)
-            embed.add_field(name="🧾 Profile", value="`/profile` - View your full Veyra profile.", inline=False)
-            embed.add_field(name="🙋🏻 Help", value="`/help` - Well, you just used it, didn’t you?")
-            embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
+            embed = build_slash_help_embed()
 
         # Update button states
         for child in self.children:
@@ -115,45 +193,15 @@ class HelpView(discord.ui.View):
 
 def get_help_embed(user: discord.User):
     view = HelpView(user=user)
-    embed = discord.Embed(
-        title="📜 Prefix Commands",
-        description="Use these commands with `!` before the command name.\n\n**Example:** `!checkwallet`, `!quest`",
-
-        color=discord.Color.blurple()
-    )
-    embed.add_field(name="🔥 Stats", value="`!check` - View your different stats", inline=False)
-    embed.add_field(name="😶‍🌫️ Gambling", value="`!bet` - Place your bets during active races.", inline=False)
-    embed.add_field(name="🎲 Fun", value="`!ping` - The legendary ping-pong game.\n"
-                                         "`!solve_wordle` - Let me solve your Wordle if the hints aren’t enough, cutie"
-                                         "\n`!play` - We can play a number guessing game :3"
-                                         "\n`!flipcoin` - Let gacha decide your fate", inline=False)
-    embed.add_field(
-        name="🗃️ Inventory",
-        value="`!info` - Confused? I can tell you about any item — just name it!\n"
-              "`!use` - Use any usable item from your inventory.\n",
-        inline=False
-    )
-    embed.add_field(name="😵‍💫 Lootbox", value="`!open` - Got boxes? I can open them for you :3", inline=False)
-    embed.add_field(name="🛒 Shop", value="`!buy` - Purchase anything available in today’s shop.\n"
-                                         "`!sell` - Sell your items if they’re in the buyback section.", inline=False)
-    embed.add_field(name="🧶 Crafting", value="`!unlock` - Buy new machine to get rich"
-                                             "\n`!upgrade` - Upgrade machines for better gains",
-                                              inline=False)
-    embed.add_field(
-    name="🛠️ Jobs",
-    value="`!work` - Perform jobs like knight, digger, miner, or thief to earn resources.",
-    inline=False
-)
-    embed.add_field(name="📚 Guides", value="`!details` - Open a detailed, paginated guide for a system (battle, jobs, loadout, race).", inline=False)
-    embed.add_field(name="🐐 Profile", value="`!helloVeyra` - HIIIIII!!\n`/profile - check your stats`")
-    embed.set_footer(text="Use !commandhelp <command> for more info on a particular command.")
+    embed = build_prefix_help_embed()
     return embed, view
 
 def get_command_info_embed(command_name: str):
 
     HELP_DATA = load_json(os.path.join(os.path.dirname(__file__),"helpdata", "commandsinfo.json"))
 
-    command_data = HELP_DATA.get(command_name.lower())
+    command_key = _normalize_command_key(command_name)
+    command_data = HELP_DATA.get(command_key)
 
     if not command_data:
         embed = discord.Embed(
@@ -263,6 +311,7 @@ class JSONPageView(discord.ui.View):
 
 DETAILS_MAP = {
         "battle": "battle.json",
+    "quests": "quests.json",
         "jobs": "jobs.json",
         "loadout": "loadout.json",
         "race": "race.json",
@@ -281,7 +330,7 @@ def get_json_pages_embed(user: discord.User, topic: str):
     if not mapped_file:
         embed = discord.Embed(
             title="❌ No such system",
-            description="Try `!details race` \n allowed arguments: battle, jobs, loadout, race, smelting, inventory, gambling, loan, alchemy, potions",
+            description="Try `!details race` \n allowed arguments: battle, quests, jobs, loadout, race, smelting, inventory, gambling, loan, alchemy, potions",
             color=discord.Color.red()
         )
         return embed, None

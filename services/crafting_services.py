@@ -1,4 +1,5 @@
 from services.inventory_services import give_item, take_items_bulk
+from services.quest_services import update_quest_progress
 
 from domain.crafting.rules import validate_smelt_amount, get_required_ore, required_ore_amount
 from domain.shared.errors import InvalidAmountError, InvalidRecipeError
@@ -38,6 +39,7 @@ def smelt(user_id: int, bar_name: str, amount: int, coal_cost: int):
             give_item(user_id, bar_id, amount, session=session)
 
             session.commit()
+            update_quest_progress(user_id, "SMELT", amount)
 
         except NotEnoughItemError:
             session.rollback()

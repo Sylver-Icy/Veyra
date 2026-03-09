@@ -1,5 +1,7 @@
 import random
+from datetime import datetime
 
+import discord
 from discord.ext import commands
 import asyncio
 
@@ -7,13 +9,122 @@ import asyncio
 from utils.solver import init_wordle, update_wordle, build_state_from_history,suggest_next_guess
 from utils.global_sessions_registry import sessions
 from utils.custom_errors import VeyraError,WrongInputError
+from utils.embeds.questembed import create_quest_embed, create_quest_complete_embed
 
 
-from services.delievry_minigame_services import requested_items
+
 from services.guessthenumber_services import Guess
 from services.response_services import create_response
+from services.economy_services import remove_gold
+
+from services.quest_services import get_or_create_quest, skip_quest, claim_quest_rewards, create_quest
+from database.sessionmaker import Session
 
 from domain.guild.commands_policies import non_spam_command
+from domain.quests.rules import get_quest_by_id
+from utils.custom_errors import NotEnoughGoldError
+from utils.emotes import GOLD_EMOJI
+
+
+QUEST_SKIP_COST = 88
+
+
+class SkipQuestView(discord.ui.View):
+    def __init__(self, user_id: int):
+        super().__init__(timeout=120)
+        self.user_id = user_id
+
+    @discord.ui.button(label="Skip Quest", style=discord.ButtonStyle.danger, emoji="⏭️")
+    async def skip_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+            return
+
+        with Session() as session:
+            skipped = skip_quest(session, self.user_id)
+
+            if not skipped:
+                await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
+                return
+
+            try:
+                remove_gold(self.user_id, QUEST_SKIP_COST, session=session)
+            except NotEnoughGoldError:
+                session.rollback()
+                await interaction.response.send_message(
+                    f"Nice try. Skipping costs **{QUEST_SKIP_COST} {GOLD_EMOJI}** and your pockets are echoing.",
+                    ephemeral=True
+                )
+                return
+
+            session.commit()
+
+        embed = discord.Embed(
+            title="⏭️ Quest Skipped",
+            description=f"Quest skipped for **{QUEST_SKIP_COST} {GOLD_EMOJI}**. Run `/quest` again and I'll hand you a new one.",
+            color=discord.Color.greyple()
+        )
+        self.stop()
+        await interaction.response.edit_message(embed=embed, view=None)
+
+
+class ClaimRewardView(discord.ui.View):
+    def __init__(self, user_id: int, quest_config: dict):
+        super().__init__(timeout=120)
+        self.user_id = user_id
+        self.quest_config = quest_config
+
+    @discord.ui.button(label="Claim Reward", style=discord.ButtonStyle.success, emoji="🎁")
+    async def claim_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+            return
+
+        with Session() as session:
+            granted, quest = claim_quest_rewards(session, self.user_id)
+            session.commit()
+
+        if granted is None:
+            await interaction.response.send_message("No rewards to claim!", ephemeral=True)
+            return
+
+        embed = create_quest_complete_embed(self.quest_config, granted)
+        self.stop()
+        await interaction.response.edit_message(embed=embed, view=None)
+
+
+class NewQuestView(discord.ui.View):
+    def __init__(self, user_id: int):
+        super().__init__(timeout=120)
+        self.user_id = user_id
+
+    @discord.ui.button(label="Get New Quest", style=discord.ButtonStyle.primary, emoji="\U0001f4dc")
+    async def new_quest_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+            return
+
+        with Session() as session:
+            user_quest = create_quest(session, self.user_id, hardcreate=True)
+            quest_config = get_quest_by_id(user_quest.quest_id)
+
+            quest_data = {
+                "name": quest_config["name"],
+                "description": quest_config["description"],
+                "reward": quest_config["reward"],
+            }
+            progress_data = {
+                "current": user_quest.progress,
+                "total": user_quest.target,
+            }
+            expires_at = user_quest.expires_at
+            session.commit()
+
+        embed = create_quest_embed(quest_data, progress_data, expires_at=expires_at)
+        view = SkipQuestView(user_id=self.user_id)
+        self.stop()
+        await interaction.response.edit_message(embed=embed, view=view)
+
 
 class Games(commands.Cog):
 
@@ -129,15 +240,76 @@ class Games(commands.Cog):
         except Exception as e:
             await ctx.respond(f"Error generating hint: {str(e)}")
 
-    @commands.slash_command(name = "quest", description="Do quest for Veyra")
-    async def quest(self,ctx):
-        embed, view = requested_items(ctx.author.display_name, ctx.author.id)
-        await ctx.respond(embed=embed, view=view)
-
     @commands.command()
     async def play(self, ctx):
         guess = Guess()
         await guess.play_game(ctx, self.bot, self.guess_sessions)
+
+    @commands.slash_command(name="quest", description="View your current quest")
+    async def quest(self, ctx):
+        await ctx.defer()
+
+        with Session() as session:
+            user_quest = get_or_create_quest(session, ctx.author.id)
+
+            now = datetime.utcnow()
+            quest_config = get_quest_by_id(user_quest.quest_id)
+
+            quest_data = {
+                "name": quest_config["name"],
+                "description": quest_config["description"],
+                "reward": quest_config["reward"],
+            }
+
+            progress_data = {
+                "current": user_quest.progress,
+                "total": user_quest.target,
+            }
+
+            is_completed = user_quest.completed and not user_quest.rewards_claimed
+            is_claimed = user_quest.completed and user_quest.rewards_claimed
+            is_expired = not user_quest.completed and user_quest.expires_at <= now
+            expires_at = user_quest.expires_at
+
+            session.commit()
+
+        if is_claimed:
+            # Already claimed — just give a new quest directly
+            with Session() as session:
+                user_quest = create_quest(session, ctx.author.id, hardcreate=True)
+                qc = get_quest_by_id(user_quest.quest_id)
+                quest_data = {"name": qc["name"], "description": qc["description"], "reward": qc["reward"]}
+                progress_data = {"current": user_quest.progress, "total": user_quest.target}
+                expires_at = user_quest.expires_at
+                session.commit()
+            embed = create_quest_embed(quest_data, progress_data, expires_at=expires_at)
+            view = SkipQuestView(user_id=ctx.author.id)
+
+        elif is_expired:
+            # Show expired quest with progress and a button to get a new one
+            ts = int(expires_at.timestamp())
+            embed = create_quest_embed(quest_data, progress_data)
+            embed.color = discord.Color.dark_grey()
+            embed.title = f"\u23f3 {quest_data['name']} \u2014 Expired"
+            embed.add_field(
+                name="Expired",
+                value=f"This quest expired <t:{ts}:R>",
+                inline=False
+            )
+            view = NewQuestView(user_id=ctx.author.id)
+
+        elif is_completed:
+            embed = create_quest_embed(quest_data, progress_data)
+            embed.color = discord.Color.green()
+            embed.title = f"\U0001f389 {quest_data['name']} \u2014 Complete!"
+            embed.set_footer(text="Click below to claim your rewards!")
+            view = ClaimRewardView(user_id=ctx.author.id, quest_config=quest_data)
+
+        else:
+            embed = create_quest_embed(quest_data, progress_data, expires_at=expires_at)
+            view = SkipQuestView(user_id=ctx.author.id)
+
+        await ctx.respond(embed=embed, view=view)
 
 
 def setup(bot):

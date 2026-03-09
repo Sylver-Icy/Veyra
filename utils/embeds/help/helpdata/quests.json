@@ -1,0 +1,128 @@
+{
+  "title": "📜 Quest System Guide",
+  "color": "purple",
+  "footer": "Veyra • Quests Help • Tip: Open /quest often",
+  "pages": [
+    {
+      "title": "📜 Quests Overview",
+      "description": "Think of quests as little side missions Veyra throws at you to keep life interesting. Open `/quest` to see what she wants, how close you are, and what shiny reward is waiting at the end.\n\nThe loop is simple:\n• Get a quest\n• Do the thing it asks for\n• Finish the target\n• Claim your reward\n• Come back for the next one",
+      "fields": [
+        {
+          "name": "Main Command",
+          "value": "• `/quest` - Opens your current quest screen\n\nThat screen changes depending on your quest state, so it will show the right button when you need it.",
+          "inline": false
+        },
+        {
+          "name": "How It Works",
+          "value": "Your quest only moves when you do what it asks. If Veyra wants battle wins, go fight. If she wants gold spent, go burn your wallet a little.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧩 What Kinds Of Quests Exist?",
+      "description": "Quests can come from a bunch of different playstyles, so whether you love fighting, gambling, crafting, or shopping badly, there is probably a quest for it.",
+      "fields": [
+        {
+          "name": "Combat",
+          "value": "These are for the violent little achievers:\n• Win battles\n• Build a win streak\n• Push campaign stages",
+          "inline": false
+        },
+        {
+          "name": "Economy & Market",
+          "value": "These focus on your wallet and marketplace habits:\n• Earn gold\n• Spend gold\n• Sell items\n• Buy items",
+          "inline": false
+        },
+        {
+          "name": "Crafting & Activity",
+          "value": "These reward active grinding and side systems:\n• Smelt bars\n• Brew potions\n• Open lootboxes\n• Complete jobs\n• Play casino games",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "📈 How Progress Builds",
+      "description": "The nice part? You do not need to babysit the quest screen. Just play normally and progress updates on its own when you do the right actions.",
+      "fields": [
+        {
+          "name": "Some Quests Count Actions",
+          "value": "Things like jobs, lootboxes, and casino plays usually go up one step at a time.",
+          "inline": false
+        },
+        {
+          "name": "Some Quests Count Amounts",
+          "value": "Gold and quantity-based quests can jump faster. Spend more gold, buy more items, smelt more bars, and progress can move in bigger chunks.",
+          "inline": false
+        },
+        {
+          "name": "Watch The Streak Ones",
+          "value": "Win streak quests are mean on purpose. If you lose, the streak breaks. Veyra believes in pressure apparently.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🎁 Rewards & Claiming",
+      "description": "Finishing the quest is only half the fun. The other half is pressing the button and getting paid.",
+      "fields": [
+        {
+          "name": "When You Finish",
+          "value": "Once you hit the target, your quest is marked complete. Open `/quest` and you will see a `Claim Reward` button waiting for you.",
+          "inline": false
+        },
+        {
+          "name": "What You Can Get",
+          "value": "Quest rewards can include:\n• Gold\n• XP\n• Items like lootboxes or materials",
+          "inline": false
+        },
+        {
+          "name": "Important",
+          "value": "Rewards are claimed through the quest screen. So if you finished something and nothing popped into chat, just open `/quest` and press the button.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "⏳ Expiry, Skip, and New Quest",
+      "description": "Veyra does not hand out infinite patience. Quests are timed, skippable, and replaceable depending on how badly you fumble them.",
+      "fields": [
+        {
+          "name": "Expiry",
+          "value": "Active quests show a live timer, so you can see exactly how long you have left. If time runs out, `/quest` will show the expired quest and how far you got.",
+          "inline": false
+        },
+        {
+          "name": "Skip Cost",
+          "value": "Do not like the quest? Fine. Skipping costs **88 gold**. If you are broke, Veyra will absolutely make that your problem.",
+          "inline": false
+        },
+        {
+          "name": "Get New Quest",
+          "value": "If your quest expires, you can grab a fresh one right from the expired screen using the `Get New Quest` button.",
+          "inline": false
+        }
+      ]
+    },
+    {
+      "title": "🧠 How To Not Throw Your Quest",
+      "description": "If you want to clear quests faster, stop playing on autopilot and actually read what Veyra asked for.",
+      "fields": [
+        {
+          "name": "1) Match Your Actions",
+          "value": "A battle quest wants fighting. A spending quest wants gold to disappear. A lootbox quest wants boxes opened. Obvious? Yes. Ignored constantly? Also yes.",
+          "inline": false
+        },
+        {
+          "name": "2) Go For Bigger Chunks",
+          "value": "Amount-based quests move faster when you do bigger actions. Spending 500 gold in one go feels a lot better than crawling there 20 at a time.",
+          "inline": false
+        },
+        {
+          "name": "3) Claim Fast, Move On",
+          "value": "Once a quest is done, claim it and get back in the loop. Sitting on a finished quest is just free progress you are refusing to take.",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}
