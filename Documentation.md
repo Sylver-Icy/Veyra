@@ -31,12 +31,14 @@
    - [Mini-Games](#mini-games)
    - [Gambling & Racing](#gambling--racing)
    - [Casino System](#casino-system)
+  - [Lottery System](#lottery-system)
 4. [Items & Rarities](#items--rarities)
 5. [Weapons & Spells](#weapons--spells)
 6. [Command Reference](#command-reference)
-7. [Developer Reference](#developer-reference)
-8. [System Interactions](#system-interactions)
-9. [Gameplay Loops](#gameplay-loops)
+7. [API Reference](#api-reference)
+8. [Developer Reference](#developer-reference)
+9. [System Interactions](#system-interactions)
+10. [Gameplay Loops](#gameplay-loops)
 
 ---
 
@@ -60,9 +62,10 @@
 | **Jobs** | Energy-based work system with rewards (knight, digger, miner, thief, explorer) |
 | **Crafting** | Ore smelting with upgradable buildings |
 | **Lootboxes** | Tiered reward boxes with rarity-based drops |
-| **Quests** | Delivery quests with streak bonuses |
+| **Quests** | Time-limited objective quests (battle, jobs, casino, market, crafting) |
 | **Mini-Games** | Wordle solver, number guessing, coin flip, animal racing |
 | **Casino** | Chip-based gambling with slots, roulette, coin flip, and dungeon raid |
+| **Lottery** | Daily ticket lottery with weekday/weekend ticket counts |
 | **Friendship** | Relationship leveling with Veyra through interactions |
 | **AI Chat** | GPT-based conversational AI (WIP) |
 
@@ -98,7 +101,7 @@ pip install -r requirements.txt
 
 1. Use `!helloVeyra` to register and become friends with Veyra
 2. Complete the interactive tutorial (guided step-by-step)
-3. Use `/help` or `!commandhelp <command>` for assistance
+3. Use `/help` or `/commandhelp <command>` for assistance
 
 ---
 
@@ -126,10 +129,10 @@ The tutorial system (`tutorial_services.py`) guides new players through:
 | State | Task | Description |
 |-------|------|-------------|
 | NOT_STARTED | - | Initial state |
-| CHECK_WALLET | `!check wallet` | Learn to check your gold |
+| CHECK_WALLET | `/check wallet` | Learn to check your gold |
 | PLAY | `!play` | Play the number guessing game |
 | OPEN_SHOP | `/shop` | View the shop system |
-| WORK | `!work <job>` | Perform your first job |
+| WORK | `/work <job>` | Perform your first job |
 | COMPLETED | - | Tutorial finished |
 
 **Technical Details:**
@@ -220,10 +223,11 @@ Each item in the database (`items` table) has:
 
 | Command | Description |
 |---------|-------------|
-| `!check inventory` | View your items (paginated) |
+| `/check inventory` | View your items (paginated) |
 | `!info <item>` | Get detailed info about any item |
 | `!use <item>` | Use a consumable item |
 | `/transfer_item` | Give items to another player |
+| `/find_item <item>` | Discover currently available item sources (shop/marketplace/players) |
 
 #### Usable Items
 
@@ -241,7 +245,7 @@ Defined in `utils/usable_items.py`:
 | Potion Of Faster Recovery III | +150-200 Energy instantly |
 | Potion Of Luck I | Applies luck effect (enhanced thief job: 90% success rate, 500g max steal for 24 hours) |
 | Potion Of Luck II | Applies luck effect (reduces casino losses by 10% for 24 hours) |
-| Potion Of Luck III | 60% chance to upgrade Iron Box → Platinum Box, 40% to downgrade to Stone Box |
+| Potion Of Luck III | 80% chance to upgrade Iron Box → Platinum Box, 20% to downgrade to Stone Box |
 | Potion Of Love I | Cannot be used; gift to others to express love |
 | Potion Of Hatred I | Cannot be used; gift to others to express hate | |
 
@@ -368,7 +372,7 @@ Each round, players choose one of five stances:
 **Loadout System:**
 Players can customize their weapon and spell:
 ```
-/loadout <weapon> <spell>
+/loadout
 ```
 
 #### PvE Campaign
@@ -463,8 +467,8 @@ Jobs are energy-based activities that generate resources.
 |-----|-------------|---------|-------|
 | **Knight** | 55 | 40-90 gold | Reliable gold income |
 | **Digger** | 70 | Lootboxes or 20 gold | See drop rates below |
-| **Miner** | 50 | Ores or 25 gold | See drop rates below |
-| **Thief** | 60 | Steal 10% of target's gold (max 150g) | 50% success rate; -30g fine on fail; target loses 1% fine (max 50g) |
+| **Miner** | 70 | Ores or 25 gold | See drop rates below |
+| **Thief** | 69 | Steal 5-10% of target's gold (max 300g) | 50% success rate; -30g fine on fail; target loses 1% of wealth; 6h robbery shield |
 | **Explorer** | 20 | Random Common/Rare item | 85% Rare, 15% Common |
 
 **Digger Drop Rates:**
@@ -482,17 +486,17 @@ Jobs are energy-based activities that generate resources.
 - Silver Ore: 12%
 
 **Miner Ore Quantities:**
-- Normal (93% chance): 3-6 ores
-- Bonus (7% chance): 12-20 ores
+- Normal (97% chance): 3-6 ores
+- Bonus (3% chance): 12-20 ores
 
 **Commands:**
 ```
-!work knight
-!work digger
-!work miner
-!work explorer
-!work thief @target
-!check energy
+/work knight
+/work digger
+/work miner
+/work explorer
+/work thief @target
+/check energy
 ```
 
 ---
@@ -562,11 +566,11 @@ The alchemy system allows players to craft potions with various effects using a 
 | Potion | Tier | Effect | Duration | Strain | Key Ingredients |
 |--------|------|--------|----------|--------|-----------------|
 | Potion Of Faster Recovery I | 1 | +2 energy per regen tick | 18 hours | 35 | Flask, Coal, Copper Ore, Deer Horn |
-| Potion Of Faster Recovery II | 2 | +5 energy per regen tick | 10 hours | 52 | Flask, Coal, Copper Bar, Iron Ore, Mana Berries |
+| Potion Of Faster Recovery II | 2 | +5 energy per regen tick | 10 hours | 52 | Flask, Coal, Copper Ore, Iron Ore, Mana Berries |
 | Potion Of Faster Recovery III | 3 | +150-200 energy instantly | Instant | 75 | Flask, Coal, Iron Bar, Silver Ore, Dragon Egg |
 | Potion Of Luck I | 1 | Enhanced thief job success (90% rate, 500g max) | 24 hours | 32 | Flask, Rabbit Foot, Scraps |
 | Potion Of Luck II | 2 | Reduces casino losses by 10% | 24 hours | 62 | Flask, Rabbit Foot, Slime in jar, Apples |
-| Potion Of Luck III | 3 | 60% chance to upgrade Iron Box → Platinum Box | Instant | 70 | Flask, Rabbit Foot, Shiny Rugs, Ancient Cheese, Abyssal Feather |
+| Potion Of Luck III | 3 | 80% chance to upgrade Iron Box → Platinum Box (20% to Stone Box) | Instant | 70 | Flask, Rabbit Foot, Shiny Rugs, Ancient Cheese, Abyssal Feather |
 | Potion Of Love I | 1 | Gift item (cannot be used by self) | 1 hour | 12 | Flask, Apples, Rare Candy, Lanter |
 | Potion Of Hatred I | 2 | Gift item (cannot be used by self) | - | 42 | Flask, Coal, Iron Ore, Silver Ore |
 
@@ -625,61 +629,46 @@ Lootboxes contain gold and random items based on rarity tiers.
 
 ### Quest System
 
-The quest system provides delivery missions with gold rewards.
+The quest system provides rotating, time-limited objective quests.
 
 #### How Quests Work
 
-1. Use `/quest` to receive or view your current quest
-2. Gather the requested items (1-2 random items)
-3. Return to complete and receive rewards
+1. Use `/quest` to view your current quest
+2. Complete objective-based progress requirements before expiry
+3. Claim rewards when complete (gold, EXP, and/or items depending on quest)
+4. If your active quest expires, use the quest message action to generate a new one
 
-**Quest Parameters:**
-- **Item rarity pool:** Based on player level
-  - Level 1-4: Common only
-  - Level 5-9: Common, Rare
-  - Level 10-17: Common, Rare, Epic
-  - Level 18+: Common, Rare, Epic, Legendary
-- **Number of items:** Based on inventory slots used
-  - <20 slots: 1 item
-  - 20-39 slots: 2 items
-  - 40-49 slots: 3 items
-  - 50-54 slots: 4 items
-  - 55-59 slots: 5 items
-  - 60-64 slots: 6 items
-  - 65+ slots: 7 items
+**Quest Structure:**
+- Every quest has a `type`, `target`, `duration_hours`, and reward bundle
+- Progress is automatically updated by gameplay events (jobs, battles, lootbox opens, casino plays, market activity, smelting, brewing, etc.)
+- Expired or claimed quests roll into new quests via the `/quest` flow
 
-**Reward Calculation:**
+**Current Quest Types (examples):**
 
-| Rarity | Base Reward |
-|--------|-------------|
-| Common | 10-15g |
-| Rare | 25-32g |
-| Epic | 71-93g |
-| Legendary | 181-321g |
-| Paragon | 799-1211g |
+| Quest Type | Example Objective |
+|------------|-------------------|
+| `BATTLE_WIN` | Win a set number of battles |
+| `BATTLE_WIN_STREAK` | Win consecutive battles without losses |
+| `JOB_COMPLETE` | Complete jobs (knight/digger/miner/explorer/thief) |
+| `LOOTBOX_OPEN` | Open lootboxes of any tier |
+| `CASINO_PLAY` | Play casino games a target number of times |
+| `GOLD_EARN` | Earn total gold from any source |
+| `GOLD_SPEND` | Spend total gold on systems like shop/market/upgrades |
+| `ITEM_SELL` | Sell listings/items in marketplace flow |
+| `ITEM_BUY` | Buy items from marketplace |
+| `SMELT` | Smelt bars from ores |
+| `BREW_POTION` | Craft potions at brewing stand |
 
-Rewards are multiplied by:
-- Random bonus:  1.2-1.8x
-- Streak multiplier (see below)
+**Reward Format:**
+- Quests can grant any combination of:
+  - Gold
+  - EXP
+  - Items (e.g., Wooden/Stone/Iron/Platinum boxes, Coal)
 
-**Streak System:**
-
-| Streak | Multiplier |
-|--------|------------|
-| 0-1 | 1.0x |
-| 2-5 | 1.2x |
-| 6-9 | 1.5x |
-| 10+ | 2.0x |
-
-**Skip System:**
-- Up to 3 skips per day
-- Skipping resets your streak
-- Skips reset daily at midnight UTC
-
-**Reroll System:**
-- Reroll your quest for a gold fee (preserves streak)
-- Reroll costs increase per use: 25g → 75g → 150g → 300g → 500g
-- Rerolls reset on quest completion
+**Command:**
+```
+/quest
+```
 
 ---
 
@@ -692,6 +681,7 @@ Players gain EXP through various activities and level up to unlock benefits.
 | Activity | EXP Gained |
 |----------|------------|
 | Chatting | 1-2 (30-second cooldown) |
+| Successful command completion | 1-20 (10-second anti-farm cooldown) |
 | Potion of EXP | 500 |
 | Jar of EXP | 2000 |
 
@@ -732,7 +722,7 @@ Players gain EXP through various activities and level up to unlock benefits.
 
 **Commands:**
 ```
-!check exp
+/check exp
 ```
 
 ---
@@ -766,6 +756,24 @@ Players build friendship with Veyra through interactions.
 **Command:**
 ```
 !helloVeyra   # Shows current friendship status
+```
+
+#### Referral / Invite System
+
+Players can track invite progress through `/invite`. Invite rewards are tied to **successful invites** (an invited player reaching level 5).
+
+**Milestones:**
+
+| Successful Invites | Reward |
+|--------------------|--------|
+| 1 | 1× Iron Box |
+| 3 | 300 Chips |
+| 7 | 1× Platinum Box |
+| 11 | Role: Veyra Early Supporter |
+
+**Command:**
+```
+/invite
 ```
 
 ---
@@ -928,8 +936,26 @@ Chips are a separate currency used exclusively in the casino:
 /casino                           # View chip packs and cashout options
 !buychips <pack_id>               # Buy a chip pack
 !cashout <pack_id>                # Cash out chips for gold
-!gamble <game> <bet> <choice>     # Play a casino game
+/gamble <mode> ...                # Play casino games via slash subgroup
 ```
+
+---
+
+### Lottery System
+
+Veyra runs a scheduled lottery announcement + result cycle via background jobs.
+
+#### Ticket Availability
+
+- **Weekdays (Mon-Fri):** 10 tickets posted at midnight UTC
+- **Weekends (Sat-Sun):** 50 tickets posted at midnight UTC
+- **Results:** Drawn daily at midnight UTC
+
+#### Notes
+
+- Lottery posts are scheduler-driven (`send_lottery`, `send_result`)
+- Ticket and winner stats are tracked in `lottery_entries` and `user_stats.biggest_lottery_win`
+- Lottery interaction is currently embed-driven from scheduled posts (no standalone slash command in cogs)
 
 ---
 
@@ -1020,13 +1046,11 @@ New players start with:
 | Command | Description | Cooldown |
 |---------|-------------|----------|
 | `!helloVeyra` | Register or check friendship | 15s |
-| `!check <stat>` | Check wallet/energy/inventory/exp | 5s |
 | `!info <item>` | Get item details | 5s |
 | `!use <item>` | Use consumable item | - |
 | `!buy <item> <qty>` | Buy from shop | 5s |
 | `!sell <item> <qty>` | Sell to buyback | 5s |
 | `!open <box>` | Open a lootbox | 5s |
-| `!work <job>` | Perform a job (knight/digger/miner/thief/explorer) | - |
 | `!unlock <building>` | Purchase a building | 20s |
 | `!upgrade <building>` | Upgrade a building | 20s |
 | `!bet <animal> <amount>` | Bet on race | - |
@@ -1034,9 +1058,6 @@ New players start with:
 | `!flipcoin` | Flip a coin | - |
 | `!play` | Number guessing game | - |
 | `!solve_wordle` | Interactive Wordle solver | - |
-| `!commandhelp <cmd>` | Get command help | 5s |
-| `!details <topic>` | Get detailed info on a topic | - |
-| `!gamble <game> <bet> <choice>` | Play casino game | - |
 | `!buychips <pack_id>` | Buy casino chip pack | - |
 | `!cashout <pack_id>` | Cash out chips for gold | - |
 | `!repayloan` | Repay active loan | - |
@@ -1046,14 +1067,18 @@ New players start with:
 | Command | Description | Cooldown |
 |---------|-------------|----------|
 | `/help` | View all commands | 25s |
+| `/commandhelp <command>` | Show detailed help for one command | 5s |
+| `/details <topic>` | Show system details from docs topics | - |
 | `/shop` | View daily shop | 15s |
 | `/casino` | View casino chip packs and cashout options | 155s |
-| `/quest` | View/start delivery quest | - |
+| `/quest` | View current rotating objective quest | - |
 | `/battle @user <bet>` | Challenge to PvP | - |
-| `/campaign` | Fight AI in campaign mode (PvE) | - |
-| `/loadout <weapon> <spell>` | Set battle loadout | - |
+| `/campaign [delay]` | Fight AI in campaign mode (PvE) | - |
+| `/open_to_battle <min_bet> <max_bet>` | Join auto-match PvP queue | - |
+| `/loadout` | Open UI to manage weapon/spell loadout | - |
 | `/transfer_gold @user <amount>` | Send gold (5% fee) | - |
 | `/transfer_item @user <item> <qty>` | Give items | - |
+| `/find_item <item>` | Find active sources for an item (25g service cost) | - |
 | `/create_listing` | Create marketplace listing (max 4 active) | 2/hour |
 | `/delete_listing <id>` | Remove your listing | 30s |
 | `/loadmarketplace` | Browse marketplace | 15s |
@@ -1061,11 +1086,63 @@ New players start with:
 | `/smelt <bar> <amount>` | Smelt ores into bars | - |
 | `/brew <potion>` | Brew potions using brewing stand | - |
 | `/leaderboard` | View richest players | 120s |
-| `/wordle_hint` | Get Wordle hint | - |
+| `/wordle_hint` | Get Wordle hint from guess/pattern history | - |
 | `/start_race` | Start animal race | 900s (15min) |
 | `/introduction` | Create intro modal | - |
 | `/profile` | View your profile | 250s |
+| `/invite` | View invite/referral milestone progress | 250s |
 | `/loan` | Take one-time starter loan (2000g, 7-day term) | - |
+
+### Slash Command Groups
+
+| Group | Subcommands | Description |
+|-------|-------------|-------------|
+| `/check` | `wallet`, `energy`, `inventory`, `exp`, `smelter`, `brewing_stand`, `pockets`, `status` | User stats and progression checks |
+| `/work` | `knight`, `digger`, `miner`, `explorer`, `thief` | Job system actions |
+| `/gamble` | `flipcoin`, `roulette`, `slots`, `dungeon` | Casino game modes |
+
+---
+
+## API Reference
+
+The FastAPI app is exposed from `api/main.py` and mounts routers from `api/routes/`.
+
+### Base URL
+
+```
+http://localhost:8000
+```
+
+### Economy Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/economy/balance/{user_id}` | Get user gold balance |
+| `POST` | `/economy/transfer` | Transfer gold between users |
+
+`POST /economy/transfer` request body:
+
+```json
+{
+  "from_user_id": 123,
+  "to_user_id": 456,
+  "amount": 50
+}
+```
+
+### Inventory Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/inventory/{user_id}` | Get inventory snapshot with item details |
+
+### Profile Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/profile/{user_id}/energy` | Get current energy state |
+| `GET` | `/profile/{user_id}/friendship` | Get friendship title + progress |
+| `GET` | `/profile/{user_id}` | Get dashboard profile payload |
 
 ---
 
@@ -1118,13 +1195,16 @@ Veyra/
 │   ├── crafting_services.py      # Smelting
 │   ├── upgrade_services.py       # Buildings
 │   ├── alchemy_services.py       # Potion crafting & effects
-│   ├── delievry_minigame_services.py # Quests
+│   ├── quest_services.py          # Quest lifecycle + progress updates
 │   ├── guessthenumber_services.py    # Number game
 │   ├── race_services.py          # Animal racing
 │   ├── lottery_services.py       # Lottery system
 │   ├── tutorial_services.py      # Onboarding
 │   ├── notif_services.py         # Notification system
 │   ├── refferal_services.py      # Referral system
+│   ├── talk_to_veyra/            # AI chat service adapters
+│   │   ├── chat_services.py      # Conversation API client
+│   │   └── call_service.py       # Label-to-service routing
 │   ├── users_services.py         # User management
 │   └── response_services.py      # Procedural responses
 ├── models/               # SQLAlchemy ORM models
@@ -1153,8 +1233,15 @@ Veyra/
 │   ├── friendship/       # Friendship tiers
 │   ├── guild/            # Guild policies
 │   ├── progression/      # EXP thresholds
-│   ├── quest/            # Quest rules
+│   ├── quests/           # Quest rules
 │   └── shared/           # Shared types & errors
+├── api/                  # FastAPI REST layer
+│   ├── main.py
+│   ├── schemas.py
+│   └── routes/
+│       ├── economy.py
+│       ├── inventory.py
+│       └── profile.py
 └── responses/            # Procedural dialogue templates
 ```
 
@@ -1176,10 +1263,15 @@ Veyra/
 - `friendship` - Relationship EXP (user_id, friendship_exp, daily_exp)
 - `user_upgrades` - Player buildings (user_id, upgrade_name, level)
 - `upgrade_definitions` - Building level definitions (name, level, cost, description)
-- `quests` - Active delivery quests (user_id, delivery_items, reward, skips, streak)
+- `quests` - Objective quests (quest_id, progress, target, expires_at, completed, rewards_claimed)
 
 **Battle Tables:**
 - `battle_loadout` - Equipped weapon/spell (user_id, weapon, spell)
+- `battle_queue` - PvP queue entries (user_id, min_bet, max_bet, score)
+
+**Social / Finance Tables:**
+- `invites` - Referral links and successful invite tracking
+- `loans` - Loan records (active/paid/defaulted, due dates)
 
 **Daily Limits:**
 - `daily` - Daily game tracking (user_id, number_game)
@@ -1193,12 +1285,13 @@ The bot uses APScheduler for background tasks:
 |-----|---------|----------|
 | Update daily shop | Midnight UTC | `update_daily_shop()` |
 | Update buyback shop | Midnight UTC | `update_daily_buyback_shop()` |
-| Reset quest skips | Midnight UTC | `reset_skips()` |
-| Reset daily games | Midnight UTC | `reset_all_daily()` |
 | Reset friendship cap | Midnight UTC | `reset_all_daily_exp()` |
 | Energy regeneration | Every 6 minutes | `regen_energy_for_all()` |
+| Strain decay | Every 25 minutes | `decay_all_strain()` |
+| Loan due reminders | Midnight UTC | `send_due_loan_reminders()` |
 | Weekly leaderboard | Sunday midnight | `send_weekly_leaderboard()` |
-| Lottery send | Daily | `send_lottery()` |
+| Lottery send (weekdays) | Mon-Fri midnight | `send_lottery(bot, 10)` |
+| Lottery send (weekends) | Sat-Sun midnight | `send_lottery(bot, 50)` |
 | Lottery results | Midnight | `send_result()` |
 
 ### Adding New Features
@@ -1212,7 +1305,13 @@ The bot uses APScheduler for background tasks:
 1. Create or modify cog in `cogs/`
 2. Add corresponding service in `services/`
 3. Update help embed in `utils/embeds/help/helpembed.py`
-4. Add to `commandsinfo.json` for `!commandhelp`
+4. Add to command metadata for `/commandhelp` autocomplete + embeds
+
+**New Scheduled Job:**
+1. Add the function in its service module
+2. Import it in `utils/jobs.py`
+3. Register it inside `schedule_jobs(bot)` with an appropriate trigger
+4. If startup seeding is needed, add it to `run_at_startup(bot)`
 
 **New Weapon/Spell:**
 1. Create class in `services/battle/weapon_class.py` or `spell_class.py`
@@ -1309,7 +1408,7 @@ Player 1 ◄──────────────────────�
 ### Daily Routine
 
 1. **Check in:** `!helloVeyra` to maintain relationship
-2. **Earn gold:** Use `/quest`, `!work knight`, or open lootboxes
+2. **Earn gold:** Use `/quest`, `/work knight`, or open lootboxes
 3. **Shop:** Check `/shop` for good deals
 4. **Play:** `!play` for daily number game rewards
 5. **Battle:** Challenge friends with `/battle` or progress through `/campaign`
@@ -1346,4 +1445,4 @@ New Player ──► Tutorial ──► Jobs & Quests ──► Shop & Marketpla
 
 ---
 
-*Last updated: February 2026*
+*Last updated: March 2026*
