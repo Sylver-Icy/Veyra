@@ -128,6 +128,30 @@ def grant_quest_rewards(user_id: int, quest_id: str, session):
     return granted
 
 
+def claim_quest_rewards(session, user_id: int):
+    """
+    Claims rewards for a completed quest that hasn't been claimed yet.
+    Returns (granted_rewards_list, quest) on success, (None, None) if nothing to claim.
+    """
+    quest = (
+        session.query(UserQuest)
+        .filter(
+            UserQuest.user_id == user_id,
+            UserQuest.completed == True,
+            UserQuest.rewards_claimed == False
+        )
+        .order_by(UserQuest.completed_at.desc())
+        .first()
+    )
+    if not quest:
+        return None, None
+
+    granted = grant_quest_rewards(user_id, quest.quest_id, session)
+    quest.rewards_claimed = True
+    session.flush()
+    return granted, quest
+
+
 def skip_quest(session, user_id: int):
     """
     Deletes the user's active quest.
@@ -194,16 +218,10 @@ def update_quest_progress(user_id: int, quest_type: str, amount: int = 1, sessio
             quest.completed = True
             quest.completed_at = now
 
-        # Grant rewards before commit so everything is in the same transaction
-        if completed:
-            granted = grant_quest_rewards(user_id, quest.quest_id, session)
-        else:
-            granted = []
-
         if owns_session:
             session.commit()
 
-        return {"completed": completed, "quest": quest, "rewards": granted}
+        return {"completed": completed, "quest": quest}
 
     except Exception:
         if owns_session:

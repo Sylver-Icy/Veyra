@@ -107,6 +107,7 @@ class UserQuest(Base):
 
     completed = Column(Boolean, nullable=False, default=False)
     completed_at = Column(TIMESTAMP, nullable=True)
+    rewards_claimed = Column(Boolean, nullable=False, default=False)
 
     __table_args__ = (
         Index('idx_user_quest_active', 'user_id', 'completed'),

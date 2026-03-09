@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-def create_quest_embed(quest: dict, progress: dict) -> discord.Embed:
+def create_quest_embed(quest: dict, progress: dict, expires_at=None) -> discord.Embed:
     """
     Creates a quest embed with a visual progress bar.
 
@@ -60,4 +60,46 @@ def create_quest_embed(quest: dict, progress: dict) -> discord.Embed:
         inline=False
     )
 
+    if expires_at is not None:
+        ts = int(expires_at.timestamp())
+        embed.add_field(
+            name="Time Remaining",
+            value=f"\u23f0 Expires <t:{ts}:R>",
+            inline=False
+        )
+
+    return embed
+
+
+def create_quest_complete_embed(quest: dict, rewards_granted: list) -> discord.Embed:
+    """
+    Creates an embed for a completed quest showing claimed rewards.
+    """
+    quest_name = quest.get("name", "Unknown Quest")
+
+    embed = discord.Embed(
+        title=f"\U0001f389 Quest Complete: {quest_name}",
+        description="You completed your quest! Here's what you earned:",
+        color=discord.Color.green()
+    )
+
+    reward_lines = []
+    for r in rewards_granted:
+        rtype = r.get("type")
+        amount = r.get("amount", 0)
+        if rtype == "gold":
+            reward_lines.append(f"\U0001f4b0 {amount} Gold")
+        elif rtype == "xp":
+            reward_lines.append(f"\u2728 {amount} XP")
+        elif rtype == "item":
+            item_name = r.get("item_name", "Item")
+            reward_lines.append(f"\U0001f4e6 {amount}x {item_name}")
+
+    embed.add_field(
+        name="Rewards",
+        value="\n".join(reward_lines) if reward_lines else "No rewards",
+        inline=False
+    )
+
+    embed.set_footer(text="Run /quest to get a new quest!")
     return embed
