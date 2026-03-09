@@ -5,8 +5,8 @@ Profile + onboarding commands.
 This cog covers:
 - `!helloVeyra`: classic prefix onboarding flow (register user)
 - `/help`: show help embed UI
-- `!commandhelp`: show info about a specific command
-- `!details`: show JSON-backed docs pages (topic based)
+- `/commandhelp`: show info about a specific command
+- `/details`: show JSON-backed docs pages (topic based)
 - `/introduction`: opens intro modal
 - `/profile`: shows user profile embed with pagination
 
@@ -31,6 +31,7 @@ from domain.guild.commands_policies import non_spam_command
 
 from utils.embeds.help.helpembed import (
     get_command_info_embed,
+    get_all_commandhelp_options,
     get_help_embed,
     get_json_pages_embed,
 )
@@ -38,6 +39,14 @@ from utils.embeds.profileembed import ProfilePagerView, build_profile_embed_page
 from utils.embeds.refferalembed import build_referral_card
 
 from utils.models.intromodel import create_intro_modal
+
+
+def _commandhelp_autocomplete(ctx: discord.AutocompleteContext):
+    query = (ctx.value or "").lower().strip()
+    options = get_all_commandhelp_options()
+    if query:
+        options = [opt for opt in options if query in opt.lower()]
+    return options[:25]
 
 
 class Profile(commands.Cog):
@@ -140,13 +149,19 @@ class Profile(commands.Cog):
         embed, view = get_help_embed(ctx.author)
         await ctx.respond(embed=embed, view=view)
 
-    @commands.command()
+    @commands.slash_command(description="Get detailed help for a specific command.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     @non_spam_command()
-    async def commandhelp(self, ctx: commands.Context, *, command_name):
-        """Prefix helper for command documentation."""
+    @discord.option(
+        "command_name",
+        description="Choose a command",
+        required=True,
+        autocomplete=discord.utils.basic_autocomplete(_commandhelp_autocomplete),
+    )
+    async def commandhelp(self, ctx: discord.ApplicationContext, command_name: str):
+        """Slash helper for command documentation."""
         embed = get_command_info_embed(command_name)
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.slash_command(description="Show feature details for a topic.")
     @discord.option(
