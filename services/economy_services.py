@@ -74,7 +74,7 @@ def add_gold(user_id: int, gold_amount: int, session=None):
         new_balance = result[0]
         if owns_session:
             session.commit()
-            _track_gold_quest(user_id, gold_amount, "GOLD_EARN")
+        _track_gold_quest(user_id, gold_amount, "GOLD_EARN")
         return new_balance, gold_amount
 
     except Exception:
@@ -126,7 +126,7 @@ def remove_gold(user_id: int, gold_amount: int, session=None):
         new_balance = result[0]
         if owns_session:
             session.commit()
-            _track_gold_quest(user_id, gold_amount, "GOLD_SPEND")
+        _track_gold_quest(user_id, gold_amount, "GOLD_SPEND")
         return new_balance, gold_amount
 
     except Exception:

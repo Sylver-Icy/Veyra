@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from utils.emotes import GOLD_EMOJI
 
 def create_quest_embed(quest: dict, progress: dict, expires_at=None) -> discord.Embed:
     """
@@ -47,7 +48,7 @@ def create_quest_embed(quest: dict, progress: dict, expires_at=None) -> discord.
         rtype = r.get("type")
         amount = r.get("amount", 0)
         if rtype == "gold":
-            reward_lines.append(f"💰 {amount} Gold")
+            reward_lines.append(f"{amount} {GOLD_EMOJI}")
         elif rtype == "xp":
             reward_lines.append(f"✨ {amount} XP")
         elif rtype == "item":
@@ -88,7 +89,7 @@ def create_quest_complete_embed(quest: dict, rewards_granted: list) -> discord.E
         rtype = r.get("type")
         amount = r.get("amount", 0)
         if rtype == "gold":
-            reward_lines.append(f"\U0001f4b0 {amount} Gold")
+            reward_lines.append(f"{amount} {GOLD_EMOJI}")
         elif rtype == "xp":
             reward_lines.append(f"\u2728 {amount} XP")
         elif rtype == "item":
