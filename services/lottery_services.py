@@ -1,13 +1,11 @@
 import random
 
-from sqlalchemy.orm.attributes import flag_modified
-
 from database.sessionmaker import Session
 from models.users_model import LotteryEntries
 
 from services.economy_services import check_wallet, remove_gold
 
-from utils.custom_errors import UserNotFoundError
+from utils.custom_errors import UserNotFoundError, UserNotRegisteredError
 
 tickets_created = set()
 
@@ -17,12 +15,17 @@ def create_ticket(user_id: int, ticket_price: int):
 
     """
     # return 0 if user doesn't have money for ticket
-    if ticket_price > check_wallet(user_id):
+    try:
+        wallet_gold = check_wallet(user_id)
+    except UserNotFoundError as exc:
+        raise UserNotRegisteredError(user_id) from exc
+
+    if ticket_price > wallet_gold:
         return 0
     try:
         remove_gold(user_id, ticket_price)
-    except UserNotFoundError:
-        return 1  # return 1 if unregistered user tries to buy tickets
+    except UserNotFoundError as exc:
+        raise UserNotRegisteredError(user_id) from exc
 
     ticket_id = random.randint(1000000, 9999999)
     while ticket_id in tickets_created:

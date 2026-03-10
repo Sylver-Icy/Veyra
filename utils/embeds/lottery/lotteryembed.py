@@ -4,6 +4,7 @@ from discord.ui import View, Button
 from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool, get_lottery_stats
 from services.economy_services import add_gold
 from services.users_services import update_biggest_lottery_win
+from utils.custom_errors import UserNotRegisteredError
 
 from utils.emotes import GOLD_EMOJI
 
@@ -15,15 +16,18 @@ class LotteryButton(View):
         self.children[0].label = f"🎟️ Buy Ticket {self.ticket_price}"
 
     @discord.ui.button(label="🎟️ Buy Ticket", style=discord.ButtonStyle.green)
-    async def buy_ticket(self, button: Button, interaction: discord.Interaction):
-        ticket_id = create_ticket(interaction.user.id, self.ticket_price)
+    async def buy_ticket(self, _button: Button, interaction: discord.Interaction):
+        try:
+            ticket_id = create_ticket(interaction.user.id, self.ticket_price)
+        except UserNotRegisteredError:
+            await interaction.response.send_message(
+                "Use `!helloveyra` to register and participate in lottery"
+            )
+            return
+
         if ticket_id == 0:
             await interaction.response.send_message(
                 "❌ Not enough gold! Maybe ask your friends to send you some?"
-            )
-        elif ticket_id == 1:
-            await interaction.response.send_message(
-                "Only my friends are allowed to enter this. Greet me first with `!helloVeyra`"
             )
         else:
             tickets_sold , prize_pool = get_lottery_stats()

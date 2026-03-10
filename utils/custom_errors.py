@@ -18,6 +18,14 @@ class UserNotFoundError(VeyraError):
         message = f"<@{user_id}> is not my friend, can't interact! Stranger Danger"
         super().__init__(message)
 
+
+class UserNotRegisteredError(VeyraError):
+    """Raise error when user is not registered with Veyra."""
+
+    def __init__(self, user_id):
+        message = f"<@{user_id}> is not registered with Veyra"
+        super().__init__(message)
+
 class NegativeGoldError(VeyraError):
     """Raise error if someone tries adding negative gold"""
     def __init__(self):
