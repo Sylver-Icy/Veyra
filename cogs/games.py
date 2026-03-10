@@ -22,7 +22,7 @@ from database.sessionmaker import Session
 
 from domain.guild.commands_policies import non_spam_command
 from domain.quests.rules import get_quest_by_id
-from utils.custom_errors import NotEnoughGoldError
+from utils.custom_errors import NotEnoughGoldError, UserNotFoundError
 from utils.emotes import GOLD_EMOJI
 
 
@@ -35,37 +35,52 @@ class SkipQuestView(discord.ui.View):
         self.user_id = user_id
 
     @discord.ui.button(label="Skip Quest", style=discord.ButtonStyle.danger, emoji="⏭️")
-    async def skip_button(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+    async def skip_button(self, _button: discord.ui.Button, interaction: discord.Interaction):
+        try:
+            if interaction.user.id != self.user_id:
+                await interaction.response.send_message("This isn't your quest!", ephemeral=True)
+                return
+
+            with Session() as session:
+                skipped = skip_quest(session, self.user_id)
+
+                if not skipped:
+                    await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
+                    return
+
+                try:
+                    remove_gold(self.user_id, QUEST_SKIP_COST, session=session)
+                except NotEnoughGoldError:
+                    session.rollback()
+                    await interaction.response.send_message(
+                        f"Nice try. Skipping costs **{QUEST_SKIP_COST} {GOLD_EMOJI}** and your pockets are echoing.",
+                        ephemeral=True
+                    )
+                    return
+                except UserNotFoundError:
+                    session.rollback()
+                    await interaction.response.send_message(
+                        "Use `!helloveyra` to register and then try again.",
+                        ephemeral=True
+                    )
+                    return
+
+                session.commit()
+
+            embed = discord.Embed(
+                title="⏭️ Quest Skipped",
+                description=f"Quest skipped for **{QUEST_SKIP_COST} {GOLD_EMOJI}**. Run `/quest` again and I'll hand you a new one.",
+                color=discord.Color.greyple()
+            )
+            self.stop()
+            await interaction.response.edit_message(embed=embed, view=None)
+        except Exception:
+            # Never let component callback exceptions bubble up and destabilize runtime.
+            if not interaction.response.is_done():
+                await interaction.response.send_message("Something went wrong while skipping your quest. Try again.", ephemeral=True)
+            else:
+                await interaction.followup.send("Something went wrong while skipping your quest. Try again.", ephemeral=True)
             return
-
-        with Session() as session:
-            skipped = skip_quest(session, self.user_id)
-
-            if not skipped:
-                await interaction.response.send_message("You don't have an active quest to skip!", ephemeral=True)
-                return
-
-            try:
-                remove_gold(self.user_id, QUEST_SKIP_COST, session=session)
-            except NotEnoughGoldError:
-                session.rollback()
-                await interaction.response.send_message(
-                    f"Nice try. Skipping costs **{QUEST_SKIP_COST} {GOLD_EMOJI}** and your pockets are echoing.",
-                    ephemeral=True
-                )
-                return
-
-            session.commit()
-
-        embed = discord.Embed(
-            title="⏭️ Quest Skipped",
-            description=f"Quest skipped for **{QUEST_SKIP_COST} {GOLD_EMOJI}**. Run `/quest` again and I'll hand you a new one.",
-            color=discord.Color.greyple()
-        )
-        self.stop()
-        await interaction.response.edit_message(embed=embed, view=None)
 
 
 class ClaimRewardView(discord.ui.View):
