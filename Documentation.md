@@ -135,6 +135,10 @@ The tutorial system (`tutorial_services.py`) guides new players through:
 | WORK | `/work <job>` | Perform your first job |
 | COMPLETED | - | Tutorial finished |
 
+The tutorial currently uses a mixed command set:
+- Registration, `!play`, and `!use` are still prefix commands
+- Wallet, shop, and work steps use slash commands
+
 **Technical Details:**
 - User state stored in `users.tutorial_state` column
 - Tutorial guards block commands until the current step is completed

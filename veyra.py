@@ -32,8 +32,8 @@ logger = logging.getLogger(__name__)
 # Services
 from services.users_services import is_user
 from services.talk_to_veyra.chat_services import handle_user_message, fetch_channel_msgs
+from services.talk_to_veyra.user_builder import build_chat_user
 from services.onboadingservices import greet
-from services.friendship_services import check_friendship
 from services.response_services import create_response
 from services.tutorial_services import tutorial_guard
 from services.refferal_services import create_inv_cache, handle_member_join
@@ -112,6 +112,51 @@ async def channel_policy_guard(ctx):
     raise WrongChannelError("❌ This command isn’t allowed in this channel.")
 
 
+def _extract_slash_command_path_and_args(ctx: ApplicationContext):
+    """Extract the full slash command path and concrete option values.
+
+    Discord nested slash commands (for example `/check wallet`) store the
+    subcommand name inside `interaction.data.options`, not in `ctx.options`.
+    """
+    interaction = getattr(ctx, "interaction", None)
+    data = getattr(interaction, "data", None) or {}
+
+    if not isinstance(data, dict):
+        fallback_name = getattr(ctx.command, "qualified_name", ctx.command.name)
+        fallback_args = list(ctx.options.values()) if ctx.options else []
+        return fallback_name, fallback_args
+
+    path_parts = []
+    arg_values = []
+
+    root_name = data.get("name")
+    if root_name:
+        path_parts.append(str(root_name))
+
+    current_options = data.get("options") or []
+
+    while current_options:
+        first = current_options[0]
+        if not isinstance(first, dict) or first.get("type") not in (1, 2):
+            break
+
+        option_name = first.get("name")
+        if option_name:
+            path_parts.append(str(option_name))
+
+        current_options = first.get("options") or []
+
+    for option in current_options:
+        if isinstance(option, dict) and "value" in option:
+            arg_values.append(option["value"])
+
+    if not arg_values and ctx.options:
+        arg_values = list(ctx.options.values())
+
+    fallback_name = getattr(ctx.command, "qualified_name", ctx.command.name)
+    return " ".join(path_parts).strip() or fallback_name, arg_values
+
+
 @bot.check
 async def tutorial_check(ctx):
     if ctx.command is None or ctx.command.name in ["helloVeyra", "help"]:
@@ -122,16 +167,17 @@ async def tutorial_check(ctx):
         # prefix commands: [self, ctx, *user_args]
         content = ctx.message.content
         parts = content.split()
+        command_name = getattr(ctx.command, "qualified_name", ctx.command.name)
         args = parts[1:]  # everything after command
     elif isinstance(ctx, ApplicationContext):
-        # slash commands: options dict -> values
-        args = list(ctx.options.values()) if ctx.options else []
+        command_name, args = _extract_slash_command_path_and_args(ctx)
     else:
+        command_name = getattr(ctx.command, "qualified_name", ctx.command.name)
         args = []
 
     blocked = await tutorial_guard(
         ctx,
-        ctx.command.name,
+        command_name,
         args
     )
 
@@ -202,22 +248,22 @@ async def on_message(message):
 
             await bot.invoke(ctx)
             return
-    # if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
-    #     async with message.channel.typing():
-    #         await asyncio.sleep(random.uniform(0.5, 2))
-    #         title, _ = check_friendship(message.author.id)
-    #         msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
+    if message.channel.id == 1275870091002777643 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+        async with message.channel.typing():
+            await asyncio.sleep(random.uniform(0.5, 2))
+            user = build_chat_user(message.author.id, message.author.display_name)
+            msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
 
-    #         # Generate reply
-    #         reply = await handle_user_message(
-    #             message.content,
-    #             title,
-    #             message.author.id,
-    #             message.author.display_name,
-    #             msg_history
-    #         )
+            # Generate reply
+            reply = await handle_user_message(
+                message.content,
+                user,
+                msg_history
+            )
 
-    #     await message.reply(reply)
+        if reply:
+            await message.reply(reply)
+        return
 
 
     # Inline command support: check if message contains a command invocation inline

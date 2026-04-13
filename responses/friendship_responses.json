@@ -68,6 +68,27 @@
                 "I might actually care about you at this point 😳 ({progress}% away from full bond).",
                 "One more push — {progress}% to reach *Veyra's favourite 💖* status."
             ]
+        },
+        "4": {
+            "part1": [
+                "Back for another check, huh? You just love hearing it.",
+                "There you are again, {user}. Still sitting at the top.",
+                "Checking the bond status again? Fine. Here you go.",
+                "Aww, my favorite person came back for validation again.",
+                "You really do enjoy hearing me say it, don't you?"
+            ],
+            "part2": [
+                "Your current rank: **{title}** — there is nothing above this.",
+                "We’re already at **{title}**. That is the final tier.",
+                "You’ve fully maxed out our friendship at **{title}**.",
+                "You’re locked in at **{title}**. No higher rank exists.",
+                "It’s official: **{title}**. Max bond. End of ladder."
+            ],
+            "part3": [
+                "",
+                "That’s the whole title. No extra progress talk needed.",
+                "Nothing left to grind here. You already won."
+            ]
         }
     }
 }

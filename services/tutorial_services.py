@@ -29,6 +29,44 @@ async def safe_send(ctx, content=None, **kwargs):
         await ctx.send(content, **kwargs)
 
 
+def _normalize_command(value):
+    if value is None:
+        return ""
+    return str(value).strip().lower()
+
+
+def _normalize_args(args):
+    return [_normalize_command(arg) for arg in (args or [])]
+
+
+def _is_wallet_step(command, args):
+    command_name = _normalize_command(command)
+    normalized_args = _normalize_args(args)
+    return command_name in ("wallet", "check wallet") or (
+        command_name == "check" and normalized_args and normalized_args[0] == "wallet"
+    )
+
+
+def _extract_job_name(command, args):
+    valid_jobs = ("knight", "digger", "miner", "thief")
+    command_name = _normalize_command(command)
+    normalized_args = _normalize_args(args)
+
+    if command_name in valid_jobs:
+        return command_name
+
+    if command_name.startswith("work "):
+        candidate = command_name.split()[-1]
+        if candidate in valid_jobs:
+            return candidate
+
+    if command_name == "work" and normalized_args:
+        if normalized_args[0] in valid_jobs:
+            return normalized_args[0]
+
+    return None
+
+
 class TutorialState(IntEnum):
     NOT_STARTED = 0
     CHECK_WALLET = 1
@@ -53,17 +91,17 @@ async def tutorial_completed(user_id: int):
         return TutorialState(user.tutorial_state) == TutorialState.COMPLETED
 
 async def handle_not_started(ctx, command, arg):
-    await safe_send(ctx, "Welcome to Natlade.\nI’ll guide you step by step — don’t rush.\n\nFirst task: check how much gold you have.\nType `!check wallet`")
     await advance(ctx.author.id, TutorialState.CHECK_WALLET)
+    if _is_wallet_step(command, arg):
+        return await handle_check_wallet(ctx, command, arg)
+
+    await safe_send(ctx, "Welcome to Natlade.\nI’ll guide you step by step — don’t rush.\n\nFirst task: check how much gold you have.\nType `/check wallet`")
     return True
 
 async def handle_check_wallet(ctx, command, arg):
-    if command != "check":
-        await safe_send(ctx, "Slow down.\nFirst, check your wallet.\nType `!check wallet`")
+    if not _is_wallet_step(command, arg):
+        await safe_send(ctx, "Slow down.\nFirst, check your wallet.\nType `/check wallet`")
         return True  # block command
-    if command == "check" and arg[0]!= "wallet":
-        await safe_send(ctx, "We are checking wallet only for now\n Use `check wallet`")
-        return True
 
     gold = check_wallet(ctx.author.id)
     response = create_response("check_wallet", 1, user=ctx.author.mention, gold=gold, emoji=GOLD_EMOJI)
@@ -104,20 +142,21 @@ async def handle_open_shop(ctx, command, arg):
     if command == "shop":
         embed,view = daily_shop()
         await safe_send(ctx, embed=embed, view=view)
-        await safe_send(ctx, "Buy anything you want. Intructions are at the bottom of shop embed\nYou can also sell items back using the Buyback button.\n\nOne final lesson left.\nNext task: earn gold by working.\nType `!work knight`")
+        await safe_send(ctx, "Buy anything you want. Intructions are at the bottom of shop embed\nYou can also sell items back using the Buyback button.\n\nOne final lesson left.\nNext task: earn gold by working.\nType `/work knight`")
         await advance(ctx.author.id, TutorialState.WORK)
         return True
 
     return False #let them run use and open commands
 
 async def handle_work(ctx, command, arg):
-    if command not in ("use", "work", "open", "buy"):
-        await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `!work knight`")
+    job = _extract_job_name(command, arg)
+
+    if command not in ("use", "work", "open", "buy") and job is None:
+        await safe_send(ctx, "This is the final step.\nChoose a job to earn gold.\n\nExample: `/work knight`")
         return True
 
-    if command == "work":
+    if job is not None:
         valid_jobs = ("knight", "digger", "miner", "thief")
-        job = arg[0].lower()
         if job not in valid_jobs:
             await safe_send(ctx, f"Available jobs: {', '.join(valid_jobs)}")
             return True
@@ -138,7 +177,7 @@ async def handle_work(ctx, command, arg):
         await safe_send(ctx, result)
         await advance(ctx.author.id, TutorialState.COMPLETED)
         await asyncio.sleep(1)
-        await safe_send(ctx, "Working drains energy, you regain it over time check your current energy status with `!check energy`\nAnd with that you’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`!commandhelp <command>`\n\nGood luck.\nAlso credited you with 50 chips ;) `!details gambling` if you don't wanna go in blind and loose it all")
+        await safe_send(ctx, "Working drains energy, you regain it over time check your current energy status with `/check energy`\nAnd with that you’re done.\n\nYou now know the basics.\nUse `/help` to see all commands.\nIf you’re confused about any command, ask me:\n`/commandhelp <command_name>`\n\nGood luck.\nAlso credited you with 50 chips ;) Use `/details gambling` if you don't wanna go in blind and loose it all")
         add_chip(ctx.author.id, 50)
         return True
 

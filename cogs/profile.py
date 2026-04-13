@@ -76,9 +76,18 @@ class Profile(commands.Cog):
 
         # Already registered user
         if is_user(user_id):
-            title, progress = check_friendship(user_id)
+            try:
+                title, progress = check_friendship(user_id)
+            except Exception:
+                # Keep the command usable even if an old friendship row is in a
+                # bad state; default to a safe baseline instead of crashing.
+                title, progress = "Stranger", 0.0
 
-            if title in ("Stranger", "Acquaintance", "Casual"):
+            if title == "Veyra's favourite 💖":
+                response = create_response(
+                    "friendship_check", 4, user=user_name, title=title, progress=progress
+                )
+            elif title in ("Stranger", "Acquaintance", "Casual"):
                 response = create_response(
                     "friendship_check", 1, user=user_name, title=title, progress=progress
                 )
@@ -119,7 +128,7 @@ class Profile(commands.Cog):
             if msg.content.lower() == "yes":
                 await ctx.send(
                     "Yay! Here keep these bags of gold as a gift for our new friendship ^^\n"
-                    " OH!! and if you wanna know more about survival in Natlade just hit me with `!ping` I'll guide you"
+                    " OH!! and if you wanna know more about survival in Natlade just run `!ping` and I'll guide you"
                 )
                 add_user(user_id, user_name)
                 give_item(user_id, 183, 2, True)

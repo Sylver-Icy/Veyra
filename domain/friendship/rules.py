@@ -53,21 +53,29 @@ def friendship_title_and_progress(exp: int) -> tuple[str, float]:
     """
     thresholds = sorted(FRIENDSHIP_TIERS.keys())
 
-    title = FRIENDSHIP_TIERS[0]
-    next_level = None
+    if not thresholds:
+        return "Stranger", 0.0
 
-    for index, threshold in enumerate(thresholds):
-        if exp >= threshold:
-            title = FRIENDSHIP_TIERS[threshold]
-            if index + 1 < len(thresholds):
-                next_level = thresholds[index + 1]
+    # Clamp negative values and handle max-tier users up front so callers never
+    # need to worry about looking for a "next" tier that does not exist.
+    safe_exp = max(0, exp)
+    max_threshold = thresholds[-1]
+
+    if safe_exp >= max_threshold:
+        return FRIENDSHIP_TIERS[max_threshold], 100.0
+
+    current_threshold = thresholds[0]
+    next_threshold = thresholds[1]
+
+    for threshold, following_threshold in zip(thresholds, thresholds[1:]):
+        if safe_exp >= threshold:
+            current_threshold = threshold
+            next_threshold = following_threshold
         else:
             break
 
-    if next_level is not None:
-        previous_level = max(t for t in thresholds if t <= exp)
-        progress = (exp - previous_level) / (next_level - previous_level) * 100
-    else:
-        progress = 100.0
+    current_title = FRIENDSHIP_TIERS[current_threshold]
+    progress = (safe_exp - current_threshold) / (next_threshold - current_threshold) * 100
+    progress = max(0.0, min(progress, 100.0))
 
-    return title, round(progress, 2)
+    return current_title, round(progress, 2)
