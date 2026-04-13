@@ -5,8 +5,6 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from services.talk_to_veyra.call_service import run_service
-
 class ConversationService:
     def __init__(self, endpoint):
         self.endpoint = endpoint
@@ -23,20 +21,19 @@ class ConversationService:
 
 brain = ConversationService("http://127.0.0.1:8000/chat")
 
-async def handle_user_message(message: str, frndship_title: str, user_id: int, user_name: str, message_history: list):
+async def handle_user_message(message: str, user: dict, message_history: list):
     payload = {
-        "text": message,
-        "frndship_title": frndship_title,
-        "user_id": user_id,
-        "user_name": user_name,
+        "message": message,
+        "user": user,
         "message_history": message_history
     }
 
     reply = await brain.get_reply(payload)
-    if reply in ("LABEL_0", "LABEL_1", "LABEL_2", "LABEL_3", "LABEL_4", "LABEL_5", "LABEL_6", "LABEL_7"):
-        return run_service(reply, user_id)
+    if not isinstance(reply, str):
+        return None
 
-    return reply
+    reply = reply.strip()
+    return reply if reply else None
 
 async def fetch_channel_msgs(channel: discord.TextChannel, limit: int = 10, bot_id: int = None):
     """

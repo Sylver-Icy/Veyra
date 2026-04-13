@@ -1,6 +1,6 @@
-from database.sessionmaker import engine
-from models.users_model import Base
+from database.sessionmaker import ensure_schema
 
 
-Base.metadata.create_all(engine)
-print("All tables created.")
+if __name__ == "__main__":
+    ensure_schema()
+    print("All ORM tables created or already present.")

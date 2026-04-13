@@ -25,6 +25,7 @@ class User(Base):
     marketplace = relationship('Marketplace', back_populates = 'user')
     upgrades = relationship("Upgrades", back_populates="user")
     quests = relationship("UserQuest", back_populates="user", cascade="all, delete")
+    game_events = relationship("GameEvent", back_populates="user", cascade="all, delete")
     user_stats = relationship("UserStats", back_populates="user", uselist=False, cascade="all, delete")
 
     effects = relationship(
@@ -72,6 +73,27 @@ class UserStats(Base):
     updated_at = Column(TIMESTAMP, default=func.now())
 
     user = relationship("User", back_populates="user_stats")
+
+
+class GameEvent(Base):
+    __tablename__ = 'game_events'
+    __table_args__ = (
+        Index('idx_game_events_user_created_at', 'user_id', 'created_at'),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(
+        BigInteger,
+        ForeignKey('users.user_id', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
+    event_type = Column(String(100), nullable=False)
+    summary = Column(Text, nullable=False)
+    event_data = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())
+
+    user = relationship("User", back_populates="game_events")
 
 
 class Wallet(Base):
