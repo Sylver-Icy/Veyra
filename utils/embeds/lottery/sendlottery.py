@@ -76,10 +76,13 @@ async def send_result(bot):
             except Exception as e:
                 print(f"⚠️ Failed to delete old result message in {guild_id}: {e}")
 
-        msg = await channel.send(
-            content=f"Results are out!!!! \n <@{winner_id}> won today!",
-            embed=embed
-        )
+        content = "Results are out!!!!"
+        if winner_id is None:
+            content += "\nNo one bought tickets today."
+        else:
+            content += f"\n <@{winner_id}> won today!"
+
+        msg = await channel.send(content=content, embed=embed)
 
         last_result_messages[guild_id] = msg
 

@@ -1,7 +1,14 @@
 import discord
 from discord.ui import View, Button
 
-from services.lottery_services import create_ticket, pick_lottery_winner, calculate_prize_pool, get_lottery_stats
+from services.game_events_services import create_game_event
+from services.lottery_services import (
+    calculate_prize_pool,
+    create_ticket,
+    get_lottery_round_entries,
+    get_lottery_stats,
+    pick_lottery_winner,
+)
 from services.economy_services import add_gold
 from services.users_services import update_biggest_lottery_win
 from utils.custom_errors import UserNotRegisteredError
@@ -54,9 +61,10 @@ def create_result_embed():
             description="No tickets were purchased this round.",
             color=discord.Color.dark_grey()
         )
-        return embed
+        return embed, None
 
 
+    participants = get_lottery_round_entries()
     winner_id, ticket_id = result
     prize = calculate_prize_pool()
     embed = discord.Embed(
@@ -68,5 +76,34 @@ def create_result_embed():
     embed.add_field(name=f"Congratulations on winning {prize} {GOLD_EMOJI}", value="Your winnings have been deposited")
     add_gold(winner_id, prize)
     update_biggest_lottery_win(winner_id, prize)
+
+    winner_ticket_count = next(
+        (entry["ticket_count"] for entry in participants if entry["user_id"] == winner_id),
+        1,
+    )
+    create_game_event(
+        winner_id,
+        "lottery_win",
+        f"Won the lottery with {winner_ticket_count} ticket(s) and pocketed {prize} gold.",
+        {
+            "ticket_id": ticket_id,
+            "ticket_count": winner_ticket_count,
+            "prize": prize,
+        },
+    )
+
+    for entry in participants:
+        if entry["user_id"] == winner_id:
+            continue
+        create_game_event(
+            entry["user_id"],
+            "lottery_loss",
+            f"Bought {entry['ticket_count']} lottery ticket(s) and still lost the draw.",
+            {
+                "ticket_count": entry["ticket_count"],
+                "prize_pool": prize,
+                "winning_ticket": ticket_id,
+            },
+        )
 
     return embed, winner_id

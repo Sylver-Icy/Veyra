@@ -1,12 +1,12 @@
 import random
-from services.inventory_services import give_item
+import asyncio
+from datetime import datetime, timedelta
+
 from database.sessionmaker import Session
 from models.users_model import Daily
-
-
-import asyncio
+from services.game_events_services import create_game_event
+from services.inventory_services import give_item
 from services.response_services import create_response
-from datetime import datetime, timedelta
 
 class Guess:
     """
@@ -192,6 +192,21 @@ class Guess:
 
             reward = Guess.calculate_and_distribute_reward(loss_round, ctx.author.id)
             await ctx.send(f"Well and with that, game over. You get:\n{reward}")
+
+            if loss_round == 5:
+                summary = f"Cleared all 4 stages in !play and won {reward}."
+                event_data = {"stage_reached": 4, "completed_run": True, "reward": reward}
+            else:
+                summary = f"Reached stage {loss_round} in !play and won {reward}."
+                event_data = {"stage_reached": loss_round, "completed_run": False, "reward": reward}
+
+            create_game_event(
+                ctx.author.id,
+                "guess_game_attempt",
+                summary,
+                event_data,
+                keep_recent=5,
+            )
 
             # Mark as played for today
             with Session() as session:

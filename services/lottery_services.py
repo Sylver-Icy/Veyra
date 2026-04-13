@@ -73,6 +73,21 @@ def get_user_tickets(user_id: int):
         return entry.tickets if entry else []
 
 
+def get_lottery_round_entries():
+    """Return current lottery participants with ticket counts before reset."""
+    with Session() as session:
+        entries = session.query(LotteryEntries).all()
+        return [
+            {
+                "user_id": entry.user_id,
+                "ticket_count": len(entry.tickets or []),
+                "ticket_price": entry.ticket_price,
+            }
+            for entry in entries
+            if entry.tickets
+        ]
+
+
 def pick_lottery_winner():
     with Session() as session:
         all_entries = session.query(LotteryEntries).all()

@@ -1,9 +1,11 @@
 import logging
 from sqlalchemy import select, func
-from models.marketplace_model import Marketplace
+
 from database.sessionmaker import Session
-from services.inventory_services import take_item, give_item
 from services.economy_services import add_gold, remove_gold
+from services.game_events_services import create_game_event
+from services.inventory_services import take_item, give_item
+from models.marketplace_model import Marketplace
 from services.quest_services import update_quest_progress
 from utils.custom_errors import VeyraError, NotEnoughGoldError, FullInventoryError, PartialInventoryError
 from utils.embeds.marketplaceembed import build_marketplace
@@ -79,16 +81,19 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
         item_name = listing.item.item_name
         price = listing.price
         seller_name = listing.user.user_name
+        seller_id = listing.user.user_id
+        total_price = quantity * price
+        seller_earnings = int(total_price * 0.93)
 
         # Attempt to deduct buyer's gold
         try:
-            remove_gold(buyer_id, quantity * price)
+            remove_gold(buyer_id, total_price)
         except NotEnoughGoldError as e:
             return str(e)
 
         # Transfer item and gold
         give_item(buyer_id, item_id, quantity)
-        add_gold(listing.user_id, int((quantity * price) * 0.93)) #Charge the 7 % listing fee
+        add_gold(listing.user_id, seller_earnings) #Charge the 7 % listing fee
 
         # Quest progress: seller sold items, buyer bought items
         update_quest_progress(listing.user_id, "ITEM_SELL", quantity)
@@ -101,11 +106,38 @@ def buy_listed_item(buyer_id: int, listing_id: int, quantity: int):
             listing.quantity -= quantity
 
         session.commit()
+        create_game_event(
+            buyer_id,
+            "marketplace_purchase",
+            f"Bought {quantity}x {item_name} from the marketplace for {total_price} gold.",
+            {
+                "listing_id": listing_id,
+                "item_id": item_id,
+                "item_name": item_name,
+                "quantity": quantity,
+                "total_price": total_price,
+                "seller_id": seller_id,
+            },
+        )
+        create_game_event(
+            seller_id,
+            "marketplace_sale",
+            f"Sold {quantity}x {item_name} on the marketplace for {seller_earnings} gold after fees.",
+            {
+                "listing_id": listing_id,
+                "item_id": item_id,
+                "item_name": item_name,
+                "quantity": quantity,
+                "gross_price": total_price,
+                "net_gold": seller_earnings,
+                "buyer_id": buyer_id,
+            },
+        )
         logger.info("Items traded on marketplace", extra={
             "user": buyer_id,
             "flex": f"Item bought-> {item_name} at rate-> {price} amount->{quantity} from {seller_name}"
         })
-        return f"Successfully bought {quantity}×{item_name} from <@{listing.user.user_id}> for {quantity * price} {GOLD_EMOJI}"
+        return f"Successfully bought {quantity}×{item_name} from <@{seller_id}> for {total_price} {GOLD_EMOJI}"
 
 def remove_listing(user_id: int, listing_id: int) -> str:
     """

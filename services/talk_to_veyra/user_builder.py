@@ -4,6 +4,7 @@ from sqlalchemy.orm import joinedload
 
 from database.sessionmaker import Session
 from domain.friendship.rules import friendship_title_and_progress
+from services.game_events_services import get_recent_game_events
 from models.users_model import User
 
 
@@ -44,6 +45,8 @@ def build_chat_user(user_id: int, user_name: str) -> dict:
     if user.battle_loadout and (user.battle_loadout.weapon or user.battle_loadout.spell):
         loadout = f"{user.battle_loadout.weapon}/{user.battle_loadout.spell}"
 
+    recent_events = get_recent_game_events(user.user_id, limit=10)
+
     return {
         "user_id": user.user_id,
         "name": user.user_name,
@@ -53,7 +56,7 @@ def build_chat_user(user_id: int, user_name: str) -> dict:
         "current_energy": user.energy or 0,
         "exp": user.exp or 0,
         "lvl": user.level or 1,
-        "game_events": [],
+        "game_events": recent_events,
         "campaign_stage": user.campaign_stage or 1,
         "current_quest": None,
         "loadout": loadout,

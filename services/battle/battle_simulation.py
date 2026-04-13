@@ -14,6 +14,7 @@ from services.battle.veyra_ai import VeyraAI
 from services.battle.campaign.bardok_ai import BardokAI
 from services.battle.arena_class import LavaArena, FrozenArena, NullArena, IrritationArena
 from services.economy_services import add_gold
+from services.game_events_services import create_game_event
 from services.users_services import inc_battles_won
 from services.quest_services import update_quest_progress, decrease_quest_progress
 
@@ -314,6 +315,22 @@ async def start_campaign_battle(ctx, player: discord.User, result_display_time: 
                 give_stage_rewards(player.id)
                 advance_campaign_stage(player.id)
                 update_quest_progress(player.id, "CAMPAIGN_WIN", 1)
+                next_stage = min(stage + 1, 16)
+                if next_stage >= 16:
+                    summary = f"Defeated {enemy_name} and finished the campaign."
+                else:
+                    summary = f"Defeated {enemy_name} in campaign stage {stage} and advanced to stage {next_stage}."
+                create_game_event(
+                    player.id,
+                    "campaign_progress",
+                    summary,
+                    {
+                        "enemy_name": enemy_name,
+                        "cleared_stage": stage,
+                        "next_stage": next_stage,
+                        "reward_summary": reward_string,
+                    },
+                )
                 return
 
             round_num += 1
