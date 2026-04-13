@@ -21,13 +21,13 @@ class LotteryButton(View):
             ticket_id = create_ticket(interaction.user.id, self.ticket_price)
         except UserNotRegisteredError:
             await interaction.response.send_message(
-                "Use `!helloveyra` to register and participate in lottery"
+                f"{interaction.user.mention} you need to use `!helloVeyra` first to participate in the lottery."
             )
             return
 
         if ticket_id == 0:
             await interaction.response.send_message(
-                "❌ Not enough gold! Maybe ask your friends to send you some?"
+                f"❌ {interaction.user.mention} you don’t have enough gold to buy a lottery ticket. Maybe ask your friends to send some?"
             )
         else:
             tickets_sold , prize_pool = get_lottery_stats()
