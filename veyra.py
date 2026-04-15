@@ -258,7 +258,7 @@ async def on_message(message):
 
             await bot.invoke(ctx)
             return
-    if message.channel.id == 1275870091002777642 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+    if message.channel.id == 1437565988966109318 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
         if not is_user(message.author.id):
             await message.reply("Use `!helloVeyra` first. I don't talk to strangers.")
             return
