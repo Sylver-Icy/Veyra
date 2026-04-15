@@ -31,7 +31,12 @@ logger = logging.getLogger(__name__)
 
 # Services
 from services.users_services import is_user
-from services.talk_to_veyra.chat_services import handle_user_message, fetch_channel_msgs
+from services.talk_to_veyra.chat_services import (
+    ConversationServiceError,
+    brain,
+    fetch_channel_msgs,
+    handle_user_message,
+)
 from services.talk_to_veyra.user_builder import build_chat_user
 from services.onboadingservices import greet
 from services.response_services import create_response
@@ -201,6 +206,11 @@ async def on_ready():
         schedule_jobs(bot)
         if not scheduler.running:
             scheduler.start()
+        await brain.start()
+        if await brain.is_available():
+            logger.info("Conversation model is reachable at %s", brain.endpoint)
+        else:
+            logger.error("Conversation model is not reachable at %s", brain.endpoint)
         logger.info(f"✅ Veyra is online as {bot.user}")
     except Exception as e:
         logger.error(f"Error during on_ready: {e}", exc_info=True)
@@ -248,18 +258,26 @@ async def on_message(message):
 
             await bot.invoke(ctx)
             return
-    if message.channel.id == 1275870091002777643 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+    if message.channel.id == 1275870091002777642 and (bot.user in message.mentions or "veyra" in msg_lower) and msg_lower != "!helloveyra":
+        if not is_user(message.author.id):
+            await message.reply("Use `!helloVeyra` first. I don't talk to strangers.")
+            return
+
         async with message.channel.typing():
             await asyncio.sleep(random.uniform(0.5, 2))
             user = build_chat_user(message.author.id, message.author.display_name)
             msg_history = await fetch_channel_msgs(message.channel, bot_id=bot.user.id)
 
             # Generate reply
-            reply = await handle_user_message(
-                message.content,
-                user,
-                msg_history
-            )
+            try:
+                reply = await handle_user_message(
+                    message.content,
+                    user,
+                    msg_history
+                )
+            except ConversationServiceError as exc:
+                logger.error("talk-to-Veyra request failed: %s", exc)
+                reply = "Not in mood to talk right now. come back later?"
 
         if reply:
             await message.reply(reply)
