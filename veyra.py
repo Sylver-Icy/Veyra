@@ -202,9 +202,9 @@ async def on_ready():
     await create_inv_cache(bot)
 
     try:
-        await run_at_startup(bot)
-        schedule_jobs(bot)
         if not scheduler.running:
+            await run_at_startup(bot)
+            schedule_jobs(bot)
             scheduler.start()
         await brain.start()
         if await brain.is_available():

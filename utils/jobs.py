@@ -28,16 +28,72 @@ weekly_trigger = CronTrigger(day_of_week="sun", hour=0, minute=0, timezone=timez
 def schedule_jobs(bot):
     """Registers all recurring background jobs."""
     # Daily jobs
-    scheduler.add_job(update_daily_shop, trigger=midnight_trigger)
-    scheduler.add_job(update_daily_buyback_shop, trigger=midnight_trigger)
-    scheduler.add_job(reset_all_daily_exp, trigger=midnight_trigger)
-    scheduler.add_job(send_weekly_leaderboard, trigger=weekly_trigger, args=[bot])
-    scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="sat,sun", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 50])
-    scheduler.add_job(send_lottery, trigger=CronTrigger(day_of_week="mon-fri", hour=0, minute=0, timezone=timezone("UTC")), args=[bot, 10])
-    scheduler.add_job(send_result, trigger=midnight_trigger, args=[bot])
-    scheduler.add_job(regen_energy_for_all, trigger=IntervalTrigger(minutes=6, start_date=None), args=[bot])
-    scheduler.add_job(decay_all_strain, trigger=IntervalTrigger(minutes=25, start_date=None))
-    scheduler.add_job(send_due_loan_reminders, trigger=midnight_trigger, args=[bot])
+    scheduler.add_job(
+        update_daily_shop,
+        id="update_daily_shop",
+        trigger=midnight_trigger,
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        update_daily_buyback_shop,
+        id="update_daily_buyback_shop",
+        trigger=midnight_trigger,
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        reset_all_daily_exp,
+        id="reset_all_daily_exp",
+        trigger=midnight_trigger,
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_weekly_leaderboard,
+        id="send_weekly_leaderboard",
+        trigger=weekly_trigger,
+        args=[bot],
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_lottery,
+        id="send_lottery_weekend",
+        trigger=CronTrigger(day_of_week="sat,sun", hour=0, minute=0, timezone=timezone("UTC")),
+        args=[bot, 50],
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_lottery,
+        id="send_lottery_weekday",
+        trigger=CronTrigger(day_of_week="mon-fri", hour=0, minute=0, timezone=timezone("UTC")),
+        args=[bot, 10],
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_result,
+        id="send_result",
+        trigger=midnight_trigger,
+        args=[bot],
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        regen_energy_for_all,
+        id="regen_energy_for_all",
+        trigger=IntervalTrigger(minutes=6, start_date=None),
+        args=[bot],
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        decay_all_strain,
+        id="decay_all_strain",
+        trigger=IntervalTrigger(minutes=25, start_date=None),
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_due_loan_reminders,
+        id="send_due_loan_reminders",
+        trigger=midnight_trigger,
+        args=[bot],
+        replace_existing=True,
+    )
 
 
 

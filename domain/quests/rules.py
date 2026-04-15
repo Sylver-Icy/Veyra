@@ -94,7 +94,7 @@ QUESTS = {
         "id": "big_spender",
         "type": "GOLD_SPEND",
         "name": "Big Spender",
-        "description": "Splash the cash! Spend a total of 1000 gold on shop purchases, marketplace buys, upgrades, or casino bets within 24 hours.",
+        "description": "Splash the cash! Spend a total of 1000 gold on shop purchases, marketplace buys, upgrades, chip packs, or other gold sinks within 24 hours.",
         "target": 1000,
         "filters": {},
         "reward": [

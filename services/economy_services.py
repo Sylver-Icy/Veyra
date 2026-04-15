@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def _track_gold_quest(user_id: int, gold_amount: int, quest_type: str, session=None):
-    """Fire-and-forget quest progress update for gold actions."""
+    """Track quest progress inside the active wallet transaction when possible."""
     try:
         from services.quest_services import update_quest_progress
         update_quest_progress(user_id, quest_type, gold_amount, session=session)
@@ -72,9 +72,9 @@ def add_gold(user_id: int, gold_amount: int, session=None):
             )
             raise UserNotFoundError(user_id)
         new_balance = result[0]
+        _track_gold_quest(user_id, gold_amount, "GOLD_EARN", session=session)
         if owns_session:
             session.commit()
-        _track_gold_quest(user_id, gold_amount, "GOLD_EARN", session=session)
         return new_balance, gold_amount
 
     except Exception:
@@ -124,9 +124,9 @@ def remove_gold(user_id: int, gold_amount: int, session=None):
                 raise UserNotFoundError(user_id)
             raise NotEnoughGoldError(gold_amount, "gold")
         new_balance = result[0]
+        _track_gold_quest(user_id, gold_amount, "GOLD_SPEND", session=session)
         if owns_session:
             session.commit()
-        _track_gold_quest(user_id, gold_amount, "GOLD_SPEND", session=session)
         return new_balance, gold_amount
 
     except Exception:

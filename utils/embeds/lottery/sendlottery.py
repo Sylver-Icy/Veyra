@@ -17,6 +17,24 @@ LOTTERY_TARGETS = [
 last_lottery_messages = {}
 last_result_messages = {}
 
+
+async def _delete_previous_posts(channel, bot_user_id: int, content_prefix: str, cached_message=None):
+    if cached_message:
+        try:
+            await cached_message.delete()
+        except Exception as e:
+            print(f"⚠️ Failed to delete cached lottery message in {channel.guild.id}: {e}")
+
+    async for msg in channel.history(limit=15):
+        if msg.author.id != bot_user_id:
+            continue
+        if not (msg.content or "").startswith(content_prefix):
+            continue
+        try:
+            await msg.delete()
+        except Exception as e:
+            print(f"⚠️ Failed to delete prior lottery message in {channel.guild.id}: {e}")
+
 async def send_lottery(bot, ticket_price: int):
     for target in LOTTERY_TARGETS:
         guild_id = target["guild_id"]
@@ -34,11 +52,12 @@ async def send_lottery(bot, ticket_price: int):
 
         # delete old message if it exists
         old_msg = last_lottery_messages.get(guild_id)
-        if old_msg:
-            try:
-                await old_msg.delete()
-            except Exception as e:
-                print(f"⚠️ Failed to delete old message in {guild_id}: {e}")
+        await _delete_previous_posts(
+            channel,
+            bot.user.id,
+            "TIME TO TRY YOUR LUCK!!!!",
+            cached_message=old_msg,
+        )
 
         embed, view = create_lottery_embed(ticket_price)
         msg = await channel.send(
@@ -70,11 +89,12 @@ async def send_result(bot):
 
         # delete old result message if it exists
         old_msg = last_result_messages.get(guild_id)
-        if old_msg:
-            try:
-                await old_msg.delete()
-            except Exception as e:
-                print(f"⚠️ Failed to delete old result message in {guild_id}: {e}")
+        await _delete_previous_posts(
+            channel,
+            bot.user.id,
+            "Results are out!!!!",
+            cached_message=old_msg,
+        )
 
         content = "Results are out!!!!"
         if winner_id is None:
