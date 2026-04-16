@@ -25,7 +25,7 @@ class ConversationService:
         base_url = self.endpoint.removesuffix("/chat")
         self.health_endpoint = f"{base_url}/health"
         self._session: aiohttp.ClientSession | None = None
-        self._timeout = aiohttp.ClientTimeout(total=20, connect=5, sock_connect=5, sock_read=25)
+        self._timeout = aiohttp.ClientTimeout(total=60, connect=5, sock_connect=5, sock_read=25)
 
     async def start(self) -> None:
         if self._session is None or self._session.closed:
