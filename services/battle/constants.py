@@ -1,0 +1,14 @@
+STANCE_ATTACK = "attack"
+STANCE_BLOCK = "block"
+STANCE_COUNTER = "counter"
+STANCE_RECOVER = "recover"
+STANCE_CAST = "cast"
+
+VALID_STANCES = (
+    STANCE_ATTACK,
+    STANCE_BLOCK,
+    STANCE_COUNTER,
+    STANCE_RECOVER,
+    STANCE_CAST,
+)
+

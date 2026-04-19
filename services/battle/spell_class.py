@@ -2,6 +2,7 @@ class Spell:
     def __init__(self, name, mana_cost):
         self.name = name
         self.mana_cost = mana_cost
+        self.content_key = self.__class__.__name__.lower()
 
     def can_cast(self, caster):
         return caster.mana >= self.mana_cost

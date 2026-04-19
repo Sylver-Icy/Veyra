@@ -1,9 +1,16 @@
-from services.battle.weapon_class import ElephantHammer, MoonSlasher
-from services.battle.spell_class import FrostBite
+from services.battle.constants import (
+    STANCE_ATTACK,
+    STANCE_BLOCK,
+    STANCE_CAST,
+    STANCE_COUNTER,
+    STANCE_RECOVER,
+)
 from services.battle.campaign.npcai import BaseAI
 
 spell_effects_on_player = ["nightfall"]
 spell_effects_on_veyra = ["veilofdarkness"]
+
+
 class VeyraAI(BaseAI):
     def __init__(self, difficulty="normal", veyra=None, player=None):
         super().__init__(fighter=veyra, opponent=player)
@@ -11,73 +18,64 @@ class VeyraAI(BaseAI):
         self.veyra = veyra
         self.player = player
 
-        self.attack_weight = 0
-        self.block_weight = 0
-        self.counter_weight = 0
-        self.recover_weight = 0
-        self.cast_weight = 0
-
     def choose_move(self):
-         # --- BASELINE (ALWAYS NON-ZERO) ---
-        self.attack_weight = 25
-        self.block_weight = 25
-        self.counter_weight = 25
-        self.recover_weight = 25
-        self.cast_weight = 0
+        weights = {
+            STANCE_ATTACK: 25,
+            STANCE_BLOCK: 25,
+            STANCE_COUNTER: 25,
+            STANCE_RECOVER: 25,
+            STANCE_CAST: 0,
+        }
 
-        # --- SPELL PRIORITY ---
         if self.veyra.mana >= self.veyra.spell.mana_cost:
             if any(effect in self.player.status_effect for effect in spell_effects_on_player):
-                self.attack_weight = 40
-                self.block_weight = 15
-                self.counter_weight = 30
-                self.recover_weight = 15
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 15
+                weights[STANCE_COUNTER] = 30
+                weights[STANCE_RECOVER] = 15
 
             if any(effect in self.veyra.status_effect for effect in spell_effects_on_veyra):
-                self.attack_weight = 40
-                self.block_weight = 15
-                self.counter_weight = 30
-                self.recover_weight = 15
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 15
+                weights[STANCE_COUNTER] = 30
+                weights[STANCE_RECOVER] = 15
 
             elif self.veyra.speed <= self.player.speed:
-                self.attack_weight = 40
-                self.block_weight = 15
-                self.cast_weight = 45
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 15
+                weights[STANCE_CAST] = 45
 
-            elif isinstance(self.veyra.spell, FrostBite) and self.player.frost <= 5:
-                self.attack_weight = 40
-                self.block_weight = 5
-                self.cast_weight = 55
+            elif getattr(self.veyra.spell, "content_key", None) == "frostbite" and self.player.frost <= 5:
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 5
+                weights[STANCE_CAST] = 55
             else:
-                return "cast"
+                return STANCE_CAST
 
-        # --- WEAPON-BASED BEHAVIOR ---
-        elif isinstance(self.veyra.weapon, MoonSlasher):
-            self.attack_weight = 70
-            self.block_weight = 25
-            self.counter_weight = 5
-            self.recover_weight = 10
+        elif getattr(self.veyra.weapon, "content_key", None) == "moonslasher":
+            weights[STANCE_ATTACK] = 70
+            weights[STANCE_BLOCK] = 25
+            weights[STANCE_COUNTER] = 5
+            weights[STANCE_RECOVER] = 10
 
-        elif isinstance(self.veyra.weapon, ElephantHammer):
-            self.attack_weight = 40
-            self.block_weight = 40
-            self.counter_weight = 0
-            self.recover_weight = 20
+        elif getattr(self.veyra.weapon, "content_key", None) == "elephanthammer":
+            weights[STANCE_ATTACK] = 40
+            weights[STANCE_BLOCK] = 40
+            weights[STANCE_COUNTER] = 0
+            weights[STANCE_RECOVER] = 20
 
-        # --- HP / STATE-BASED FALLBACKS ---
         elif self.player.hp < 20:
-            self.attack_weight = 40
-            self.block_weight = 30
-            self.counter_weight = 20
-            self.recover_weight = 10
+            weights[STANCE_ATTACK] = 40
+            weights[STANCE_BLOCK] = 30
+            weights[STANCE_COUNTER] = 20
+            weights[STANCE_RECOVER] = 10
 
         elif self.veyra.hp < 20:
-            self.attack_weight = 40
-            self.block_weight = 35
-            self.counter_weight = 10
-            self.recover_weight = 15
+            weights[STANCE_ATTACK] = 40
+            weights[STANCE_BLOCK] = 35
+            weights[STANCE_COUNTER] = 10
+            weights[STANCE_RECOVER] = 15
 
-        # --- PLAYER PATTERN BIAS (SPRINKLES ONLY) ---
         history = list(self.player.move_history)
 
         if history:
@@ -86,30 +84,30 @@ class VeyraAI(BaseAI):
             counter_rate = history.count("counter") / len(history)
 
             if attack_rate > 0.6:
-                self.counter_weight += 20
-                self.block_weight += 10
-                self.recover_weight -= 10
+                weights[STANCE_COUNTER] += 20
+                weights[STANCE_BLOCK] += 10
+                weights[STANCE_RECOVER] -= 10
 
             if block_rate > 0.5:
-                self.recover_weight += 15
+                weights[STANCE_RECOVER] += 15
 
             if counter_rate > 0.5:
-                self.attack_weight -= 15
-                self.recover_weight += 20
+                weights[STANCE_ATTACK] -= 15
+                weights[STANCE_RECOVER] += 20
 
-        # --- IF ALL FAILS GACHA GO BRRRRR ---
         else:
-            self.attack_weight = 25
-            self.block_weight = 25
-            self.counter_weight = 25
-            self.recover_weight = 25
+            weights = {
+                STANCE_ATTACK: 25,
+                STANCE_BLOCK: 25,
+                STANCE_COUNTER: 25,
+                STANCE_RECOVER: 25,
+                STANCE_CAST: weights[STANCE_CAST],
+            }
 
-
-        # --- FINAL DECISION ---
         return self.weighted_choice([
-            self.attack_weight,
-            self.block_weight,
-            self.counter_weight,
-            self.recover_weight,
-            self.cast_weight
+            weights[STANCE_ATTACK],
+            weights[STANCE_BLOCK],
+            weights[STANCE_COUNTER],
+            weights[STANCE_RECOVER],
+            weights[STANCE_CAST],
         ])

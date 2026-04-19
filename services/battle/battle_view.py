@@ -2,7 +2,9 @@
 import discord
 from discord.ui import View, button, Button
 
-VALID_MOVES = ("attack", "block", "counter", "recover", "cast")
+from services.battle.constants import VALID_STANCES
+
+VALID_MOVES = VALID_STANCES
 
 class BattleRoundView(View):
     """

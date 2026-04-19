@@ -1,6 +1,9 @@
 import random
 from collections import deque
 
+from services.battle.constants import VALID_STANCES
+
+
 class BaseAI:
     """
     Base class for all campaign NPC AIs.
@@ -21,7 +24,7 @@ class BaseAI:
         Order: attack, block, counter, recover, cast
         """
         return random.choices(
-            ["attack", "block", "counter", "recover", "cast"],
+            list(VALID_STANCES),
             weights=weights,
             k=1
         )[0]

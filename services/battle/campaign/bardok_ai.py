@@ -1,10 +1,17 @@
 from services.battle.campaign.npcai import BaseAI
 
-from services.battle.weapon_class import BardoksClaymore, MoonSlasher
-from services.battle.spell_class import Earthquake, FrostBite
+from services.battle.constants import (
+    STANCE_ATTACK,
+    STANCE_BLOCK,
+    STANCE_CAST,
+    STANCE_COUNTER,
+    STANCE_RECOVER,
+)
 
 
 spell_effects_on_player = ["nightfall"]
+
+
 class BardokAI(BaseAI):
     """
     Aggressive, pressure-focused AI.
@@ -17,103 +24,93 @@ class BardokAI(BaseAI):
         self.player = player
         self.stage = stage
         self.bardok.origin = "bardok"
-        self.attack_weight = 0
-        self.block_weight = 0
-        self.counter_weight = 0
-        self.recover_weight = 0
-        self.cast_weight = 0
 
     def choose_move(self):
-        # --- BASELINE (ALWAYS NON-ZERO) ---
-        self.attack_weight = 35
-        self.block_weight = 25
-        self.counter_weight = 15
-        self.recover_weight = 25
-        self.cast_weight = 0
+        weights = {
+            STANCE_ATTACK: 35,
+            STANCE_BLOCK: 25,
+            STANCE_COUNTER: 15,
+            STANCE_RECOVER: 25,
+            STANCE_CAST: 0,
+        }
 
-        # --- SPELL PRIORITY ---
         if self.bardok.mana >= self.bardok.spell.mana_cost:
             if any(effect in self.player.status_effect for effect in spell_effects_on_player):
-                self.attack_weight = 35
-                self.block_weight = 25
-                self.counter_weight = 15
-                self.recover_weight = 25
+                weights = {
+                    STANCE_ATTACK: 35,
+                    STANCE_BLOCK: 25,
+                    STANCE_COUNTER: 15,
+                    STANCE_RECOVER: 25,
+                    STANCE_CAST: 0,
+                }
 
             elif self.bardok.speed <= self.player.speed:
-                self.attack_weight = 40
-                self.block_weight = 15
-                self.cast_weight = 45
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 15
+                weights[STANCE_CAST] = 45
 
-            elif isinstance(self.bardok.spell, FrostBite) and self.player.frost <= 5:
-                self.attack_weight = 40
-                self.block_weight = 10
-                self.recover_weight = 5
-                self.cast_weight = 45
+            elif getattr(self.bardok.spell, "content_key", None) == "frostbite" and self.player.frost <= 5:
+                weights[STANCE_ATTACK] = 40
+                weights[STANCE_BLOCK] = 10
+                weights[STANCE_RECOVER] = 5
+                weights[STANCE_CAST] = 45
 
-            elif isinstance(self.bardok.spell, Earthquake):
-                if self.player.hp <=5:
-                    return "cast"
+            elif getattr(self.bardok.spell, "content_key", None) == "earthquake":
+                if self.player.hp <= 5:
+                    return STANCE_CAST
                 if self.player.defense >= 10:
-                    return "cast"
+                    return STANCE_CAST
 
-                self.attack_weight = 35
-                self.block_weight = 25
-                self.counter_weight = 15
-                self.recover_weight = 25
+                weights = {
+                    STANCE_ATTACK: 35,
+                    STANCE_BLOCK: 25,
+                    STANCE_COUNTER: 15,
+                    STANCE_RECOVER: 25,
+                    STANCE_CAST: 0,
+                }
 
             else:
-                return "cast"
+                return STANCE_CAST
 
         elif self.stage == 13:
-            # Player cannot repeat moves -> anticipate forced rotation
             history = list(self.player.move_history)
 
             if history:
                 last_move = history[-1]
-
-                # If player attacked last round -> likely forced to recover
                 if last_move == "attack":
-                    self.recover_weight += 80
-
-                # If player recovered last round -> likely forced to counter
+                    weights[STANCE_RECOVER] += 80
                 elif last_move == "recover":
-                    self.counter_weight += 50
-
-                # If player blocked or countered last round -> likely forced to attack
+                    weights[STANCE_COUNTER] += 50
                 elif last_move in ("block", "counter"):
-                    self.attack_weight += 30
+                    weights[STANCE_ATTACK] += 30
 
-            # HARD PUNISH: if player same stance twice in a row
             if len(history) >= 2 and history[-1] == "attack" and history[-2] == "attack":
-                self.attack_weight += 60
+                weights[STANCE_ATTACK] += 60
 
-        # --- WEAPON-BASED BEHAVIOR ---
-        elif isinstance(self.bardok.weapon, MoonSlasher):
-            self.attack_weight = 60
-            self.block_weight = 25
-            self.counter_weight = 5
-            self.recover_weight = 20
+        elif getattr(self.bardok.weapon, "content_key", None) == "moonslasher":
+            weights[STANCE_ATTACK] = 60
+            weights[STANCE_BLOCK] = 25
+            weights[STANCE_COUNTER] = 5
+            weights[STANCE_RECOVER] = 20
 
-        elif isinstance(self.bardok.weapon, BardoksClaymore):
-            self.attack_weight = 60
-            self.block_weight = 20
-            self.counter_weight = 10
-            self.recover_weight = 10
+        elif getattr(self.bardok.weapon, "content_key", None) == "bardoksclaymore":
+            weights[STANCE_ATTACK] = 60
+            weights[STANCE_BLOCK] = 20
+            weights[STANCE_COUNTER] = 10
+            weights[STANCE_RECOVER] = 10
 
-        # --- HP / STATE-BASED FALLBACKS ---
         elif self.player.hp < 10:
-            self.attack_weight = 50
-            self.block_weight = 30
-            self.counter_weight = 10
-            self.recover_weight = 10
+            weights[STANCE_ATTACK] = 50
+            weights[STANCE_BLOCK] = 30
+            weights[STANCE_COUNTER] = 10
+            weights[STANCE_RECOVER] = 10
 
         elif self.bardok.hp < 10:
-            self.attack_weight = 40
-            self.block_weight = 15
-            self.counter_weight = 30
-            self.recover_weight = 15
+            weights[STANCE_ATTACK] = 40
+            weights[STANCE_BLOCK] = 15
+            weights[STANCE_COUNTER] = 30
+            weights[STANCE_RECOVER] = 15
 
-        # --- PLAYER PATTERN BIAS (SPRINKLES ONLY) ---
         history = list(self.player.move_history)
 
         if history:
@@ -122,29 +119,30 @@ class BardokAI(BaseAI):
             counter_rate = history.count("counter") / len(history)
 
             if attack_rate > 0.6:
-                self.counter_weight += 20
-                self.block_weight += 10
-                self.recover_weight -= 10
+                weights[STANCE_COUNTER] += 20
+                weights[STANCE_BLOCK] += 10
+                weights[STANCE_RECOVER] -= 10
 
             if block_rate > 0.5:
-                self.recover_weight += 15
+                weights[STANCE_RECOVER] += 15
 
             if counter_rate > 0.5:
-                self.attack_weight -= 15
-                self.recover_weight += 20
+                weights[STANCE_ATTACK] -= 15
+                weights[STANCE_RECOVER] += 20
 
-        # --- IF ALL FAILS GACHA GO BRRRRR ---
         else:
-            self.attack_weight = 25
-            self.block_weight = 25
-            self.counter_weight = 25
-            self.recover_weight = 25
+            weights = {
+                STANCE_ATTACK: 25,
+                STANCE_BLOCK: 25,
+                STANCE_COUNTER: 25,
+                STANCE_RECOVER: 25,
+                STANCE_CAST: weights[STANCE_CAST],
+            }
 
-        # --- FINAL DECISION ---
         return self.weighted_choice([
-            self.attack_weight,
-            self.block_weight,
-            self.counter_weight,
-            self.recover_weight,
-            self.cast_weight
+            weights[STANCE_ATTACK],
+            weights[STANCE_BLOCK],
+            weights[STANCE_COUNTER],
+            weights[STANCE_RECOVER],
+            weights[STANCE_CAST],
         ])

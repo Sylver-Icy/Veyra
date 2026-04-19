@@ -6,6 +6,7 @@ class Weapon():
         self.hp_bonus = hp_bonus
         self.speed_bonus = speed_bonus
         self.mana_bonus = mana_bonus
+        self.content_key = self.__class__.__name__.lower()
 
     # hooks ↓
     def on_attack_success(self, attacker, defender, damage): pass

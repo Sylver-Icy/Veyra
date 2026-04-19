@@ -2,6 +2,8 @@ import logging
 import random
 from collections import deque
 
+from services.battle.constants import VALID_STANCES
+from services.battle.effects import process_effects
 from services.battle.spell_class import Spell
 from services.battle.weapon_class import Weapon
 
@@ -223,58 +225,7 @@ class Battle:
 
 
     def proc_effect(self):
-        expired = []
-
-        for effect, data in list(self.status_effect.items()):
-            duration = data["duration"]
-
-            if effect == "largeheal":
-                if not self.can_heal:
-                    self.log.append("Healing failed because of Dark blade effect")
-                else:
-                    self.hp += 4
-                    self.log.append(f"{self.name} healed 4 hp")
-
-            elif effect == "nightfall":
-                # Stat-specific nightfall debuffs
-                drops = {
-                    "attack": 1,
-                    "speed": 1,
-                    "mana": 2,
-                    "hp": 3,
-                    "defense": 5,
-                }
-
-                valid = [s for s in drops.keys() if getattr(self, s) > 0]
-                if valid:
-                    chosen = random.choice(valid)
-                    drop = drops[chosen]
-                    new_val = max(0, getattr(self, chosen) - drop)
-                    setattr(self, chosen, new_val)
-                    self.log.append(f"{self.name}'s {chosen} drops by {drop}")
-
-            self.status_effect[effect]["duration"] -= 1
-
-            if self.status_effect[effect]["duration"] <= 0:
-                expired.append(effect)
-
-        for e in expired:
-            del self.status_effect[e]
-            self.log.append(f"{self.name} is no longer affected by {e}")
-
-        #frost logic
-        if self.frost >= 10:
-            dmg = int(self.hp * 0.5)  # 50% of current HP
-            self.hp -= dmg
-            self.frost = 0
-            self.log.append(f"Frostbite triggers on {self.name}, dealing {dmg} damage!")
-
-        elif self.frost > 0:
-            self.frost -= 1
-
-        logs = self.log.copy()
-        self.log.clear()
-        return logs
+        return process_effects(self)
 
 
     def set_stance(self, stance: str):
@@ -287,7 +238,7 @@ class Battle:
         Returns:
             None
         """
-        if stance not in ('attack', 'block', 'counter', 'recover', 'cast'):
+        if stance not in VALID_STANCES:
             logger.error("Invalid stance")
             return
 
