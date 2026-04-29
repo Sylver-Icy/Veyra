@@ -107,7 +107,7 @@ def stage_reward_details(user_id: int):
     if key == "Gold":
         return f"You won {value}× {GOLD_EMOJI}!"
 
-    if key == "Unlock 1":
+    if key == "Unlock":
         return (
             "You have proven yourself a warrior beyond doubt.\n"
             "As acknowledgment of your strength, I grant you my signature grimoire "
