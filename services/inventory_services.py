@@ -11,6 +11,7 @@ from models.inventory_model import Inventory, Items
 from models.users_model import User, Upgrades
 
 from domain.inventory.rules import available_inventory_slots_for_user, allowed_stack_size
+from domain.battle.gear_shards import is_account_bound_shard_item
 
 from services.users_services import is_user
 
@@ -182,6 +183,9 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount: int):
 
         if not is_user(receiver_id, session):
             raise UserNotFoundError(receiver_id)
+
+        if is_account_bound_shard_item(item_id):
+            return "account_bound"
 
         try:
             #Lock sender inventory row

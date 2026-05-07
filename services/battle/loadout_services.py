@@ -8,16 +8,15 @@ from database.sessionmaker import Session
 
 from models.users_model import BattleLoadout
 
-from services.battle.campaign.campaign_services import get_campaign_stage
+from domain.battle.gear_shards import STARTER_WEAPON_KEY
 
 from domain.battle.rules import (
     get_allowed_weapons,
     get_allowed_spells,
-    get_weapon_unlock_stage,
-    get_spell_unlock_stage,
     get_weapon_label,
     get_spell_label,
 )
+from services.battle.gear_shard_services import owns_spell, owns_weapon
 
 def _normalize_input(value: str) -> str:
     """
@@ -55,23 +54,17 @@ def update_loadout(user_id: int, weapon: str = None, spell: str = None):
             "message": f"Invalid spell: {spell}"
         }
 
-    stage = get_campaign_stage(user_id)
+    if weapon_key and not owns_weapon(user_id, weapon_key):
+        return {
+            "success": False,
+            "message": f"You need 1x {get_weapon_label(weapon_key)} Shard to equip this weapon."
+        }
 
-    if weapon_key:
-        required_stage = get_weapon_unlock_stage(weapon_key)
-        if stage < required_stage:
-            return {
-                "success": False,
-                "message": f"{get_weapon_label(weapon_key)} unlocks at campaign stage {required_stage}"
-            }
-
-    if spell_key:
-        required_stage = get_spell_unlock_stage(spell_key)
-        if stage < required_stage:
-            return {
-                "success": False,
-                "message": f"{get_spell_label(spell_key)} unlocks at campaign stage {required_stage}"
-            }
+    if spell_key and not owns_spell(user_id, spell_key):
+        return {
+            "success": False,
+            "message": f"You need 1x {get_spell_label(spell_key)} Shard to equip this spell."
+        }
 
     with Session() as session:
         warrior = session.get(BattleLoadout, user_id)
@@ -84,18 +77,19 @@ def update_loadout(user_id: int, weapon: str = None, spell: str = None):
 
             session.commit()
 
+            weapon, equipped_spell = fetch_loadout(user_id)
             return {
                 "success": True,
-                "weapon": warrior.weapon,
-                "spell": warrior.spell,
+                "weapon": weapon,
+                "spell": equipped_spell,
                 "message": "Loadout updated"
             }
 
-        # Create new loadout (fallback to defaults if missing)
+        # Create new loadout. Training Blade is the only free starter gear.
         new_entry = BattleLoadout(
             user_id=user_id,
-            weapon=weapon_key or "trainingblade",
-            spell=spell_key or "nightfall"
+            weapon=weapon_key or STARTER_WEAPON_KEY,
+            spell=spell_key
         )
 
         session.add(new_entry)
@@ -116,7 +110,18 @@ def fetch_loadout(user_id: int):
     with Session() as session:
         warrior = session.get(BattleLoadout, user_id)
         if warrior:
-            return (warrior.weapon, warrior.spell)
+            weapon = warrior.weapon
+            if (
+                not weapon
+                or weapon not in get_allowed_weapons()
+                or (weapon != STARTER_WEAPON_KEY and not owns_weapon(user_id, weapon, session))
+            ):
+                weapon = STARTER_WEAPON_KEY
 
-        #default loadout
-        return "trainingblade", "nightfall"
+            spell = warrior.spell
+            if not spell or spell not in get_allowed_spells() or not owns_spell(user_id, spell, session):
+                spell = None
+
+            return weapon, spell
+
+        return STARTER_WEAPON_KEY, None

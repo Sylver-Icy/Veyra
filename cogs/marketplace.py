@@ -88,6 +88,8 @@ class Marketplace(commands.Cog):
             await ctx.respond(
                 "You don't own enough items to create that listing. Maybe try selling fewer items?"
             )
+        elif listing_id == -2:
+            await ctx.respond("That shard is account-bound and cannot be listed on the marketplace.")
         else:
             await ctx.respond(
                 "You already have 4 active listings\nDelete old ones first or stop selling items overpriced?"

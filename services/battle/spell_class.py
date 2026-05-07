@@ -17,6 +17,15 @@ class Spell:
         return True, f"{caster.name} casts {self.name}!"
 
 
+class NoSpell(Spell):
+    def __init__(self):
+        super().__init__("No Spell", 0)
+        self.is_no_spell = True
+
+    def cast(self, caster, target):
+        return False, f"{caster.name} has no spell equipped."
+
+
 class Fireball(Spell):
     def __init__(self):
         super().__init__("Fireball", 15)

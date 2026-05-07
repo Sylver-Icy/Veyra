@@ -18,6 +18,7 @@ from services.notif_services import send_notification
 from services.alchemy_services import get_active_user_effect, expire_user_effect
 from services.quest_services import update_quest_progress
 
+from domain.battle.gear_shards import shard_item_ids
 
 from utils.custom_errors import VeyraError
 
@@ -366,12 +367,16 @@ class JobsClass:
                 session.execute(
                     select(Items)
                     .where(Items.item_rarity == rarity)
+                    .where(Items.item_id.notin_(shard_item_ids()))
                     .order_by(func.random())
                     .limit(1)
                 )
                 .scalars()
                 .first()
             )
+
+        if item is None:
+            return "You explored but found nothing useful."
 
         try:
             give_item(self.user_id, item.item_id, 1)

@@ -18,6 +18,7 @@ from services.inventory_services import give_item, take_item, fetch_inventory
 from services.economy_services import remove_gold, add_gold, check_wallet, add_chip, remove_chips
 
 from domain.casino.rules import CONVERSION_RATES, CHIP_OFFERS
+from domain.battle.gear_shards import shard_item_ids
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ def db_get_shop_items(shop_type: str):
             session.query(ShopDaily)
             .where(ShopDaily.shop_type == shop_type)
             .where(ShopDaily.date == today())
+            .where(ShopDaily.item_id.notin_(shard_item_ids()))
             .all()
         )
 
@@ -72,6 +74,7 @@ def update_daily_shop():
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
             .where(Items.item_name.notin_(EXCLUDED_ITEMS))
+            .where(Items.item_id.notin_(shard_item_ids()))
             .order_by(func.random())
             .limit(6)
             .all()
@@ -117,6 +120,7 @@ def update_daily_buyback_shop():
             session.query(Items)
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
             .where(Items.item_id.notin_(sell_ids_subq))
+            .where(Items.item_id.notin_(shard_item_ids()))
             .order_by(func.random())
             .limit(5)
             .all()
@@ -365,4 +369,3 @@ def cashout_chips(user_id: int, pack_id: str):
         f"✅ Cashout Succesfull for **{name}**\n"
         f"Added **{total_gold}** {GOLD_EMOJI} (`{gold}` + `{bonus}` bonus)"
     )
-

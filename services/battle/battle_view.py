@@ -5,6 +5,7 @@ from discord.ui import View, button, Button
 from services.battle.constants import VALID_STANCES
 
 VALID_MOVES = VALID_STANCES
+NO_SPELL_EQUIPPED_MESSAGE = "You don't have a spell equipped. Pick another move before time runs out."
 
 class BattleRoundView(View):
     """
@@ -13,11 +14,18 @@ class BattleRoundView(View):
     - Each user can lock exactly one move.
     - View stops automatically when both locked.
     """
-    def __init__(self, p1_id: int, p2_id: int, timeout: float = 50.0):
+    def __init__(
+        self,
+        p1_id: int,
+        p2_id: int,
+        timeout: float = 50.0,
+        spellless_user_ids: set[int] | None = None,
+    ):
         super().__init__(timeout=timeout)
         self.p1_id = p1_id
         self.p2_id = p2_id
         self.moves: dict[int, str] = {}  # {user_id: move}
+        self.spellless_user_ids = spellless_user_ids or set()
 
     async def _handle_move(self, interaction: discord.Interaction, move: str):
         uid = interaction.user.id
@@ -27,6 +35,10 @@ class BattleRoundView(View):
 
         if uid in self.moves:
             await interaction.response.send_message("You already locked your move.", ephemeral=True)
+            return
+
+        if move == "cast" and uid in self.spellless_user_ids:
+            await interaction.response.send_message(NO_SPELL_EQUIPPED_MESSAGE, ephemeral=True)
             return
 
         self.moves[uid] = move
@@ -65,12 +77,20 @@ class PvEBattleRoundView(View):
     PvE version of BattleRoundView.
     Collects ONE move from the player, then auto-injects Veyra's move via AI.
     """
-    def __init__(self, player_id: int, veyra_id: int, ai_controller, timeout: float = 50.0):
+    def __init__(
+        self,
+        player_id: int,
+        veyra_id: int,
+        ai_controller,
+        timeout: float = 50.0,
+        spellless_user_ids: set[int] | None = None,
+    ):
         super().__init__(timeout=timeout)
         self.player_id = player_id
         self.veyra_id = veyra_id
         self.ai_controller = ai_controller
         self.moves: dict[int, str] = {}
+        self.spellless_user_ids = spellless_user_ids or set()
 
     async def _handle_player_move(self, interaction: discord.Interaction, move: str):
         uid = interaction.user.id
@@ -80,6 +100,10 @@ class PvEBattleRoundView(View):
 
         if uid in self.moves:
             await interaction.response.send_message("You already locked your move.", ephemeral=True)
+            return
+
+        if move == "cast" and uid in self.spellless_user_ids:
+            await interaction.response.send_message(NO_SPELL_EQUIPPED_MESSAGE, ephemeral=True)
             return
 
         self.moves[self.player_id] = move

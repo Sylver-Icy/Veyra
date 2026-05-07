@@ -14,6 +14,7 @@ from services.battle.content_registry import CONTENT_REGISTRY
 from services.battle.session_runner import BattleSession
 from services.battle.settlement_services import SettlementService
 from services.battle.loadout_services import fetch_loadout
+from services.battle.spell_class import NoSpell
 from utils.embeds.battleembed import build_final_embed, build_result_embed, build_round_embed
 
 TIMEOUT_SECONDS = 50
@@ -25,7 +26,7 @@ def _build_player_fighter(user_id: int, name: str) -> Battle:
     weapon_key, spell_key = fetch_loadout(user_id)
     return Battle(
         name,
-        CONTENT_REGISTRY.create_spell(spell_key),
+        CONTENT_REGISTRY.create_spell(spell_key) if spell_key else NoSpell(),
         CONTENT_REGISTRY.create_weapon(weapon_key),
     )
 
@@ -53,6 +54,10 @@ def _arena_key_for_stage(stage: int) -> str:
     if stage == 15:
         return "frozen"
     return "null"
+
+
+def _has_no_spell(fighter: Battle) -> bool:
+    return bool(getattr(fighter.spell, "is_no_spell", False))
 
 
 async def _run_battle_session(
@@ -162,6 +167,14 @@ async def start_battle_simulation(ctx, challenger: discord.User, target: discord
                 p1_id=challenger.id,
                 p2_id=target.id,
                 timeout=TIMEOUT_SECONDS,
+                spellless_user_ids={
+                    user_id
+                    for user_id, fighter in (
+                        (challenger.id, session.p1),
+                        (target.id, session.p2),
+                    )
+                    if _has_no_spell(fighter)
+                },
             )
 
         def extract_moves(view):
@@ -235,6 +248,7 @@ async def start_campaign_battle(ctx, player: discord.User, result_display_time: 
                 veyra_id=VEYRA_ID,
                 ai_controller=ai,
                 timeout=TIMEOUT_SECONDS,
+                spellless_user_ids={player.id} if _has_no_spell(player_fighter) else set(),
             )
 
         def extract_moves(view):

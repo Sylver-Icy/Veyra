@@ -5,6 +5,7 @@ from database.sessionmaker import Session
 from services.inventory_services import give_item
 from services.economy_services import add_gold
 from services.quest_services import update_quest_progress
+from domain.battle.gear_shards import non_droppable_shard_item_ids
 from utils.itemname_to_id import get_item_id_safe
 from utils.embeds.lootboxembed import lootbox_embed_and_view
 
@@ -69,6 +70,8 @@ def lootbox_reward(user_id: int,lootbox: str):
         # Attempt up to 10 times to find a unique item of chosen rarity
         for _ in range(10):
             reward_item = pick_random_item(rarity)
+            if reward_item is None:
+                continue
             if reward_item.item_name not in picked_items:
                 picked_items.add(reward_item.item_name)
                 break
@@ -99,12 +102,18 @@ def pick_random_item(rarity: str):
         rarity (str): Rarity of the item to pick (e.g., "Common", "Rare").
 
     Returns:
-        str: The name of the randomly selected item, or "Unknown item" if none found.
+        Items | None: The randomly selected item row, or None if none found.
     """
     rarity = rarity.capitalize()
     with Session() as session:
-        item = session.query(Items).filter_by(item_rarity=rarity).order_by(func.random()).first()  # pylint: disable=not-callable
-        return item if item else "Unknown item"
+        blocked_shards = non_droppable_shard_item_ids()
+        return (
+            session.query(Items)
+            .filter_by(item_rarity=rarity)
+            .where(Items.item_id.notin_(blocked_shards))
+            .order_by(func.random())
+            .first()
+        )  # pylint: disable=not-callable
 
 
 def decide_gold(lootbox: str):

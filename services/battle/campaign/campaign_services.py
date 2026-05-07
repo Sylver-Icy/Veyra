@@ -18,6 +18,7 @@ from services.economy_services import add_gold
 from services.inventory_services import give_item
 
 from services.battle.campaign.campaign_config import CAMPAIGN_LEVELS,REWARD_CHART
+from domain.battle.gear_shards import campaign_gear_reward_for_stage
 
 from utils.emotes import GOLD_EMOJI
 
@@ -67,7 +68,9 @@ def advance_campaign_stage(user_id: int) -> None:
 
 def allow_campaign_weapons(user_id: int) -> bool:
     """
-    Check whether the user has unlocked campaign-exclusive weapons.
+    Legacy helper for campaign-era unlock checks.
+
+    Player equip permissions now come from inventory shard ownership.
 
     Returns:
         bool: True if the user has completed the campaign (stage >= 10).
@@ -83,48 +86,55 @@ def give_stage_rewards(user_id: int) -> None:
     stage = get_campaign_stage(user_id)
     reward = REWARD_CHART.get(stage)
 
-    # Each reward entry contains exactly one key-value pair
-    key, value = next(iter(reward.items()))
+    if reward:
+        # Each reward entry contains exactly one key-value pair
+        key, value = next(iter(reward.items()))
 
-    if key == "Gold":
-        add_gold(user_id, value)
-        return
+        if key == "Gold":
+            add_gold(user_id, value)
+        elif key != "Unlock":
+            give_item(user_id, key, value, True)
 
-    # Stage 10 unlock:
-    # Signature weapon and spell unlock logic is handled by the battle/campaign system
-    if key == "Unlock":
-        return #user gets to lvl 10 that auto unlocks
-
-    give_item(user_id, key, value, True)
+    gear_reward = campaign_gear_reward_for_stage(stage)
+    if gear_reward:
+        give_item(user_id, gear_reward.item_id, 1, True)
 
 def stage_reward_details(user_id: int):
     stage = get_campaign_stage(user_id)
     reward = REWARD_CHART.get(stage)
 
-    # Each reward entry contains exactly one key-value pair
-    key, value = next(iter(reward.items()))
+    message = None
 
-    if key == "Gold":
-        return f"You won {value}× {GOLD_EMOJI}!"
+    if reward:
+        # Each reward entry contains exactly one key-value pair
+        key, value = next(iter(reward.items()))
 
-    if key == "Unlock":
-        return (
-            "You have proven yourself a warrior beyond doubt.\n"
-            "As acknowledgment of your strength, I grant you my signature grimoire "
-            "and the spell bound within it."
-        )
-    if key == 199:
-        return (
-            "Bardok stands frozen in silence. The fire in his eyes fades.\n"
-            "He turns away in shame, his pride shattered for ever doubting your strength.\n\n"
-            "His massive claymore falls to the ground with a heavy clang.\n"
-            "Beside it rests a swirling vial — a Potion of Hatred I.\n\n"
-            "You claim the relics of a defeated legend."
-        )
+        if key == "Gold":
+            message = f"You won {value}× {GOLD_EMOJI}!"
+        elif key == "Unlock":
+            message = (
+                "You have proven yourself a warrior beyond doubt.\n"
+                "As acknowledgment of your strength, I grant you my signature grimoire."
+            )
+        elif key == 199:
+            message = (
+                "Bardok stands frozen in silence. The fire in his eyes fades.\n"
+                "He turns away in shame, his pride shattered for ever doubting your strength.\n\n"
+                "His massive claymore falls to the ground with a heavy clang.\n"
+                "Beside it rests a swirling vial — a Potion of Hatred I.\n\n"
+                "You claim the relics of a defeated legend."
+            )
+        else:
+            with Session() as session:
+                item = session.get(Items, key)
+            message = f"You received {value}× {item.item_name}!"
 
-    with Session() as session:
-        item = session.get(Items, key)
-    return f"You received {value}× {item.item_name}!"
+    gear_reward = campaign_gear_reward_for_stage(stage)
+    if gear_reward:
+        gear_message = f"You also received 1x {gear_reward.item_name}."
+        return f"{message}\n\n{gear_message}" if message else gear_message
+
+    return message or "No reward for this stage."
 
 
 def fetch_veyra_loadout(user_id: int) -> dict:

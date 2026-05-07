@@ -23,8 +23,11 @@ def get_weapon_label(weapon_key: str) -> str:
     return weapon.label if weapon else weapon_key
 
 
-def get_spell_label(spell_key: str) -> str:
+def get_spell_label(spell_key: str | None) -> str:
     """Return display label for spell."""
+    if spell_key is None:
+        return "No Spell Equipped"
+
     spell = CONTENT_REGISTRY.get_spell(spell_key)
     return spell.label if spell else spell_key
 

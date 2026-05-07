@@ -117,7 +117,7 @@ REWARD_CHART = {
     7: {180: 5},
     8:{178: 2},
     9: {179: 1},
-    10: {"Unlock": 0}, #Unlocks Veyra's sig weapon and spell
+    10: {"Unlock": 0}, #Unlocks Veyra's campaign weapon shard
     11: {193: 1}, #Potion of energy regen II
     12: {157: 5}, #Flasks
     13: {180: 3}, #Hint Key

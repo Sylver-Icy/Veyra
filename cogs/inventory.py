@@ -28,6 +28,8 @@ from services.response_services import create_response
 from services.friendship_services import add_friendship
 from services.item_services import lookup_item_sources
 
+from domain.battle.gear_shards import is_account_bound_shard_item
+
 from utils.itemname_to_id import get_item_id_safe
 from utils.custom_errors import NotEnoughItemError
 
@@ -82,6 +84,10 @@ class Inventory(commands.Cog):
 
         # Handle transfer if the target is the bot itself
         if target.id == self.bot.user.id:
+            if is_account_bound_shard_item(item_id):
+                await ctx.respond("That shard is account-bound and cannot be transferred.")
+                return
+
             try:
                 take_item(ctx.author.id, item_id, amount)
 
@@ -111,6 +117,9 @@ class Inventory(commands.Cog):
                 result = transfer_item_service(ctx.author.id, target.id, item_id, amount)
                 if result == "full_inventory":
                     await ctx.respond("Reciever has no space to recieve this")
+                    return
+                if result == "account_bound":
+                    await ctx.respond("That shard is account-bound and cannot be transferred.")
                     return
 
                 response = create_response(

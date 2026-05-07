@@ -15,6 +15,7 @@ from models.inventory_model import Inventory
 from models.users_model import User, UserStats, Wallet, Upgrades
 
 from domain.friendship.rules import friendship_title_and_progress
+from services.battle.gear_shard_services import grant_starter_weapon_shard
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,7 @@ def add_user(user_id: int, user_name: str):
         new_user.upgrades.append(Upgrades(upgrade_name="inventory", level=1))
         session.add(new_user)
         try:
+            grant_starter_weapon_shard(user_id, session)
             session.commit()
             return True
         except Exception as e:

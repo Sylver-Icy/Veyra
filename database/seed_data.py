@@ -5,6 +5,9 @@ to content referenced by code: starter rewards, lootboxes, smelting resources,
 potion recipes/outputs, campaign/quest rewards, and registered usable items.
 """
 
+from domain.battle.gear_shards import shard_item_rows
+
+
 ITEMS = [
     {
         "item_id": 131,
@@ -417,6 +420,8 @@ ITEMS = [
         "item_usable": True,
     },
 ]
+
+ITEMS.extend(shard_item_rows())
 
 UPGRADE_DEFINITIONS = [
     {
