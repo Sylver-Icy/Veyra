@@ -105,6 +105,15 @@ def test_tutorial_final_embed_points_to_main_next_steps():
     assert "/details battle" in values
 
 
+def test_tutorial_timeout_message_mentions_user_and_tells_them_to_restart():
+    player = type("Player", (), {"id": 123, "mention": "<@123>"})()
+
+    assert tutorial_battle_services.build_tutorial_timeout_message(player) == (
+        "<@123> ig you r too scared to continue fight. "
+        "Say `!helloVeyra` again when u have courage."
+    )
+
+
 def test_tutorial_guard_allows_help_details_profile_and_hello(monkeypatch):
     async def fake_state(_user_id):
         return tutorial_services.TutorialState.IN_TUTORIAL_BATTLE

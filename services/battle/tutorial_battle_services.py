@@ -20,7 +20,6 @@ TIMEOUT_SECONDS = 50
 TUTORIAL_LOCKED_MODE = "tutorial"
 TUTORIAL_RESTART_MESSAGE = "Restarting your starter duel."
 TUTORIAL_BUSY_MESSAGE = "Finish your current battle first."
-TUTORIAL_TIMEOUT_MESSAGE = "Focus. Press **{move}** to continue."
 TUTORIAL_FINAL_MESSAGE = "Well, you're a good fighter ig. We can be frnds. Lemme show you what else you can do in Natlade."
 
 ACTIVE_TUTORIAL_TOKENS: dict[int, object] = {}
@@ -31,6 +30,14 @@ def _active_battles():
     from services.battle.battle_simulation import ACTIVE_BATTLES
 
     return ACTIVE_BATTLES
+
+
+def _player_mention(player) -> str:
+    return getattr(player, "mention", f"<@{player.id}>")
+
+
+def build_tutorial_timeout_message(player) -> str:
+    return f"{_player_mention(player)} ig you r too scared to continue fight. Say `!helloVeyra` again when u have courage."
 
 
 @dataclass(frozen=True)
@@ -223,8 +230,12 @@ async def start_tutorial_battle(ctx, player, round_pause: float = 1.0):
                 if view.moves.get(player.id) != step.required_move:
                     with suppress(Exception):
                         await round_message.edit(view=None)
-                    await ctx.channel.send(TUTORIAL_TIMEOUT_MESSAGE.format(move=step.required_label))
-                    continue
+                    await advance(player.id, TutorialState.NOT_STARTED)
+                    ACTIVE_TUTORIAL_TOKENS.pop(player.id, None)
+                    ACTIVE_TUTORIAL_VIEWS.pop(player.id, None)
+                    active_battles.pop(player.id, None)
+                    await ctx.channel.send(build_tutorial_timeout_message(player))
+                    return
 
                 with suppress(Exception):
                     await round_message.edit(view=view)
