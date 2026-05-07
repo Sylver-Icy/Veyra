@@ -3,7 +3,7 @@
 Profile + onboarding commands.
 
 This cog covers:
-- `!helloVeyra`: classic prefix onboarding flow (register user)
+- `!helloVeyra`: register user and start PvP onboarding
 - `/help`: show help embed UI
 - `/commandhelp`: show info about a specific command
 - `/details`: show JSON-backed docs pages (topic based)
@@ -14,7 +14,6 @@ This file intentionally stays as a command/UI layer. Business logic lives in
 `services/*`.
 """
 
-import asyncio
 import discord
 
 from discord.ext import commands
@@ -25,6 +24,8 @@ from services.jobs_services import JobsClass
 from services.response_services import create_response
 from services.users_services import add_user, get_user_profile_new, is_user
 from services.refferal_services import get_referral_card_data
+from services.battle.tutorial_battle_services import start_tutorial_battle
+from services.tutorial_services import TutorialState, get_tutorial_state
 
 from domain.guild.commands_policies import non_spam_command
 
@@ -55,27 +56,20 @@ class Profile(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-        # Tracks users currently mid-registration to avoid duplicate flows.
-        self.users_pending: set[int] = set()
-
     @commands.command()
-    @commands.cooldown(1, 15, commands.BucketType.user)
     @non_spam_command()
     async def helloVeyra(self, ctx: commands.Context):
-        """Register a user in the database.
-
-        Flow:
-        - If already registered: respond with friendship status.
-        - If new: ask Yes/No, wait up to 30 seconds.
-            - Yes: register, give starter items + energy.
-            - No: (well...) insult.
-        """
+        """Register a user and start the PvP onboarding duel."""
 
         user_id = ctx.author.id
         user_name = ctx.author.name
 
-        # Already registered user
         if is_user(user_id):
+            state = await get_tutorial_state(user_id)
+            if state != TutorialState.COMPLETED:
+                await start_tutorial_battle(ctx, ctx.author)
+                return
+
             try:
                 title, progress = check_friendship(user_id)
             except Exception:
@@ -103,49 +97,19 @@ class Profile(commands.Cog):
             await ctx.send(response)
             return
 
-        # New user registration
-        if user_id in self.users_pending:
-            await ctx.send(
-                "You haven't replied to me my previous message. YOU WANNA BE FRIEND WITH ME OR NOT."
-            )
+        if not add_user(user_id, user_name):
+            await ctx.send("Something broke while making your profile. Try `!helloVeyra` again.")
             return
 
-        self.users_pending.add(user_id)
-        await ctx.send("Hy there wanna be frnds with me? (Yes/No)")
+        give_item(user_id, 183, 2, True)
+        user = JobsClass(user_id)
+        user.gain_energy(150)
 
-        # Checks if the message is from the same user, same channel, and in allowed form.
-        def check(m):
-            return (
-                m.author == ctx.author
-                and m.channel == ctx.channel
-                and m.content.lower() in ["yes", "no"]
-            )
-
-        try:
-            # 30 sec wait time for user to respond
-            msg = await self.bot.wait_for("message", timeout=30, check=check)
-
-            if msg.content.lower() == "yes":
-                await ctx.send(
-                    "Yay! Here keep these bags of gold as a gift for our new friendship ^^\n"
-                    " OH!! and if you wanna know more about survival in Natlade just run `!ping` and I'll guide you"
-                )
-                add_user(user_id, user_name)
-                give_item(user_id, 183, 2, True)
-                self.users_pending.remove(user_id)
-
-                # Starter energy reward
-                user = JobsClass(user_id)
-                user.gain_energy(150)  # give 150 energy on registration
-
-            else:
-                self.users_pending.remove(user_id)
-                await ctx.send("Go fuck yourself 😇")
-
-        except asyncio.TimeoutError:
-            # If user didn't reply in 30 sec let them know command ended
-            self.users_pending.remove(user_id)
-            await ctx.send(f"Too slow ig you don't wanna be frnds {user_name}")
+        await ctx.send(
+            "Oh, you wanna say hello?\n"
+            "Let's see if you can fight first."
+        )
+        await start_tutorial_battle(ctx, ctx.author)
 
     # -----------------------------
     # Help / Docs

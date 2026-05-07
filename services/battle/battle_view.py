@@ -140,3 +140,79 @@ class PvEBattleRoundView(View):
 
     async def on_timeout(self):
         self.stop()
+
+
+class TutorialBattleRoundView(View):
+    """
+    Guided one-player lesson view.
+
+    The player must press the scripted move for the current lesson. Other moves
+    return an ephemeral nudge and do not lock the round.
+    """
+    def __init__(
+        self,
+        player_id: int,
+        veyra_id: int,
+        required_move: str,
+        veyra_move: str,
+        required_label: str,
+        timeout: float = 50.0,
+    ):
+        super().__init__(timeout=timeout)
+        self.player_id = player_id
+        self.veyra_id = veyra_id
+        self.required_move = required_move
+        self.veyra_move = veyra_move
+        self.required_label = required_label
+        self.moves: dict[int, str] = {}
+
+    def _disable_buttons(self):
+        for child in self.children:
+            if hasattr(child, "disabled"):
+                child.disabled = True
+
+    async def _handle_player_move(self, interaction: discord.Interaction, move: str):
+        uid = interaction.user.id
+        if uid != self.player_id:
+            await interaction.response.send_message("Not your lesson.", ephemeral=True)
+            return
+
+        if uid in self.moves:
+            await interaction.response.send_message("You already locked your move.", ephemeral=True)
+            return
+
+        if move != self.required_move:
+            await interaction.response.send_message(
+                f"Not yet. You're learning rn; experiment later. Press **{self.required_label}**.",
+                ephemeral=True,
+            )
+            return
+
+        self.moves[self.player_id] = move
+        self.moves[self.veyra_id] = self.veyra_move
+        self._disable_buttons()
+        await interaction.response.send_message(f"Locked **{self.required_label}** ✅", ephemeral=True)
+        self.stop()
+
+    @button(label="⚔️ Attack", style=discord.ButtonStyle.primary)
+    async def btn_attack(self, button: Button, interaction: discord.Interaction):
+        await self._handle_player_move(interaction, "attack")
+
+    @button(label="🛡️ Block", style=discord.ButtonStyle.secondary)
+    async def btn_block(self, button: Button, interaction: discord.Interaction):
+        await self._handle_player_move(interaction, "block")
+
+    @button(label="🔁 Counter", style=discord.ButtonStyle.secondary)
+    async def btn_counter(self, button: Button, interaction: discord.Interaction):
+        await self._handle_player_move(interaction, "counter")
+
+    @button(label="💧 Recover", style=discord.ButtonStyle.success)
+    async def btn_recover(self, button: Button, interaction: discord.Interaction):
+        await self._handle_player_move(interaction, "recover")
+
+    @button(label="🔮 Cast", style=discord.ButtonStyle.success)
+    async def btn_cast(self, button: Button, interaction: discord.Interaction):
+        await self._handle_player_move(interaction, "cast")
+
+    async def on_timeout(self):
+        self.stop()
