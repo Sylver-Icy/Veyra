@@ -28,9 +28,12 @@ def ensure_schema() -> None:
     from models.users_model import Base
 
     Base.metadata.create_all(bind=engine)
+
+    from database.seed import seed_core_data
+
+    seed_core_data(engine)
     _schema_initialized = True
 
 
 ensure_schema()
-
 

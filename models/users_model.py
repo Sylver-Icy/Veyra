@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func, CheckConstraint, Index
+from sqlalchemy import Column, ForeignKey, BigInteger, String, Integer, SmallInteger, TIMESTAMP, Boolean, PrimaryKeyConstraint, Text, func, CheckConstraint, Index, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -170,10 +170,14 @@ class Upgrades(Base):
     __tablename__ = 'user_upgrades'
     __table_args__ = (
         PrimaryKeyConstraint('user_id', 'upgrade_name'),
+        ForeignKeyConstraint(
+            ['upgrade_name', 'level'],
+            ['upgrade_definitions.upgrade_name', 'upgrade_definitions.level'],
+        ),
     )
 
     user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'))
-    upgrade_name = Column(String(50), ForeignKey('upgrade_definitions.upgrade_name'), nullable=False)
+    upgrade_name = Column(String(50), nullable=False)
     level = Column(Integer, default=0)
 
     user = relationship("User", back_populates="upgrades")
