@@ -27,7 +27,7 @@ packaging==25.0
 pluggy==1.6.0
 propcache==0.3.1
 psycopg2-binary==2.9.10
-py-cord==2.6.1
+py-cord==2.7.1
 pydantic==2.12.4
 pydantic_core==2.41.5
 Pygments==2.19.2
