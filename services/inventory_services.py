@@ -4,6 +4,7 @@ import math
 
 import discord
 
+from sqlalchemy import func
 from typing import Tuple, Optional, List
 from database.sessionmaker import Session
 
@@ -237,10 +238,10 @@ def transfer_item(sender_id: int, receiver_id: int, item_id: int, amount: int):
             session.rollback()
             raise
 
-def fetch_inventory(user_id: int, session=None, rarity: Optional[str] = None) -> List[dict]:
+def fetch_inventory(user_id: int, session=None, category: Optional[str] = None) -> List[dict]:
     """Returns a list of items in user's inventory (excluding zero quantity).
     If session is provided, it will be reused. Otherwise, a new session is created.
-    If rarity is provided, only items of that rarity are returned.
+    If category is provided, it can match either item type or rarity.
     """
 
     owns_session = False
@@ -259,8 +260,12 @@ def fetch_inventory(user_id: int, session=None, rarity: Optional[str] = None) ->
             )
         )
 
-        if rarity:
-            query = query.filter(Items.item_rarity == rarity)
+        if category:
+            normalized = category.strip().lower()
+            query = query.filter(
+                (Items.item_type == normalized) |
+                (func.lower(Items.item_rarity) == normalized)
+            )
 
         inventory = query.order_by(Items.item_name.asc()).all()
 
@@ -270,6 +275,7 @@ def fetch_inventory(user_id: int, session=None, rarity: Optional[str] = None) ->
                 "item_id": entry.item_id,
                 "item_name": item.item_name,
                 "item_quantity": entry.item_quantity,
+                "item_type": item.item_type,
                 "item_rarity": item.item_rarity,
                 "item_description": item.item_description,
                 "item_icon": item.item_icon
@@ -284,7 +290,7 @@ def fetch_inventory(user_id: int, session=None, rarity: Optional[str] = None) ->
 def get_inventory(user_id: int, user_name: str, cataegory: str) -> Tuple[Optional[str], Optional[discord.Embed]]:
     with Session() as session:
         user = session.get(User, user_id)
-        result = fetch_inventory(user_id, session=session, rarity=cataegory)
+        result = fetch_inventory(user_id, session=session, category=cataegory)
 
         if not result:
             if user.starter_given:
@@ -307,6 +313,7 @@ def get_item_details(user_id, item_id: int):
             return None
         item_details['name'] = item.item_name
         item_details['description'] = item.item_description
+        item_details['type'] = item.item_type
         item_details['rarity'] = item.item_rarity
         item_details['icon'] = item.item_icon
         item_details['amount_owned'] = user_inv.item_quantity if user_inv else 0
@@ -356,9 +363,9 @@ def calculate_slots_used(user_id: int, session) -> int:
     # get user upgrades once
     user_pockets = session.get(Upgrades, (user_id, "pockets"))
 
-    # fetch inventory joined with items for rarity
+    # fetch inventory joined with items for type
     rows = (
-        session.query(Inventory.item_id, Inventory.item_quantity, Items.item_rarity)
+        session.query(Inventory.item_id, Inventory.item_quantity, Items.item_type)
         .join(Items, Inventory.item_id == Items.item_id)
         .filter(Inventory.user_id == user_id)
         .all()
@@ -366,11 +373,11 @@ def calculate_slots_used(user_id: int, session) -> int:
 
     total_slots_used = 0
 
-    for _, qty, rarity in rows:
+    for _, qty, item_type in rows:
         if qty <= 0:
             continue
 
-        stack_limit = allowed_stack_size(user_pockets.level, rarity)
+        stack_limit = allowed_stack_size(user_pockets.level, item_type)
 
         stacks_needed = math.ceil(qty / stack_limit)
 
@@ -391,7 +398,7 @@ def max_addable_amount(user_id: int, item_id: int, session) -> int:
     if not item:
         return 0
 
-    stack_limit = allowed_stack_size(user_pockets.level, item.item_rarity)
+    stack_limit = allowed_stack_size(user_pockets.level, item.item_type)
     slots_allowed = available_inventory_slots_for_user(user_inv.level)
 
     slots_used_now = calculate_slots_used(user_id, session)

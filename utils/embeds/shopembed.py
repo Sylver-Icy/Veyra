@@ -14,7 +14,7 @@ def shop_embed(shop_items: list) -> discord.Embed:
     for item in shop_items:
         embed.add_field(
             name=f"**{item['name']}**\nID: {item['id']} | Price: {item['price']} {GOLD_EMOJI}",
-            value=f"`{item['description']}`\nRarity: {item['rarity']}",
+            value=f"`{item['description']}`\nType: {item['type']} | Rarity: {item['rarity']}",
             inline=True
         )
 

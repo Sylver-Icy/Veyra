@@ -366,6 +366,7 @@ class JobsClass:
             item = (
                 session.execute(
                     select(Items)
+                    .where(Items.item_type == "item")
                     .where(Items.item_rarity == rarity)
                     .where(Items.item_id.notin_(shard_item_ids()))
                     .order_by(func.random())

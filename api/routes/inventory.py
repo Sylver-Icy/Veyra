@@ -33,6 +33,7 @@ def get_inventory(user_id: int):
         InventoryItemSchema(
             item_id=i["item_id"],
             name=i["item_name"],
+            type=i["item_type"],
             rarity=i["item_rarity"],
             quantity=i["item_quantity"],
             description=i["item_description"],

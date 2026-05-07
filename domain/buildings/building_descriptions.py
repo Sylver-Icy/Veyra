@@ -23,19 +23,19 @@ INVENTORY_DESCRIPTIONS = {
 POCKET_DESCRIPTIONS = {
     0: "You haven't unlocked Pocket upgrades yet. Unlock it with `!unlock pockets`.",
     1: "Your pockets are Level 1.\n"
-       "Stack Limits → Common: 10 | Rare: 5 | Epic: 1 | Legendary: 1 | Minerals: 20 | Lootboxes: 2",
+       "Stack Limits -> Item: 10 | Potion: 1 | Mineral: 20 | Lootbox: 2 | Shard: 50",
 
     2: "Your pockets are Level 2.\n"
-       "Stack Limits → Common: 20 | Rare: 10 | Epic: 3 | Legendary: 1 | Minerals: 30 | Lootboxes: 5",
+       "Stack Limits -> Item: 20 | Potion: 2 | Mineral: 30 | Lootbox: 5 | Shard: 100",
 
     3: "Your pockets are Level 3.\n"
-       "Stack Limits → Common: 40 | Rare: 15 | Epic: 5 | Legendary: 1 | Minerals: 35 | Lootboxes: 10",
+       "Stack Limits -> Item: 40 | Potion: 3 | Mineral: 35 | Lootbox: 10 | Shard: 200",
 
     4: "Your pockets are Level 4.\n"
-       "Stack Limits → Common: 50 | Rare: 20 | Epic: 7 | Legendary: 1 | Minerals: 40 | Lootboxes: 12",
+       "Stack Limits -> Item: 50 | Potion: 4 | Mineral: 40 | Lootbox: 12 | Shard: 300",
 
     5: "Your pockets are Level 5.\n"
-       "Stack Limits → Common: 100 | Rare: 25 | Epic: 10 | Legendary: 2 | Minerals: 50 | Lootboxes: 15"
+       "Stack Limits -> Item: 100 | Potion: 5 | Mineral: 50 | Lootbox: 15 | Shard: 500"
 }
 
 BREWING_STAND_DESCRIPTIONS = {

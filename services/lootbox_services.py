@@ -110,6 +110,7 @@ def pick_random_item(rarity: str):
         return (
             session.query(Items)
             .filter_by(item_rarity=rarity)
+            .where(Items.item_type.in_(("item", "shard")))
             .where(Items.item_id.notin_(blocked_shards))
             .order_by(func.random())
             .first()

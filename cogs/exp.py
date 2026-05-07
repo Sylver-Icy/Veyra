@@ -64,9 +64,12 @@ class Exp(commands.Cog):
     @check.command(name="inventory", description="Check your inventory")
     @discord.option(
         "category",
-        description="Filter inventory by category",
+        description="Filter inventory by type or rarity",
         required=False,
-        choices=["Common", "Rare", "Epic", "Legendary", "minerals", "lootbox", "Potion"]
+        choices=[
+            "item", "shard", "mineral", "potion", "lootbox",
+            "Common", "Rare", "Epic", "Legendary", "Mythic",
+        ]
     )
     async def check_inventory(self, ctx: discord.ApplicationContext, category: str = None):
         status, embed_pages = get_inventory(ctx.author.id, ctx.author.name, category)

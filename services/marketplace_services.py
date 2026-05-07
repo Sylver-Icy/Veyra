@@ -211,6 +211,7 @@ def fill_marketplace_list():
                 'item_name': listing.item.item_name,
                 'quantity': listing.quantity,
                 'price': listing.price,
+                'type': listing.item.item_type,
                 'rarity': listing.item.item_rarity,
             })
 

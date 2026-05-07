@@ -98,12 +98,12 @@
     },
     {
       "name": "👝 Pockets (Stack Size per Slot)",
-      "value": "Pockets upgrades increase **stack size limits** per slot.\n\nStack limits depend on the item rarity/category:\n• Common stacks bigger than Legendary\n• Minerals stack larger than normal items\n• Lootboxes have their own limits\n\nExample:\nIf Common stack limit is **20**, one slot can hold **20 Common** items.",
+      "value": "Pockets upgrades increase **stack size limits** per slot.\n\nStack limits depend on item type:\n• Items use the normal stack size\n• Minerals stack larger than normal items\n• Lootboxes, potions, and shards each have their own limits\n\nExample:\nIf item stack limit is **20**, one slot can hold **20 normal items**.",
       "inline": false
     },
     {
       "name": "So what does “Inventory Full” mean?",
-      "value": "It means you ran out of **free slots**, not that you hit some random total item limit.\n\nEven if you have only 1 item type, if it needs multiple stacks:\n`slots used = ceil(quantity / stack_limit)`\n\nSo if you're carrying 41 Common items and your stack limit is 20:\n`ceil(41/20) = 3 slots used`",
+      "value": "It means you ran out of **free slots**, not that you hit some random total item limit.\n\nEven if you have only 1 item type, if it needs multiple stacks:\n`slots used = ceil(quantity / stack_limit)`\n\nSo if you're carrying 41 normal items and your stack limit is 20:\n`ceil(41/20) = 3 slots used`",
       "inline": false
     },
     {

@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 class InventoryItemSchema(BaseModel):
     item_id: int
     name: str
+    type: str
     rarity: str
     quantity: int
     description: Optional[str] = None

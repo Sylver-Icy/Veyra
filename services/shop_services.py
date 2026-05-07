@@ -48,6 +48,7 @@ def db_get_shop_items(shop_type: str):
                 "id": s.item_id,
                 "price": s.price,
                 "description": s.item.item_description,
+                "type": s.item.item_type,
                 "rarity": s.item.item_rarity,
                 "is_bonus": s.is_bonus
             }
@@ -72,6 +73,7 @@ def update_daily_shop():
 
         random_items = (
             session.query(Items)
+            .where(Items.item_type == "item")
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic")))
             .where(Items.item_name.notin_(EXCLUDED_ITEMS))
             .where(Items.item_id.notin_(shard_item_ids()))
@@ -118,6 +120,7 @@ def update_daily_buyback_shop():
 
         random_items = (
             session.query(Items)
+            .where(Items.item_type == "item")
             .where(Items.item_rarity.in_(("Common", "Rare", "Epic", "Legendary")))
             .where(Items.item_id.notin_(sell_ids_subq))
             .where(Items.item_id.notin_(shard_item_ids()))

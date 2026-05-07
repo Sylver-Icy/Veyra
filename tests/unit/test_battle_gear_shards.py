@@ -30,7 +30,9 @@ def test_every_shard_has_seeded_item_row_and_unique_id():
 
     assert len(item_ids) == len(seeded_ids)
     for shard in GEAR_SHARDS:
-        assert shard.item_id in seeded_ids
+        row = next(item for item in ITEMS if item["item_id"] == shard.item_id)
+        assert row["item_type"] == "shard"
+        assert row["item_rarity"] == shard.rarity
 
 
 def test_shard_ids_are_reserved_in_catalog_order():

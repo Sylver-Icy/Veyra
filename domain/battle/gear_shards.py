@@ -109,6 +109,7 @@ def shard_item_rows() -> list[dict]:
             "item_id": shard.item_id,
             "item_name": shard.item_name,
             "item_description": f"Collect shards to unlock {shard.item_name.removesuffix(' Shard')}.",
+            "item_type": "shard",
             "item_rarity": shard.rarity,
             "item_icon": None,
             "item_durability": None,

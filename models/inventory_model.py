@@ -23,6 +23,7 @@ class Items(Base):
     item_id = Column(Integer, autoincrement=True, primary_key=True)
     item_name = Column(String, unique=True, nullable=False)
     item_description = Column(String, nullable=False)
+    item_type = Column(String, nullable=False, default="item")
     item_rarity = Column(String, nullable=False)
     item_icon = Column(String, nullable=True)
     item_durability = Column(Integer, nullable=True)

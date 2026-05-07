@@ -34,7 +34,7 @@ def build_inventory(user_name: str,items: list):
             )
             for item in current_items:
                 embed.add_field(
-                    name=f"`{item['item_name']}` X {item['item_quantity']}       `{item['item_rarity']}` ",
+                    name=f"`{item['item_name']}` X {item['item_quantity']}       `{item['item_type']}` `{item['item_rarity']}` ",
                     value=f"*{item['item_description']}* \n  ------------------------------------------------------",
                     inline=False
                 )
@@ -51,11 +51,16 @@ def build_item_info_embed(item: dict):
             "rare": discord.Color.blue(),
             "epic": discord.Color.purple(),
             "legendary": discord.Color.orange(),
+            "mythic": discord.Color.dark_gold(),
         }
     embed = discord.Embed(
         title= item['name'],
         description= item['description'],
-        color= rarity_colors.get(item['rarity'])
+        color=rarity_colors.get(item['rarity'].lower(), discord.Color.greyple())
+    )
+    embed.add_field(
+        name="Type",
+        value=item['type']
     )
     embed.add_field(
         name="Rarity",

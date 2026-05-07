@@ -2,9 +2,9 @@
 
 This module defines:
 - Inventory slot progression by inventory level.
-- Allowed stack sizes by pockets level and item rarity.
+- Allowed stack sizes by pockets level and item type.
 
-All functions are defensive: unknown levels/rarities fall back to 0.
+All functions are defensive: unknown levels/types fall back to 0.
 """
 
 # Total inventory slots unlocked at each inventory level.
@@ -18,14 +18,17 @@ INVENTORY_SLOTS = {
     7: 70
 }
 
-# Maximum number of items allowed per stack, by pockets level and item rarity.
-ALLOWED_ITEM_STACK = {
-    1: {"Common": 10, "Rare": 5, "Potion": 1, "Epic": 1, "Legendary": 1, "Mythic": 1, "Minerals": 20, "Lootbox": 2},
-    2: {"Common": 20, "Rare": 10, "Potion": 2, "Epic": 3, "Legendary": 1, "Mythic": 1, "Minerals": 30, "Lootbox": 5},
-    3: {"Common": 40, "Rare": 15, "Potion": 3, "Epic": 5, "Legendary": 1, "Mythic": 1, "Minerals": 35, "Lootbox": 10},
-    4: {"Common": 50, "Rare": 20, "Potion": 4, "Epic": 7, "Legendary": 1, "Mythic": 1, "Minerals": 40, "Lootbox": 12},
-    5: {"Common": 100, "Rare": 25, "Potion": 5, "Epic": 10, "Legendary": 2, "Mythic": 1, "Minerals": 50, "Lootbox": 15}
+# Maximum number of items allowed per stack, by pockets level and item type.
+ALLOWED_TYPE_STACK = {
+    1: {"item": 10, "potion": 1, "mineral": 20, "lootbox": 2, "shard": 50},
+    2: {"item": 20, "potion": 2, "mineral": 30, "lootbox": 5, "shard": 100},
+    3: {"item": 40, "potion": 3, "mineral": 35, "lootbox": 10, "shard": 200},
+    4: {"item": 50, "potion": 4, "mineral": 40, "lootbox": 12, "shard": 300},
+    5: {"item": 100, "potion": 5, "mineral": 50, "lootbox": 15, "shard": 500},
 }
+
+# Backwards-compatible name for existing imports.
+ALLOWED_ITEM_STACK = ALLOWED_TYPE_STACK
 
 def available_inventory_slots_for_user(inventory_lvl: int) -> int:
     """Return the number of inventory slots available for a given inventory level.
@@ -40,28 +43,23 @@ def available_inventory_slots_for_user(inventory_lvl: int) -> int:
     # Defensive default prevents KeyError and makes invalid levels safe.
     return INVENTORY_SLOTS.get(inventory_lvl, 0)
 
-def allowed_stack_size(pockets_lvl: int, item_rarity: str) -> int:
+def allowed_stack_size(pockets_lvl: int, item_type: str) -> int:
     """Return allowed stack size for an item at a given pockets level.
 
     Args:
         pockets_lvl: The player's pockets upgrade level.
-        item_rarity: Item rarity/category name (e.g., "Common", "Epic", "Minerals").
+        item_type: Item type/category name (e.g., "item", "shard", "mineral").
 
     Returns:
-        The maximum stack size allowed for that rarity at that pockets level.
-        Returns 0 if pockets level or rarity is unknown/invalid.
-
-    Notes:
-        - Rarity strings are normalized via `capitalize()`.
-          This converts "legendary" -> "Legendary" (good).
+        The maximum stack size allowed for that type at that pockets level.
+        Returns 0 if pockets level or type is unknown/invalid.
     """
     # Fetch rules for this pockets level; unknown levels have no rules.
-    mapped_rules = ALLOWED_ITEM_STACK.get(pockets_lvl)
+    mapped_rules = ALLOWED_TYPE_STACK.get(pockets_lvl)
     if not mapped_rules:
         return 0
 
-    # Normalize input so callers can pass "legendary" etc.
-    item_rarity = item_rarity.capitalize()
+    item_type = item_type.lower().strip()
 
-    # Defensive lookup: unknown rarities should not crash the bot.
-    return mapped_rules.get(item_rarity, 0)
+    # Defensive lookup: unknown item types should not crash the bot.
+    return mapped_rules.get(item_type, 0)
