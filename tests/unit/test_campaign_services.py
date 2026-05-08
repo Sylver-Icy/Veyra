@@ -25,7 +25,8 @@ def test_stage_10_unlock_reward_details_mentions_signature_shard(monkeypatch):
     details = campaign_services.stage_reward_details(123)
 
     assert "signature grimoire" in details
-    assert "Veyra's Grimoire Shard" in details
+    assert "Veyra's Grimoire" in details
+    assert "Veyra's Grimoire Shard" not in details
 
 
 def test_stage_15_reward_grants_bardok_shard_after_normal_reward(monkeypatch):

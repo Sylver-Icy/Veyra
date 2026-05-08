@@ -9,6 +9,11 @@ footers = (
     "What are you checking? Planning to trade these with others or sell them back to me?"
 )
 
+
+def _display_label(value: str) -> str:
+    return value.replace("_", " ").title()
+
+
 def build_inventory(user_name: str,items: list):
     pages=[] #empty list to store pages
     if not items:
@@ -33,8 +38,9 @@ def build_inventory(user_name: str,items: list):
                 color = discord.Colour.brand_red()
             )
             for item in current_items:
+                item_type = _display_label(item["item_type"])
                 embed.add_field(
-                    name=f"`{item['item_name']}` X {item['item_quantity']}       `{item['item_type']}` `{item['item_rarity']}` ",
+                    name=f"`{item['item_name']}` X {item['item_quantity']}       `{item_type}` `{item['item_rarity']}` ",
                     value=f"*{item['item_description']}* \n  ------------------------------------------------------",
                     inline=False
                 )
@@ -60,7 +66,7 @@ def build_item_info_embed(item: dict):
     )
     embed.add_field(
         name="Type",
-        value=item['type']
+        value=_display_label(item['type'])
     )
     embed.add_field(
         name="Rarity",

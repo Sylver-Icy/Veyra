@@ -57,13 +57,13 @@ def update_loadout(user_id: int, weapon: str = None, spell: str = None):
     if weapon_key and not owns_weapon(user_id, weapon_key):
         return {
             "success": False,
-            "message": f"You need 1x {get_weapon_label(weapon_key)} Shard to equip this weapon."
+            "message": f"You need 1x {get_weapon_label(weapon_key)} to equip this weapon."
         }
 
     if spell_key and not owns_spell(user_id, spell_key):
         return {
             "success": False,
-            "message": f"You need 1x {get_spell_label(spell_key)} Shard to equip this spell."
+            "message": f"You need 1x {get_spell_label(spell_key)} to equip this spell."
         }
 
     with Session() as session:

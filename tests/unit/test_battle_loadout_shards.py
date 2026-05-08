@@ -36,7 +36,8 @@ def test_zero_weapon_shards_cannot_equip(monkeypatch):
     result = loadout_services.update_loadout(123, weapon="darkblade")
 
     assert result["success"] is False
-    assert "Dark Blade Shard" in result["message"]
+    assert "Dark Blade" in result["message"]
+    assert "Dark Blade Shard" not in result["message"]
 
 
 def test_one_weapon_shard_can_equip(monkeypatch):
@@ -58,7 +59,8 @@ def test_zero_spell_shards_cannot_equip(monkeypatch):
     result = loadout_services.update_loadout(123, spell="fireball")
 
     assert result["success"] is False
-    assert "Fireball Shard" in result["message"]
+    assert "Fireball" in result["message"]
+    assert "Fireball Shard" not in result["message"]
 
 
 def test_fetch_loadout_falls_back_to_training_blade_and_no_spell(monkeypatch):
