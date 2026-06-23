@@ -60,7 +60,9 @@ if not TOKEN:
     logger.critical("DISCORD_TOKEN is not set or empty. Exiting.")
     sys.exit(1)
 
-intents = discord.Intents.all()
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True, help_command=None)
 
 
